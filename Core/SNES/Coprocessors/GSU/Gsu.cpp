@@ -6,6 +6,7 @@
 #include "SNES/SnesCpu.h"
 #include "SNES/SnesMemoryManager.h"
 #include "SNES/BaseCartridge.h"
+#include "SNES/CartTypes.h"
 #include "SNES/RamHandler.h"
 #include "Shared/Emulator.h"
 #include "Shared/EmuSettings.h"
@@ -39,7 +40,7 @@ Gsu::Gsu(SnesConsole *console, uint32_t gsuRamSize)
 		_gsuRamHandlers.push_back(unique_ptr<IMemoryHandler>(new RamHandler(_gsuRam, i * 0x1000, _gsuRamSize, MemoryType::GsuWorkRam)));
 		_gsuCpuRamHandlers.push_back(unique_ptr<IMemoryHandler>(new GsuRamHandler(_state, _gsuRamHandlers.back().get())));
 	}
-	
+
 	//CPU mappings
 	MemoryMappings *cpuMappings = _memoryManager->GetMemoryMappings();
 	vector<unique_ptr<IMemoryHandler>> &prgRomHandlers = _console->GetCartridge()->GetPrgRomHandlers();
@@ -51,25 +52,68 @@ Gsu::Gsu(SnesConsole *console, uint32_t gsuRamSize)
 	cpuMappings->RegisterHandler(0x00, 0x3F, 0x3000, 0x3FFF, this);
 	cpuMappings->RegisterHandler(0x80, 0xBF, 0x3000, 0x3FFF, this);
 
-	for(int i = 0; i < 0x3F; i++) {
-		cpuMappings->RegisterHandler(i, i, 0x6000, 0x7FFF, _gsuCpuRamHandlers);
-		cpuMappings->RegisterHandler(i + 0x80, i + 0x80, 0x6000, 0x7FFF, _gsuCpuRamHandlers);
+	bool isHiRom = (_console->GetCartridge()->GetCartFlags() & CartFlags::HiRom) != 0;
+
+	if(isHiRom) {
+		//HiROM+GSU: use pageIncrement=8 so $00:$8000 maps to ROM offset $8000 (not $0000)
+		cpuMappings->RegisterHandler(0x00, 0x3F, 0x8000, 0xFFFF, _gsuCpuRomHandlers, 8);
+		cpuMappings->RegisterHandler(0x80, 0xBF, 0x8000, 0xFFFF, _gsuCpuRomHandlers, 8);
+		//ROM at $40-$7D, skipping $70-$71 (GSU RAM banks)
+		cpuMappings->RegisterHandler(0x40, 0x6F, 0x0000, 0xFFFF, _gsuCpuRomHandlers);
+		uint16_t startPage72 = (uint16_t)(((0x72 - 0x40) * 16) % _gsuCpuRomHandlers.size());
+		cpuMappings->RegisterHandler(0x72, 0x7D, 0x0000, 0xFFFF, _gsuCpuRomHandlers, 0, startPage72);
+		//ROM at $C0-$FF, skipping $F0-$F1 (GSU RAM mirrors)
+		cpuMappings->RegisterHandler(0xC0, 0xEF, 0x0000, 0xFFFF, _gsuCpuRomHandlers);
+		uint16_t startPageF2 = (uint16_t)(((0xF2 - 0xC0) * 16) % _gsuCpuRomHandlers.size());
+		cpuMappings->RegisterHandler(0xF2, 0xFF, 0x0000, 0xFFFF, _gsuCpuRomHandlers, 0, startPageF2);
+
+		//GSU-side ROM: HiROM layout (linear 64KB per bank)
+		_mappings.RegisterHandler(0x00, 0x3F, 0x0000, 0xFFFF, prgRomHandlers);
+		_mappings.RegisterHandler(0x40, 0x5F, 0x0000, 0xFFFF, prgRomHandlers);
+	} else {
+		//LoROM+GSU: EXACT original Mesen mapping (order matters)
+		for(int i = 0; i < 0x3F; i++) {
+			cpuMappings->RegisterHandler(i, i, 0x6000, 0x7FFF, _gsuCpuRamHandlers);
+			cpuMappings->RegisterHandler(i + 0x80, i + 0x80, 0x6000, 0x7FFF, _gsuCpuRamHandlers);
+		}
+		cpuMappings->RegisterHandler(0x70, 0x71, 0x0000, 0xFFFF, _gsuCpuRamHandlers);
+		cpuMappings->RegisterHandler(0xF0, 0xF1, 0x0000, 0xFFFF, _gsuCpuRamHandlers);
+
+		cpuMappings->RegisterHandler(0x00, 0x3F, 0x8000, 0xFFFF, _gsuCpuRomHandlers);
+		cpuMappings->RegisterHandler(0x80, 0xBF, 0x8000, 0xFFFF, _gsuCpuRomHandlers);
+		cpuMappings->RegisterHandler(0x40, 0x5F, 0x0000, 0xFFFF, _gsuCpuRomHandlers);
+		cpuMappings->RegisterHandler(0xC0, 0xDF, 0x0000, 0xFFFF, _gsuCpuRomHandlers);
+
+		//GSU-side ROM: LoROM layout
+		_mappings.RegisterHandler(0x00, 0x3F, 0x8000, 0xFFFF, prgRomHandlers);
+		_mappings.RegisterHandler(0x00, 0x3F, 0x0000, 0x7FFF, prgRomHandlers); //Mirror
+		_mappings.RegisterHandler(0x40, 0x5F, 0x0000, 0xFFFF, prgRomHandlers);
+
+		//GSU-side RAM
+		_mappings.RegisterHandler(0x70, 0x71, 0x0000, 0xFFFF, _gsuRamHandlers);
 	}
-	cpuMappings->RegisterHandler(0x70, 0x71, 0x0000, 0xFFFF, _gsuCpuRamHandlers);
-	cpuMappings->RegisterHandler(0xF0, 0xF1, 0x0000, 0xFFFF, _gsuCpuRamHandlers);
 
-	cpuMappings->RegisterHandler(0x00, 0x3F, 0x8000, 0xFFFF, _gsuCpuRomHandlers);
-	cpuMappings->RegisterHandler(0x80, 0xBF, 0x8000, 0xFFFF, _gsuCpuRomHandlers);
+	if(isHiRom) {
+		//HiROM RAM — registered AFTER ROM so $70-$71 overrides ROM
+		for(int i = 0; i < 0x3F; i++) {
+			cpuMappings->RegisterHandler(i, i, 0x6000, 0x7FFF, _gsuCpuRamHandlers);
+			cpuMappings->RegisterHandler(i + 0x80, i + 0x80, 0x6000, 0x7FFF, _gsuCpuRamHandlers);
+		}
+		for(uint8_t bank = 0x70; bank <= 0x71; bank++) {
+			for(uint32_t addr = 0x0000; addr <= 0xF000; addr += 0x1000) {
+				uint32_t ramPage = ((bank - 0x70) * 16 + (addr >> 12)) % _gsuCpuRamHandlers.size();
+				cpuMappings->RegisterHandler(bank, bank, (uint16_t)addr, (uint16_t)(addr | 0x0FFF), _gsuCpuRamHandlers[ramPage].get());
+			}
+		}
+		for(uint8_t bank = 0xF0; bank <= 0xF1; bank++) {
+			for(uint32_t addr = 0x0000; addr <= 0xF000; addr += 0x1000) {
+				uint32_t ramPage = ((bank - 0xF0) * 16 + (addr >> 12)) % _gsuCpuRamHandlers.size();
+				cpuMappings->RegisterHandler(bank, bank, (uint16_t)addr, (uint16_t)(addr | 0x0FFF), _gsuCpuRamHandlers[ramPage].get());
+			}
+		}
+		_mappings.RegisterHandler(0x70, 0x71, 0x0000, 0xFFFF, _gsuRamHandlers);
+	}
 
-	cpuMappings->RegisterHandler(0x40, 0x5F, 0x0000, 0xFFFF, _gsuCpuRomHandlers);
-	cpuMappings->RegisterHandler(0xC0, 0xDF, 0x0000, 0xFFFF, _gsuCpuRomHandlers);
-
-	//GSU mappings
-	_mappings.RegisterHandler(0x00, 0x3F, 0x8000, 0xFFFF, prgRomHandlers);
-	_mappings.RegisterHandler(0x00, 0x3F, 0x0000, 0x7FFF, prgRomHandlers); //Mirror
-
-	_mappings.RegisterHandler(0x40, 0x5F, 0x0000, 0xFFFF, prgRomHandlers);
-	_mappings.RegisterHandler(0x70, 0x71, 0x0000, 0xFFFF, _gsuRamHandlers);
 }
 
 Gsu::~Gsu()
