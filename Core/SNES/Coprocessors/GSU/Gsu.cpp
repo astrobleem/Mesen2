@@ -434,7 +434,8 @@ void Gsu::Step(uint64_t cycles)
 	_state.CycleCount += cycles;
 
 	if(_state.RomDelay) {
-		_state.RomDelay -= std::min<uint8_t>((uint8_t)cycles, _state.RomDelay);
+		uint8_t romDec = (cycles >= _state.RomDelay) ? _state.RomDelay : (uint8_t)cycles;
+		_state.RomDelay -= romDec;
 		if(_state.RomDelay == 0) {
 			WaitForRomAccess();
 			_state.RomReadBuffer = ReadGsu((_state.RomBank << 16) | _state.R[14], MemoryOperationType::Read);
@@ -443,7 +444,8 @@ void Gsu::Step(uint64_t cycles)
 	}
 
 	if(_state.RamDelay) {
-		_state.RamDelay -= std::min<uint8_t>((uint8_t)cycles, _state.RamDelay);
+		uint8_t ramDec = (cycles >= _state.RamDelay) ? _state.RamDelay : (uint8_t)cycles;
+		_state.RamDelay -= ramDec;
 		if(_state.RamDelay == 0) {
 			WaitForRamAccess();
 			WriteGsu(0x700000 | (_state.RamBank << 16) | _state.RamWriteAddress, _state.RamWriteValue, MemoryOperationType::Write);
