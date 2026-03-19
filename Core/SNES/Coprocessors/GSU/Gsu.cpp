@@ -533,6 +533,18 @@ void Gsu::Write(uint32_t addr, uint8_t value)
 				_state.RomDelay = _state.ClockSelect ? 5 : 6;
 			} else if(addr == 0x301F) {
 				_state.SFR.Running = true;
+				_waitForRomAccess = false;
+				_waitForRamAccess = false;
+				_state.SFR.RomReadPending = false;
+				_state.RomDelay = 0;
+				_state.RamDelay = 0;
+				// Ensure CycleCount doesn't exceed master clock so Run() can execute
+				{
+					uint64_t target = _memoryManager->GetMasterClock() * _clockMultiplier;
+					if(_state.CycleCount > target) {
+						_state.CycleCount = target;
+					}
+				}
 				UpdateRunningState();
 			}
 			break;
