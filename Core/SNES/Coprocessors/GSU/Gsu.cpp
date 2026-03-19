@@ -385,8 +385,12 @@ void Gsu::WaitRamOperation()
 void Gsu::WaitForRomAccess()
 {
 	if(!_state.GsuRomAccess) {
-		_waitForRomAccess = true;
-		_stopped = true;
+		// When executing from RAM (PBR >= $60), the R14 ROM prefetch is
+		// a no-op on real hardware — don't stall the GSU for it.
+		if(_state.ProgramBank <= 0x5F) {
+			_waitForRomAccess = true;
+			_stopped = true;
+		}
 	}
 }
 
