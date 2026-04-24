@@ -234,7 +234,14 @@ internal sealed class McpServer
 		return new Dictionary<string, Func<JsonNode?, JsonNode>> {
 			["ping"] = McpTools.Ping,
 			["get_state"] = McpTools.GetState,
+			["pause"] = McpTools.Pause,
+			["resume"] = McpTools.Resume,
+			["run_frames"] = McpTools.RunFrames,
 			["read_memory"] = McpTools.ReadMemory,
+			["write_memory"] = McpTools.WriteMemory,
+			["take_screenshot"] = McpTools.TakeScreenshot,
+			["save_state"] = McpTools.SaveState,
+			["load_state"] = McpTools.LoadState,
 		};
 	}
 
