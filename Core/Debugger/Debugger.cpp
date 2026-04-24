@@ -1052,7 +1052,13 @@ void Debugger::Log(string message)
 	}
 	_debuggerLog.push_back(message);
 
-	std::cout << message << std::endl;
+	// In MCP mode the parent process owns stdout for JSON-RPC framing;
+	// mirror the log line to stderr instead so humans can still see it.
+	if(_settings && _settings->CheckFlag(EmulationFlags::McpMode)) {
+		std::cerr << message << std::endl;
+	} else {
+		std::cout << message << std::endl;
+	}
 }
 
 string Debugger::GetLog()

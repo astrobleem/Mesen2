@@ -75,6 +75,10 @@ namespace Mesen
 				return TestRunner.Run(args);
 			}
 
+			if(CommandLineHelper.IsMcpRunner(args)) {
+				return Mesen.Utilities.Mcp.McpRunner.Run(args);
+			}
+
 			using SingleInstance instance = SingleInstance.Instance;
 			instance.Init(args);
 			if(instance.FirstInstance) {

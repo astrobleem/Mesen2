@@ -5,6 +5,10 @@
 
 void Gsu::STOP()
 {
+	// Flush pixel caches before stopping
+	WritePixelCache(_state.SecondaryCache);
+	WritePixelCache(_state.PrimaryCache);
+
 	if(!_state.IrqDisabled) {
 		_state.SFR.Irq = true;
 		_cpu->SetIrqSource(SnesIrqSource::Coprocessor);

@@ -58,7 +58,8 @@ namespace Mesen.Interop
 		InBackground = 0x08,
 		ConsoleMode = 0x10,
 		TestMode = 0x20,
-		OutputToStdout = 0x40
+		OutputToStdout = 0x40,
+		McpMode = 0x80,
 	}
 
 	public enum DebuggerFlags : UInt32

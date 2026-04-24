@@ -429,8 +429,12 @@ void Gsu::WaitRamOperation()
 void Gsu::WaitForRomAccess()
 {
 	if(!_state.GsuRomAccess) {
-		_waitForRomAccess = true;
-		_stopped = true;
+		// When executing from RAM (PBR >= $60), the R14 ROM prefetch is
+		// a no-op on real hardware — don't stall the GSU for it.
+		if(_state.ProgramBank <= 0x5F) {
+			_waitForRomAccess = true;
+			_stopped = true;
+		}
 	}
 }
 
@@ -474,7 +478,8 @@ void Gsu::Step(uint64_t cycles)
 	_state.CycleCount += cycles;
 
 	if(_state.RomDelay) {
-		_state.RomDelay -= std::min<uint8_t>((uint8_t)cycles, _state.RomDelay);
+		uint8_t romDec = (cycles >= _state.RomDelay) ? _state.RomDelay : (uint8_t)cycles;
+		_state.RomDelay -= romDec;
 		if(_state.RomDelay == 0) {
 			WaitForRomAccess();
 			_state.RomReadBuffer = ReadGsu((_state.RomBank << 16) | _state.R[14], MemoryOperationType::Read);
@@ -483,7 +488,8 @@ void Gsu::Step(uint64_t cycles)
 	}
 
 	if(_state.RamDelay) {
-		_state.RamDelay -= std::min<uint8_t>((uint8_t)cycles, _state.RamDelay);
+		uint8_t ramDec = (cycles >= _state.RamDelay) ? _state.RamDelay : (uint8_t)cycles;
+		_state.RamDelay -= ramDec;
 		if(_state.RamDelay == 0) {
 			WaitForRamAccess();
 			WriteGsu(0x700000 | (_state.RamBank << 16) | _state.RamWriteAddress, _state.RamWriteValue, MemoryOperationType::Write);
@@ -571,6 +577,21 @@ void Gsu::Write(uint32_t addr, uint8_t value)
 				_state.RomDelay = _state.ClockSelect ? 5 : 6;
 			} else if(addr == 0x301F) {
 				_state.SFR.Running = true;
+				_waitForRomAccess = false;
+				_waitForRamAccess = false;
+				_state.SFR.RomReadPending = false;
+				_state.RomDelay = 0;
+				_state.RamDelay = 0;
+				// Note: do NOT clear _cacheValid here. Real hardware preserves
+				// the instruction cache across STOP/GO. Programs that need fresh
+				// cache should use the CACHE instruction with a different CacheBase.
+				// Ensure CycleCount doesn't exceed master clock so Run() can execute
+				{
+					uint64_t target = _memoryManager->GetMasterClock() * _clockMultiplier;
+					if(_state.CycleCount > target) {
+						_state.CycleCount = target;
+					}
+				}
 				UpdateRunningState();
 			}
 			break;
