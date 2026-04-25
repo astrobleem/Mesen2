@@ -86,8 +86,10 @@ internal sealed class McpServer
 			// Kick off the event-drain pump. Reads hooks events from the
 			// emulator side via a small buffer and emits MCP notifications
 			// on this socket. Lifecycle is tied to the client: the thread
-			// exits as soon as _clientConnected flips false below.
-			Interop.DebugApi.McpResetHooks();  // defensive: start each session clean
+			// exits as soon as the cancellation token is signalled below.
+			// Note: defer the McpResetHooks call to after first message; on
+			// fresh boot the debugger isn't auto-init yet and the WithDebugger
+			// auto-init can take a noticeable moment that delays initialize.
 			var drainCts = new CancellationTokenSource();
 			var drainThread = new Thread(() => DrainLoop(drainCts.Token)) {
 				IsBackground = true,
@@ -117,7 +119,7 @@ internal sealed class McpServer
 				// so we can't race a notification write against a null writer.
 				drainCts.Cancel();
 				drainThread.Join(1000);
-				Interop.DebugApi.McpResetHooks();  // don't leak hooks to next client
+				try { Interop.DebugApi.McpResetHooks(); } catch { }  // don't leak hooks to next client
 			}
 		}
 		_in = null;
@@ -129,22 +131,29 @@ internal sealed class McpServer
 		// Buffer sized to amortize the P/Invoke cost per drain call. 256 events
 		// is ~5KB marshalled and hits well-behaved hooks once per a few frames.
 		var buf = new Interop.McpHookEvent[256];
+
+		// Pre-init the debugger so the first drain call doesn't race the
+		// main thread's WithDebugger auto-init path. Cheap if already done.
+		try { DebugApi.InitializeDebugger(); } catch { }
+
 		while(!cancel.IsCancellationRequested) {
-			int n;
+			int n = 0;
 			try {
-				n = Interop.DebugApi.McpDrainEvents(buf, buf.Length);
+				n = DebugApi.McpDrainEvents(buf, buf.Length);
 			} catch {
-				// If the debugger isn't alive (e.g. Emu shutting down), bail.
-				break;
+				// Debugger torn down between checks; just nap and re-check.
 			}
 
 			for(int i = 0; i < n; i++) {
-				SendHookNotification(buf[i]);
+				try {
+					SendHookNotification(buf[i]);
+				} catch {
+					// Socket gone; the main loop will notice via ReadLine
+					// returning null and shut us down.
+					return;
+				}
 			}
 
-			// Adaptive sleep: if we just drained a full buffer, assume more
-			// are queued and loop immediately. Otherwise sleep briefly so we
-			// don't hot-poll an idle session.
 			if(n < buf.Length) {
 				try {
 					cancel.WaitHandle.WaitOne(2);
