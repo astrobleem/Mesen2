@@ -341,6 +341,9 @@ internal sealed class McpServer
 			["read_dma_state"] = McpTools.ReadDmaState,
 			["add_frame_hook"] = McpTools.AddFrameHook,
 			["reset_emulator"] = McpTools.ResetEmulator,
+			["record_audio"] = McpTools.RecordAudio,
+			["stop_audio"] = McpTools.StopAudio,
+			["get_audio_state"] = McpTools.GetAudioState,
 		};
 	}
 

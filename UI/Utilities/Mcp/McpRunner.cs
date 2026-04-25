@@ -46,7 +46,12 @@ internal static class McpRunner
 		Log("ApplyConfig");
 		ConfigManager.Config.ApplyConfig();
 		Log("InitializeEmu");
-		EmuApi.InitializeEmu(ConfigManager.HomeFolder, IntPtr.Zero, IntPtr.Zero, true, true, true, true);
+		// Enable audio (noAudio=false) so the SPC700/DSP run and record_audio
+		// can capture a real waveform. We still pass noVideo=true (we don't
+		// open an Avalonia window), and noInput=true (debugger overrides
+		// only). Audio is emulated but not pushed to the speakers in
+		// console mode unless the user explicitly wants it.
+		EmuApi.InitializeEmu(ConfigManager.HomeFolder, IntPtr.Zero, IntPtr.Zero, true, false, true, true);
 		Log("Pause");
 		EmuApi.Pause();
 

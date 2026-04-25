@@ -172,6 +172,25 @@ internal static class McpTools
 				+ "wiped; the ROM stays loaded. Use to start each MCP-driven test "
 				+ "from a known initial state without respawning Mesen.",
 			null),
+
+		new("record_audio",
+			"Start recording emulator audio to a WAV file. Pair with stop_audio. "
+				+ "Captures the same sample stream the user would hear, so client-side "
+				+ "FFT analysis ('which voices are active', 'is the song playing the "
+				+ "right pitch') becomes possible without ears.",
+			BuildRecordAudioSchema()),
+
+		new("stop_audio",
+			"Stop the active audio recording.",
+			null),
+
+		new("get_audio_state",
+			"Snapshot SPC700 + S-DSP register state. SPC700 fields = CPU registers "
+				+ "(PC, A/X/Y, SP, flags). DSP fields include the 128-byte register "
+				+ "block — voice key-on/off, volume L/R per voice, pitch, ADSR envelope, "
+				+ "etc. Lets you ask 'what is the audio engine doing right now' rather "
+				+ "than 'what does the song sound like'.",
+			null),
 	};
 
 	private static JsonNode BuildRunFramesSchema()
@@ -266,6 +285,22 @@ internal static class McpTools
 				["cpuType"] = new JsonObject {
 					["type"] = "string",
 					["description"] = "CPU type (default 'Snes')",
+				},
+			},
+			["required"] = required,
+		};
+	}
+
+	private static JsonNode BuildRecordAudioSchema()
+	{
+		var required = new JsonArray();
+		required.Add(JsonValue.Create("path"));
+		return new JsonObject {
+			["type"] = "object",
+			["properties"] = new JsonObject {
+				["path"] = new JsonObject {
+					["type"] = "string",
+					["description"] = "Output .wav path. Existing files are overwritten.",
 				},
 			},
 			["required"] = required,
@@ -705,6 +740,83 @@ internal static class McpTools
 			["kind"] = "Frame",
 			["everyN"] = isPow2 ? (long)everyN : 1,
 			["cpuType"] = cpu.ToString(),
+		};
+	}
+
+	public static JsonNode RecordAudio(JsonNode? args)
+	{
+		if(args == null) throw new McpException(-32602, "record_audio requires arguments");
+		string path = RequireString(args, "path");
+		Mesen.Interop.RecordApi.WaveRecord(path);
+		return new JsonObject { ["path"] = path, ["recording"] = true };
+	}
+
+	public static JsonNode StopAudio(JsonNode? args)
+	{
+		Mesen.Interop.RecordApi.WaveStop();
+		return new JsonObject { ["recording"] = false };
+	}
+
+	public static JsonNode GetAudioState(JsonNode? args)
+	{
+		var state = DebugApi.GetConsoleState<Mesen.Interop.SnesState>(ConsoleType.Snes);
+
+		var spc = state.Spc;
+		var dsp = state.Dsp;
+
+		// Decode the per-voice DSP register block. Each voice has 8 register
+		// slots at offsets x0..x9; voice index in high nibble. Surface the
+		// most useful subset for "is the music playing": volume L/R, pitch,
+		// source #, ADSR1/ADSR2, gain, envelope, current output.
+		var voices = new JsonArray();
+		for(int v = 0; v < 8; v++) {
+			int b = v * 0x10;
+			byte volL  = dsp.ExternalRegs[b + 0x00];
+			byte volR  = dsp.ExternalRegs[b + 0x01];
+			ushort pitch = (ushort)(dsp.ExternalRegs[b + 0x02] | (dsp.ExternalRegs[b + 0x03] << 8));
+			byte src   = dsp.ExternalRegs[b + 0x04];
+			byte adsr1 = dsp.ExternalRegs[b + 0x05];
+			byte adsr2 = dsp.ExternalRegs[b + 0x06];
+			byte gain  = dsp.ExternalRegs[b + 0x07];
+			byte envx  = dsp.ExternalRegs[b + 0x08];
+			byte outx  = dsp.ExternalRegs[b + 0x09];
+			voices.Add(new JsonObject {
+				["voice"] = v,
+				["volL"] = (sbyte)volL,
+				["volR"] = (sbyte)volR,
+				["pitch"] = pitch,
+				["sampleSrc"] = src,
+				["adsr1"] = adsr1,
+				["adsr2"] = adsr2,
+				["gain"] = gain,
+				["envelope"] = envx,
+				["currentOutput"] = (sbyte)outx,
+			});
+		}
+
+		// Master flags. $0C = MVOLL, $1C = MVOLR, $2C = EVOLL, $3C = EVOLR,
+		// $4C = KON (key on), $5C = KOF (key off), $6C = FLG (mute/reset/echo),
+		// $7C = ENDX (which voices ended).
+		return new JsonObject {
+			["spc"] = new JsonObject {
+				["pc"] = spc.PC,
+				["a"] = spc.A,
+				["x"] = spc.X,
+				["y"] = spc.Y,
+				["sp"] = spc.SP,
+				["cycle"] = spc.Cycle,
+			},
+			["dsp"] = new JsonObject {
+				["mainVolL"] = (sbyte)dsp.ExternalRegs[0x0C],
+				["mainVolR"] = (sbyte)dsp.ExternalRegs[0x1C],
+				["echoVolL"] = (sbyte)dsp.ExternalRegs[0x2C],
+				["echoVolR"] = (sbyte)dsp.ExternalRegs[0x3C],
+				["keyOn"] = dsp.ExternalRegs[0x4C],
+				["keyOff"] = dsp.ExternalRegs[0x5C],
+				["flg"] = dsp.ExternalRegs[0x6C],
+				["voicesEnded"] = dsp.ExternalRegs[0x7C],
+			},
+			["voices"] = voices,
 		};
 	}
 
