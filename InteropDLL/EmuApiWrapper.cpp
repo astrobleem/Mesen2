@@ -12,6 +12,8 @@
 #include "Core/Shared/TimingInfo.h"
 #include "Core/Shared/CheatManager.h"
 #include "Core/Shared/DebuggerRequest.h"
+#include "Core/Debugger/Debugger.h"
+#include "Core/Debugger/ScriptManager.h"
 #include "Core/Netplay/GameClient.h"
 #include "Core/Netplay/GameServer.h"
 #include "Utilities/ArchiveReader.h"
@@ -170,6 +172,11 @@ extern "C" {
 
 	DllExport void __stdcall TakeScreenshot() { _emu->GetVideoDecoder()->TakeScreenshot(); }
 
+	DllExport uint32_t __stdcall GetFrameCount() { return _emu->GetFrameCount(); }
+
+	DllExport void __stdcall McpResetEmu() { _emu->Reset(); }
+	DllExport void __stdcall McpPowerCycle() { _emu->PowerCycle(); }
+
 	DllExport void __stdcall ProcessAudioPlayerAction(AudioPlayerActionParams p) { _emu->ProcessAudioPlayerAction(p); }
 
 	DllExport void __stdcall GetArchiveRomList(char* filename, char* outBuffer, uint32_t maxLength) { 
@@ -311,6 +318,53 @@ extern "C" {
 		void ResetKeyState() {}
 		void SetDisabled(bool disabled) {}
 	};
+
+	DllExport int32_t __stdcall HeadlessRunTest(char* romPath, char* homeFolder,
+		char* luaName, char* luaDir, char* luaContent, int32_t timeoutSec)
+	{
+		FolderUtilities::SetHomeFolder(homeFolder);
+		KeyManager::SetSettings(_emu->GetSettings());
+		_emu->Initialize();
+
+		_emu->GetSettings()->SetFlag(EmulationFlags::ConsoleMode);
+		_emu->GetSettings()->SetFlag(EmulationFlags::MaximumSpeed);
+		_emu->GetSettings()->SetFlag(EmulationFlags::OutputToStdout);
+
+		if(!_emu->LoadRom((VirtualFile)string(romPath), VirtualFile())) {
+			_emu->Stop(false);
+			_emu->Release();
+			return -2;
+		}
+
+		if(luaContent != nullptr && strlen(luaContent) > 0) {
+			DebuggerRequest dbgReq = _emu->GetDebugger(false);
+			Debugger* dbg = dbgReq.GetDebugger();
+			if(dbg && dbg->GetScriptManager()) {
+				dbg->GetScriptManager()->LoadScript(
+					string(luaName), string(luaDir), string(luaContent), -1);
+			}
+		}
+
+		int32_t result = -1;
+		auto start = std::chrono::steady_clock::now();
+		while(true) {
+			std::this_thread::sleep_for(std::chrono::milliseconds(100));
+			auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(
+				std::chrono::steady_clock::now() - start).count();
+
+			if(!_emu->IsRunning()) {
+				result = _emu->GetStopCode();
+				break;
+			}
+			if(elapsed >= timeoutSec) {
+				break;
+			}
+		}
+
+		_emu->Stop(false);
+		_emu->Release();
+		return result;
+	}
 
 	DllExport void __stdcall PgoRunTest(vector<string> testRoms, bool enableDebugger)
 	{

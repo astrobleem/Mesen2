@@ -65,6 +65,7 @@ private:
 	ConsoleType _consoleType = ConsoleType::Snes;
 
 	unique_ptr<ScriptManager> _scriptManager;
+	unique_ptr<class McpHookManager> _mcpHooks;
 	unique_ptr<MemoryDumper> _memoryDumper;
 	unique_ptr<MemoryAccessCounter> _memoryAccessCounter;
 	unique_ptr<CodeDataLogger> _codeDataLogger;
@@ -192,6 +193,7 @@ public:
 	LabelManager* GetLabelManager() { return _labelManager.get(); }
 	CdlManager* GetCdlManager() { return _cdlManager.get(); }
 	ScriptManager* GetScriptManager() { return _scriptManager.get(); }
+	class McpHookManager* GetMcpHooks() { return _mcpHooks.get(); }
 	IConsole* GetConsole() { return _console; }
 	Emulator* GetEmulator() { return _emu; }
 

@@ -12,6 +12,9 @@ enum class EmulationFlags
 	ConsoleMode = 0x10,
 	TestMode = 0x20,
 	OutputToStdout = 0x40,
+	// Mesen takes over stdout for MCP JSON-RPC framing; Debugger::Log and
+	// ScriptingContext::Log redirect to stderr when this bit is set.
+	McpMode = 0x80,
 };
 
 enum class ScaleFilterType

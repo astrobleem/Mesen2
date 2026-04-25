@@ -1,5 +1,6 @@
 #include "pch.h"
 #include <algorithm>
+#include <iostream>
 #include <regex>
 #include "Lua/lua.hpp"
 #include "Lua/luasocket.hpp"
@@ -168,6 +169,13 @@ void ScriptingContext::Log(string message)
 	_logRows.push_back(message);
 	if(_logRows.size() > 500) {
 		_logRows.pop_front();
+	}
+	// MCP mode owns stdout for JSON-RPC framing; redirect Lua log output to
+	// stderr so it stays visible without corrupting the MCP channel.
+	if(_settings && _settings->CheckFlag(EmulationFlags::McpMode)) {
+		std::cerr << message << std::endl;
+	} else {
+		std::cout << message << std::endl;
 	}
 }
 

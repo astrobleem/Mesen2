@@ -128,6 +128,11 @@ public class CommandLineHelper
 		return args.Any(arg => CommandLineHelper.ConvertArg(arg).ToLowerInvariant() == "testrunner");
 	}
 
+	public static bool IsMcpRunner(string[] args)
+	{
+		return args.Any(arg => CommandLineHelper.ConvertArg(arg).ToLowerInvariant() == "mcp");
+	}
+
 	public void ProcessPostLoadCommandSwitches(MainWindow wnd)
 	{
 		if(LuaScriptsToLoad.Count > 0) {

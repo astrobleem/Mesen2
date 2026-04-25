@@ -12,6 +12,7 @@
 #include "Debugger/DebugBreakHelper.h"
 #include "Debugger/LabelManager.h"
 #include "Debugger/ScriptManager.h"
+#include "Mcp/McpHookManager.h"
 #include "Debugger/ScriptHost.h"
 #include "Debugger/CallstackManager.h"
 #include "Debugger/ExpressionEvaluator.h"
@@ -80,6 +81,7 @@ Debugger::Debugger(Emulator* emu, IConsole* console)
 	_disassemblySearch.reset(new DisassemblySearch(_disassembler.get(), _labelManager.get()));
 	_memoryAccessCounter.reset(new MemoryAccessCounter(this));
 	_scriptManager.reset(new ScriptManager(this));
+	_mcpHooks.reset(new McpHookManager());
 	_traceLogSaver.reset(new TraceLogFileSaver());
 	_cdlManager.reset(new CdlManager(this, _disassembler.get()));
 
@@ -246,6 +248,11 @@ void Debugger::ProcessInstruction()
 		uint8_t value = (uint8_t)memOp.Value;
 		_scriptManager->ProcessMemoryOperation(relAddr, value, MemoryOperationType::ExecOpCode, type, true);
 	}
+
+	if(_mcpHooks->HasAnyHooks()) {
+		MemoryOperationInfo memOp = debugger->InstructionProgress.LastMemOperation;
+		_mcpHooks->OnMemoryOperation(type, memOp.Address, memOp.Value, McpHookKind::Exec, _emu->GetFrameCount());
+	}
 }
 
 template<CpuType type, uint8_t accessWidth, MemoryAccessFlags flags, typename T>
@@ -278,6 +285,10 @@ void Debugger::ProcessMemoryRead(uint32_t addr, T& value, MemoryOperationType op
 
 	if(_scriptManager->HasCpuMemoryCallbacks()) {
 		ProcessScripts<type>(addr, value, opType);
+	}
+
+	if(_mcpHooks->HasAnyHooks()) {
+		_mcpHooks->OnMemoryOperation(type, addr, (uint32_t)value, McpHookKind::Read, _emu->GetFrameCount());
 	}
 }
 
@@ -312,7 +323,11 @@ bool Debugger::ProcessMemoryWrite(uint32_t addr, T& value, MemoryOperationType o
 	if(_scriptManager->HasCpuMemoryCallbacks()) {
 		ProcessScripts<type>(addr, value, opType);
 	}
-	
+
+	if(_mcpHooks->HasAnyHooks()) {
+		_mcpHooks->OnMemoryOperation(type, addr, (uint32_t)value, McpHookKind::Write, _emu->GetFrameCount());
+	}
+
 	return !_debuggers[(int)type].Debugger->GetFrozenAddressManager().IsFrozenAddress(addr);
 }
 
@@ -585,6 +600,17 @@ void Debugger::ProcessEvent(EventType type, std::optional<CpuType> cpuTypeOpt)
 {
 	CpuType evtCpuType = cpuTypeOpt.value_or(_mainCpuType);
 	_scriptManager->ProcessEvent(type, evtCpuType);
+
+	// MCP frame hooks: fire once per video frame on the main CPU only —
+	// SA-1 / SPC / etc. also raise EndFrame and would double-count. Pass
+	// the frame number as both addr and value so value-match filters
+	// (e.g. "every Nth frame") work uniformly.
+	if(type == EventType::EndFrame && evtCpuType == _mainCpuType
+			&& _mcpHooks->HasAnyHooks()) {
+		uint32_t frameNum = _emu->GetFrameCount();
+		_mcpHooks->OnMemoryOperation(evtCpuType, frameNum, frameNum,
+			McpHookKind::Frame, frameNum);
+	}
 
 	switch(type) {
 		default: break;
@@ -1052,7 +1078,13 @@ void Debugger::Log(string message)
 	}
 	_debuggerLog.push_back(message);
 
-	std::cout << message << std::endl;
+	// In MCP mode the parent process owns stdout for JSON-RPC framing;
+	// mirror the log line to stderr instead so humans can still see it.
+	if(_settings && _settings->CheckFlag(EmulationFlags::McpMode)) {
+		std::cerr << message << std::endl;
+	} else {
+		std::cout << message << std::endl;
+	}
 }
 
 string Debugger::GetLog()
