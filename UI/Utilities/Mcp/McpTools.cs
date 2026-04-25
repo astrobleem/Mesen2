@@ -67,6 +67,21 @@ internal static class McpTools
 		new("load_state",
 			"Load emulator state from a named slot or file path.",
 			BuildSaveLoadSchema()),
+
+		new("set_input",
+			"Inject controller state for the next N frames. Buttons are bit-OR "
+				+ "of: a=1,b=2,select=4,start=8,up=16,down=32,left=64,right=128 and "
+				+ "SNES-only x=256,l=512,r=1024,y=2048. Use when scripts need to "
+				+ "drive past the title screen or trigger script-driven transitions "
+				+ "the way the real controller does.",
+			BuildSetInputSchema()),
+
+		new("get_ppu_state",
+			"Return PPU register snapshot: forced-blank flag, brightness, BG mode, "
+				+ "main/sub screen layer enable masks (bit0=BG1..bit4=OBJ), per-layer "
+				+ "scroll + tile/tilemap addrs, window config. Essential for diagnosing "
+				+ "'black scanlines' / 'missing layer' bugs without eyeball + guesswork.",
+			null),
 	};
 
 	private static JsonNode BuildRunFramesSchema()
@@ -115,6 +130,32 @@ internal static class McpTools
 					["description"] = "'path' (default; writes PNG to Screenshots folder, returns path) or 'base64' (inline PNG bytes)",
 				},
 			},
+		};
+	}
+
+	private static JsonNode BuildSetInputSchema()
+	{
+		var required = new JsonArray();
+		required.Add(JsonValue.Create("port"));
+		required.Add(JsonValue.Create("buttons"));
+		required.Add(JsonValue.Create("frames"));
+		return new JsonObject {
+			["type"] = "object",
+			["properties"] = new JsonObject {
+				["port"] = new JsonObject {
+					["type"] = "integer",
+					["description"] = "Controller port (0 = player 1)",
+				},
+				["buttons"] = new JsonObject {
+					["type"] = "integer",
+					["description"] = "Bitmask of buttons (e.g. 8 = start)",
+				},
+				["frames"] = new JsonObject {
+					["type"] = "integer",
+					["description"] = "How many frames to hold the input; emulation advances during this window",
+				},
+			},
+			["required"] = required,
 		};
 	}
 
@@ -325,6 +366,100 @@ internal static class McpTools
 		string path = RequireString(args, "path");
 		EmuApi.LoadStateFile(path);
 		return new JsonObject { ["path"] = path };
+	}
+
+	public static JsonNode GetPpuState(JsonNode? args)
+	{
+		var s = DebugApi.GetPpuState<SnesPpuState>(CpuType.Snes);
+
+		var layers = new JsonArray();
+		for(int i = 0; i < s.Layers.Length; i++) {
+			var L = s.Layers[i];
+			layers.Add(new JsonObject {
+				["index"] = i,
+				["tilemapAddr"] = L.TilemapAddress,
+				["chrAddr"] = L.ChrAddress,
+				["hscroll"] = L.HScroll,
+				["vscroll"] = L.VScroll,
+				["largeTiles"] = L.LargeTiles,
+				["doubleWidth"] = L.DoubleWidth,
+				["doubleHeight"] = L.DoubleHeight,
+			});
+		}
+
+		var mainMask = new JsonArray();
+		var subMask = new JsonArray();
+		for(int i = 0; i < s.WindowMaskMain.Length; i++) {
+			mainMask.Add(JsonValue.Create((int)s.WindowMaskMain[i]));
+			subMask.Add(JsonValue.Create((int)s.WindowMaskSub[i]));
+		}
+
+		return new JsonObject {
+			["frameCount"] = s.FrameCount,
+			["scanline"] = s.Scanline,
+			["forcedBlank"] = s.ForcedBlank,
+			["brightness"] = s.ScreenBrightness,
+			["bgMode"] = s.BgMode,
+			["mainScreenLayers"] = s.MainScreenLayers,  // bit0=BG1 .. bit4=OBJ
+			["subScreenLayers"] = s.SubScreenLayers,
+			["mainScreenWindowMask"] = mainMask,
+			["subScreenWindowMask"] = subMask,
+			["mosaicSize"] = s.MosaicSize,
+			["mosaicEnabled"] = s.MosaicEnabled,
+			["layers"] = layers,
+		};
+	}
+
+	public static JsonNode SetInput(JsonNode? args)
+	{
+		if(args == null) {
+			throw new McpException(-32602, "set_input requires arguments");
+		}
+		uint port = RequireUInt(args, "port");
+		uint buttons = RequireUInt(args, "buttons");
+		uint frames = RequireUInt(args, "frames");
+		if(frames == 0 || frames > 100_000) {
+			throw new McpException(-32602, "frames out of range (1..100000)");
+		}
+		if(port > 3) {
+			throw new McpException(-32602, "port out of range (0..3)");
+		}
+
+		DebugControllerState state = new() {
+			A = (buttons & 0x001) != 0,
+			B = (buttons & 0x002) != 0,
+			Select = (buttons & 0x004) != 0,
+			Start = (buttons & 0x008) != 0,
+			Up = (buttons & 0x010) != 0,
+			Down = (buttons & 0x020) != 0,
+			Left = (buttons & 0x040) != 0,
+			Right = (buttons & 0x080) != 0,
+			X = (buttons & 0x100) != 0,
+			L = (buttons & 0x200) != 0,
+			R = (buttons & 0x400) != 0,
+			Y = (buttons & 0x800) != 0,
+		};
+
+		// Apply the override, run the emulator forward for the requested
+		// frames, then clear the override. Debugger input overrides win
+		// against the default controller polling every frame.
+		DebugApi.SetInputOverrides(port, state);
+		EmuApi.Resume();
+		double estMs = frames * (1000.0 / 60.0);
+		System.Threading.Thread.Sleep((int)Math.Min(estMs * 1.2 + 20, 120_000));
+		EmuApi.Pause();
+		for(int i = 0; i < 200; i++) {
+			if(EmuApi.IsPaused()) break;
+			System.Threading.Thread.Sleep(5);
+		}
+		DebugApi.SetInputOverrides(port, default);
+
+		return new JsonObject {
+			["port"] = port,
+			["buttons"] = buttons,
+			["frames"] = frames,
+			["isPaused"] = EmuApi.IsPaused(),
+		};
 	}
 
 	public static JsonNode ReadMemory(JsonNode? args)

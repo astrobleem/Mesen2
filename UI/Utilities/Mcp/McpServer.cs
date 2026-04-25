@@ -242,6 +242,8 @@ internal sealed class McpServer
 			["take_screenshot"] = McpTools.TakeScreenshot,
 			["save_state"] = McpTools.SaveState,
 			["load_state"] = McpTools.LoadState,
+			["set_input"] = McpTools.SetInput,
+			["get_ppu_state"] = McpTools.GetPpuState,
 		};
 	}
 
