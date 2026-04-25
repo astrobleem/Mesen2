@@ -1,3 +1,4 @@
+using Mesen.Debugger;
 using Mesen.Interop;
 using System;
 using System.Collections.Generic;
@@ -84,15 +85,26 @@ internal static class McpTools
 			null),
 
 		new("add_exec_hook",
-			"Register a hook that fires when the CPU executes an instruction at a "
-				+ "specific address (or within a range). Returns a handle; use "
-				+ "remove_hook to detach. When a hook fires the server sends a "
-				+ "notifications/event message with the handle, address, and frame.",
-			BuildAddExecHookSchema()),
+			"Fire on CPU instruction execution at address (or in [address..endAddress]). "
+				+ "Returns a handle; remove_hook to detach. Per-fire the server sends "
+				+ "notifications/mesen/hookFired with handle, address, value, frame. "
+				+ "Optional matchValue+matchValueMask filters server-side so high-volume "
+				+ "PCs don't flood the socket.",
+			BuildAddHookSchema(includeValueMatch: true)),
+
+		new("add_read_hook",
+			"Fire on CPU memory reads at address (or [address..endAddress]). The "
+				+ "value field of the notification is the byte read. matchValue/Mask "
+				+ "supports the common 'fire when value == X' pattern.",
+			BuildAddHookSchema(includeValueMatch: true)),
+
+		new("add_write_hook",
+			"Fire on CPU memory writes. value = byte written. matchValue/Mask same as "
+				+ "the other hook tools.",
+			BuildAddHookSchema(includeValueMatch: true)),
 
 		new("remove_hook",
-			"Detach a previously-registered hook by handle. Returns whether the "
-				+ "handle was known.",
+			"Detach a previously-registered hook by handle.",
 			BuildRemoveHookSchema()),
 
 		new("list_hooks",
@@ -105,6 +117,26 @@ internal static class McpTools
 				+ "address-range matches since reset. Lets you confirm the hot-path "
 				+ "is alive even when no hook address has fired yet.",
 			null),
+
+		new("lookup_symbol",
+			"Resolve symbol names from a WLA-DX-format sym file. Pass the file path "
+				+ "(typically build/SuperMonkeyIsland.sym for SNES projects) and a "
+				+ "regex pattern. Returns matches with their bank:offset + 24-bit ROM "
+				+ "address ($C0|offset for HiROM bank 0). Caches the parsed file.",
+			BuildLookupSymbolSchema()),
+
+		new("disassemble",
+			"Return N disassembled instructions starting at address. Wraps Mesen's "
+				+ "GetDisassemblyOutput. Useful for one-shot 'what's at this PC' rather "
+				+ "than dragging out a hex dump.",
+			BuildDisassembleSchema()),
+
+		new("run_until",
+			"Resume emulation until any of (a) up to N frames pass, or (b) a hook fires. "
+				+ "Returns the trigger reason and (if a hook fired) which handle. "
+				+ "Atomic 'pause -> set hook -> resume -> wait -> pause' so callers "
+				+ "don't have to roll the state machine themselves.",
+			BuildRunUntilSchema()),
 	};
 
 	private static JsonNode BuildRunFramesSchema()
@@ -156,7 +188,32 @@ internal static class McpTools
 		};
 	}
 
-	private static JsonNode BuildAddExecHookSchema()
+	private static JsonNode BuildLookupSymbolSchema()
+	{
+		var required = new JsonArray();
+		required.Add(JsonValue.Create("symFile"));
+		required.Add(JsonValue.Create("pattern"));
+		return new JsonObject {
+			["type"] = "object",
+			["properties"] = new JsonObject {
+				["symFile"] = new JsonObject {
+					["type"] = "string",
+					["description"] = "Absolute path to a WLA-DX .sym file",
+				},
+				["pattern"] = new JsonObject {
+					["type"] = "string",
+					["description"] = "Regex pattern matched against symbol names. Use '^name$' for exact match.",
+				},
+				["maxResults"] = new JsonObject {
+					["type"] = "integer",
+					["description"] = "Cap on results returned (default 64)",
+				},
+			},
+			["required"] = required,
+		};
+	}
+
+	private static JsonNode BuildDisassembleSchema()
 	{
 		var required = new JsonArray();
 		required.Add(JsonValue.Create("address"));
@@ -165,17 +222,69 @@ internal static class McpTools
 			["properties"] = new JsonObject {
 				["address"] = new JsonObject {
 					["type"] = "integer",
-					["description"] = "Start address (inclusive)",
+					["description"] = "Start address (CPU bus, e.g. 0xC08000)",
 				},
-				["endAddress"] = new JsonObject {
+				["count"] = new JsonObject {
 					["type"] = "integer",
-					["description"] = "End address (inclusive). Defaults to address for a single-PC hook.",
+					["description"] = "Number of lines (default 16)",
 				},
 				["cpuType"] = new JsonObject {
 					["type"] = "string",
-					["description"] = "CPU type (default 'Snes'; other valid: 'Sa1', 'Spc', 'Gameboy', etc).",
+					["description"] = "CPU type (default 'Snes')",
 				},
 			},
+			["required"] = required,
+		};
+	}
+
+	private static JsonNode BuildRunUntilSchema()
+	{
+		return new JsonObject {
+			["type"] = "object",
+			["properties"] = new JsonObject {
+				["maxFrames"] = new JsonObject {
+					["type"] = "integer",
+					["description"] = "Frame budget; emulation pauses after this many frames if no hook fires (default 600).",
+				},
+				["hookHandle"] = new JsonObject {
+					["type"] = "integer",
+					["description"] = "An existing hook handle to wait on. If 0/missing, run for maxFrames and return.",
+				},
+			},
+		};
+	}
+
+	private static JsonNode BuildAddHookSchema(bool includeValueMatch)
+	{
+		var required = new JsonArray();
+		required.Add(JsonValue.Create("address"));
+		var props = new JsonObject {
+			["address"] = new JsonObject {
+				["type"] = "integer",
+				["description"] = "Start address (inclusive)",
+			},
+			["endAddress"] = new JsonObject {
+				["type"] = "integer",
+				["description"] = "End address (inclusive). Defaults to address for a single-byte/PC hook.",
+			},
+			["cpuType"] = new JsonObject {
+				["type"] = "string",
+				["description"] = "CPU type (default 'Snes'; other valid: 'Sa1', 'Spc', 'Gameboy', etc).",
+			},
+		};
+		if(includeValueMatch) {
+			props["matchValue"] = new JsonObject {
+				["type"] = "integer",
+				["description"] = "Optional value match. Hook only fires when (observed & matchValueMask) == (matchValue & matchValueMask).",
+			};
+			props["matchValueMask"] = new JsonObject {
+				["type"] = "integer",
+				["description"] = "Mask for matchValue. 0 disables value matching (fire on every hit). 0xFF for byte-exact.",
+			};
+		}
+		return new JsonObject {
+			["type"] = "object",
+			["properties"] = props,
 			["required"] = required,
 		};
 	}
@@ -280,11 +389,10 @@ internal static class McpTools
 
 	public static JsonNode GetState(JsonNode? args)
 	{
-		// TODO expose actual frame count once we expose GetFrameCount via
-		// InteropDLL; IsRunning/IsPaused are already exported.
 		return new JsonObject {
 			["isRunning"] = EmuApi.IsRunning(),
 			["isPaused"] = EmuApi.IsPaused(),
+			["frameCount"] = EmuApi.GetFrameCount(),
 		};
 	}
 
@@ -431,9 +539,13 @@ internal static class McpTools
 		return new JsonObject { ["path"] = path };
 	}
 
-	public static JsonNode AddExecHook(JsonNode? args)
+	public static JsonNode AddExecHook(JsonNode? args) => AddHookImpl(args, McpHookKind.Exec, "add_exec_hook");
+	public static JsonNode AddReadHook(JsonNode? args) => AddHookImpl(args, McpHookKind.Read, "add_read_hook");
+	public static JsonNode AddWriteHook(JsonNode? args) => AddHookImpl(args, McpHookKind.Write, "add_write_hook");
+
+	private static JsonNode AddHookImpl(JsonNode? args, McpHookKind kind, string toolName)
 	{
-		if(args == null) throw new McpException(-32602, "add_exec_hook requires arguments");
+		if(args == null) throw new McpException(-32602, $"{toolName} requires arguments");
 		uint addr = RequireUInt(args, "address");
 		uint endAddr = (uint?)args["endAddress"]?.GetValue<long>() ?? addr;
 		string cpuStr = args["cpuType"]?.GetValue<string>() ?? "Snes";
@@ -443,12 +555,17 @@ internal static class McpTools
 		if(endAddr < addr) {
 			throw new McpException(-32602, "endAddress must be >= address");
 		}
-		int handle = DebugApi.McpAddExecHook(cpu, addr, endAddr);
+		uint matchValue = (uint)((args["matchValue"]?.GetValue<long>()) ?? 0);
+		uint matchValueMask = (uint)((args["matchValueMask"]?.GetValue<long>()) ?? 0);
+		int handle = DebugApi.McpAddHook((byte)kind, cpu, addr, endAddr, matchValue, matchValueMask);
 		return new JsonObject {
 			["handle"] = handle,
+			["kind"] = kind.ToString(),
 			["cpuType"] = cpu.ToString(),
 			["address"] = addr,
 			["endAddress"] = endAddr,
+			["matchValue"] = matchValue,
+			["matchValueMask"] = matchValueMask,
 		};
 	}
 
@@ -460,6 +577,163 @@ internal static class McpTools
 		return new JsonObject {
 			["handle"] = handle,
 			["removed"] = ok,
+		};
+	}
+
+	// Sym-file cache: filename -> (mtime, list of (name, addr)). Reparse if
+	// the file's mtime changes — typical workflow has the user rebuilding
+	// the ROM frequently and addresses shift each time.
+	private static readonly Dictionary<string, (DateTime mtime, List<(string name, uint addr)> rows)> _symCache
+		= new(StringComparer.OrdinalIgnoreCase);
+	private static readonly object _symCacheLock = new();
+
+	private static List<(string name, uint addr)> LoadSymFile(string path)
+	{
+		var info = new System.IO.FileInfo(path);
+		if(!info.Exists) {
+			throw new McpException(-32602, "sym file not found: " + path);
+		}
+		lock(_symCacheLock) {
+			if(_symCache.TryGetValue(path, out var cached) && cached.mtime == info.LastWriteTimeUtc) {
+				return cached.rows;
+			}
+			// WLA-DX format: "BBBB:OOOOOO NAME". Bank may be 4 hex digits, offset
+			// is variable width. WRAM symbols encode the $7E bank in offset.
+			var rows = new List<(string name, uint addr)>();
+			var rx = new System.Text.RegularExpressions.Regex(
+				@"^\s*[0-9A-Fa-f]{4}:([0-9A-Fa-f]+)\s+(\S+)\s*$");
+			foreach(string line in System.IO.File.ReadAllLines(path)) {
+				var m = rx.Match(line);
+				if(!m.Success) continue;
+				if(uint.TryParse(m.Groups[1].Value, System.Globalization.NumberStyles.HexNumber,
+						null, out uint addr)) {
+					rows.Add((m.Groups[2].Value, addr));
+				}
+			}
+			_symCache[path] = (info.LastWriteTimeUtc, rows);
+			return rows;
+		}
+	}
+
+	public static JsonNode LookupSymbol(JsonNode? args)
+	{
+		if(args == null) throw new McpException(-32602, "lookup_symbol requires arguments");
+		string path = RequireString(args, "symFile");
+		string pattern = RequireString(args, "pattern");
+		int maxResults = (int)((args["maxResults"]?.GetValue<long>()) ?? 64);
+		System.Text.RegularExpressions.Regex rx;
+		try {
+			rx = new System.Text.RegularExpressions.Regex(pattern);
+		} catch(Exception ex) {
+			throw new McpException(-32602, "invalid regex: " + ex.Message);
+		}
+		var rows = LoadSymFile(path);
+		var matches = new JsonArray();
+		int count = 0;
+		foreach(var (name, addr) in rows) {
+			if(!rx.IsMatch(name)) continue;
+			// Common HiROM convenience: project's bank 0 ROM symbols (offset
+			// 0x0000..0xFFFF) run at $C0:offset at runtime. WRAM symbols
+			// already encode their full $7E:xxxx address in the offset and
+			// must not be remapped.
+			uint romCpu;
+			if(addr < 0x10000) {
+				romCpu = 0xC00000u | (addr & 0xFFFFu);
+			} else {
+				romCpu = addr;
+			}
+			matches.Add(new JsonObject {
+				["name"] = name,
+				["address"] = addr,
+				["romCpuAddr"] = romCpu,
+			});
+			if(++count >= maxResults) break;
+		}
+		return new JsonObject {
+			["count"] = count,
+			["totalSymbols"] = rows.Count,
+			["matches"] = matches,
+		};
+	}
+
+	public static JsonNode Disassemble(JsonNode? args)
+	{
+		if(args == null) throw new McpException(-32602, "disassemble requires arguments");
+		uint addr = RequireUInt(args, "address");
+		int count = (int)((args["count"]?.GetValue<long>()) ?? 16);
+		if(count <= 0 || count > 256) throw new McpException(-32602, "count out of range (1..256)");
+		string cpuStr = args["cpuType"]?.GetValue<string>() ?? "Snes";
+		if(!Enum.TryParse<CpuType>(cpuStr, ignoreCase: true, out var cpu)) {
+			throw new McpException(-32602, "unknown cpuType: " + cpuStr);
+		}
+
+		// Get the row index for our address, then pull `count` consecutive rows.
+		int startRow = DebugApi.GetDisassemblyRowAddress(cpu, addr, 0);
+		CodeLineData[] rows = DebugApi.GetDisassemblyOutput(cpu, (uint)startRow, (uint)count);
+
+		var lines = new JsonArray();
+		foreach(var r in rows) {
+			lines.Add(new JsonObject {
+				["address"] = r.Address,
+				["text"] = r.Text,
+				["byteCode"] = Convert.ToHexString(r.ByteCode, 0, Math.Min(r.OpSize, r.ByteCode.Length)),
+				["opSize"] = r.OpSize,
+			});
+		}
+		return new JsonObject {
+			["count"] = rows.Length,
+			["lines"] = lines,
+		};
+	}
+
+	public static JsonNode RunUntil(JsonNode? args)
+	{
+		args ??= new JsonObject();
+		int maxFrames = (int)((args["maxFrames"]?.GetValue<long>()) ?? 600);
+		int hookHandle = (int)((args["hookHandle"]?.GetValue<long>()) ?? 0);
+		if(maxFrames <= 0 || maxFrames > 1_000_000) {
+			throw new McpException(-32602, "maxFrames out of range (1..1000000)");
+		}
+
+		uint startFrame = EmuApi.GetFrameCount();
+		ulong startMatches = 0;
+		if(hookHandle != 0) {
+			DebugApi.McpHookDiagCounters(out _, out startMatches);
+		}
+
+		EmuApi.Resume();
+		string reason = "maxFrames";
+		var sw = System.Diagnostics.Stopwatch.StartNew();
+		// Poll loop: every ~10ms check (a) frame budget, (b) hook firing.
+		// Cap real-time at 2x the frame-budget wall-clock just in case
+		// emulation hangs.
+		long maxMs = (long)(maxFrames * (1000.0 / 60.0) * 2.0 + 200);
+		while(sw.ElapsedMilliseconds < maxMs) {
+			System.Threading.Thread.Sleep(10);
+			uint nowFrame = EmuApi.GetFrameCount();
+			if(nowFrame - startFrame >= (uint)maxFrames) {
+				reason = "maxFrames";
+				break;
+			}
+			if(hookHandle != 0) {
+				DebugApi.McpHookDiagCounters(out _, out ulong nowMatches);
+				if(nowMatches > startMatches) {
+					reason = "hookFired";
+					break;
+				}
+			}
+		}
+		EmuApi.Pause();
+		for(int i = 0; i < 200; i++) {
+			if(EmuApi.IsPaused()) break;
+			System.Threading.Thread.Sleep(5);
+		}
+
+		uint endFrame = EmuApi.GetFrameCount();
+		return new JsonObject {
+			["reason"] = reason,
+			["framesAdvanced"] = endFrame - startFrame,
+			["isPaused"] = EmuApi.IsPaused(),
 		};
 	}
 

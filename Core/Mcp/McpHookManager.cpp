@@ -5,17 +5,21 @@ McpHookManager::McpHookManager()
 {
 }
 
-int32_t McpHookManager::RegisterExecHook(CpuType cpu, uint32_t startAddr, uint32_t endAddr)
+int32_t McpHookManager::RegisterHook(McpHookKind kind, CpuType cpu, uint32_t startAddr, uint32_t endAddr,
+	uint32_t matchValue, uint32_t matchValueMask)
 {
 	std::lock_guard<std::mutex> lock(_mutex);
 	int32_t handle = _nextHandle.fetch_add(1);
 	McpHook h;
 	h.Handle = handle;
-	h.Kind = McpHookKind::Exec;
+	h.Kind = kind;
 	h.Cpu = cpu;
 	h.StartAddr = startAddr;
 	h.EndAddr = endAddr;
+	h.MatchValue = matchValue;
+	h.MatchValueMask = matchValueMask;
 	h.Active = true;
+	h.ValueMatchEnabled = (matchValueMask != 0);
 	_hooks.push_back(h);
 	UpdateHasAnyFlag();
 	return handle;
@@ -62,6 +66,9 @@ void McpHookManager::OnMemoryOperation(CpuType cpu, uint32_t addr, uint32_t valu
 		if(h.Kind != kind) continue;
 		if(h.Cpu != cpu) continue;
 		if(addr < h.StartAddr || addr > h.EndAddr) continue;
+		if(h.ValueMatchEnabled) {
+			if((value & h.MatchValueMask) != (h.MatchValue & h.MatchValueMask)) continue;
+		}
 		_matchCount.fetch_add(1, std::memory_order_relaxed);
 
 		// Drop oldest if queue full. Slow-client backpressure belongs on

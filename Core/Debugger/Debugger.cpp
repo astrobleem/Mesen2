@@ -286,6 +286,10 @@ void Debugger::ProcessMemoryRead(uint32_t addr, T& value, MemoryOperationType op
 	if(_scriptManager->HasCpuMemoryCallbacks()) {
 		ProcessScripts<type>(addr, value, opType);
 	}
+
+	if(_mcpHooks->HasAnyHooks()) {
+		_mcpHooks->OnMemoryOperation(type, addr, (uint32_t)value, McpHookKind::Read, _emu->GetFrameCount());
+	}
 }
 
 template<CpuType type, uint8_t accessWidth, MemoryAccessFlags flags, typename T>
@@ -319,7 +323,11 @@ bool Debugger::ProcessMemoryWrite(uint32_t addr, T& value, MemoryOperationType o
 	if(_scriptManager->HasCpuMemoryCallbacks()) {
 		ProcessScripts<type>(addr, value, opType);
 	}
-	
+
+	if(_mcpHooks->HasAnyHooks()) {
+		_mcpHooks->OnMemoryOperation(type, addr, (uint32_t)value, McpHookKind::Write, _emu->GetFrameCount());
+	}
+
 	return !_debuggers[(int)type].Debugger->GetFrozenAddressManager().IsFrozenAddress(addr);
 }
 

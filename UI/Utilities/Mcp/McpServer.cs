@@ -186,6 +186,7 @@ internal sealed class McpServer
 
 	private void HandleMessage(string raw)
 	{
+		WriteLog($"[mcp] <- {raw.Substring(0, Math.Min(raw.Length, 120))}");
 		JsonNode? msg;
 		try {
 			msg = JsonNode.Parse(raw);
@@ -326,9 +327,14 @@ internal sealed class McpServer
 			["set_input"] = McpTools.SetInput,
 			["get_ppu_state"] = McpTools.GetPpuState,
 			["add_exec_hook"] = McpTools.AddExecHook,
+			["add_read_hook"] = McpTools.AddReadHook,
+			["add_write_hook"] = McpTools.AddWriteHook,
 			["remove_hook"] = McpTools.RemoveHook,
 			["list_hooks"] = McpTools.ListHooks,
 			["hook_diag"] = McpTools.HookDiag,
+			["lookup_symbol"] = McpTools.LookupSymbol,
+			["disassemble"] = McpTools.Disassemble,
+			["run_until"] = McpTools.RunUntil,
 		};
 	}
 
@@ -370,8 +376,15 @@ internal sealed class McpServer
 	{
 		// Logs must NOT go to stdout (that's the JSON-RPC channel). Use
 		// stderr so the parent process can still see them on demand.
+		// Explicit flush — Console.Error is autoflushing in theory but
+		// AppendAllText to mcp_runner.log gives us a deterministic record
+		// even when stderr is buffered/lost across the WinExe boundary.
+		string line = $"[{DateTime.Now:HH:mm:ss.fff}] {message}";
+		try { Console.Error.WriteLine(line); } catch { }
 		try {
-			Console.Error.WriteLine(message);
+			System.IO.File.AppendAllText(
+				System.IO.Path.Combine(Mesen.Config.ConfigManager.HomeFolder, "mcp_server.log"),
+				line + Environment.NewLine);
 		} catch { }
 	}
 

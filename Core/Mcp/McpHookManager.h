@@ -12,6 +12,8 @@
 enum class McpHookKind : uint8_t
 {
 	Exec = 0,
+	Read = 1,
+	Write = 2,
 };
 
 struct McpHook
@@ -21,7 +23,13 @@ struct McpHook
 	CpuType Cpu;
 	uint32_t StartAddr;
 	uint32_t EndAddr;
+	// Optional value match. If ValueMatchEnabled, only fire when the
+	// observed value equals MatchValue (modulo MatchValueMask). Lets us
+	// suppress notification floods on hot PCs / hot memory ranges.
+	uint32_t MatchValue;
+	uint32_t MatchValueMask;
 	bool Active;
+	bool ValueMatchEnabled;
 };
 
 // Event emitted when a hook fires. Kept POD + fixed-size so the C# side
@@ -56,8 +64,10 @@ public:
 
 	McpHookManager();
 
-	// Registry.
-	int32_t RegisterExecHook(CpuType cpu, uint32_t startAddr, uint32_t endAddr);
+	// Registry. valueMatchMask=0 disables the value match (fire on every
+	// hit); valueMatchMask=0xFFFFFFFF requires exact equality.
+	int32_t RegisterHook(McpHookKind kind, CpuType cpu, uint32_t startAddr, uint32_t endAddr,
+		uint32_t matchValue = 0, uint32_t matchValueMask = 0);
 	bool UnregisterHook(int32_t handle);
 	size_t CopyActiveHooks(McpHook* out, size_t maxCount);
 

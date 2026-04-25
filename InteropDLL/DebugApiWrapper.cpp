@@ -91,9 +91,11 @@ extern "C"
 	DllExport void __stdcall SetInputOverrides(uint32_t index, DebugControllerState state) { WithDebugger(void, SetInputOverrides(index, state)); }
 
 	// --- MCP hook management --------------------------------------------
-	DllExport int32_t __stdcall McpAddExecHook(CpuType cpu, uint32_t startAddr, uint32_t endAddr)
+	DllExport int32_t __stdcall McpAddHook(uint8_t kind, CpuType cpu, uint32_t startAddr, uint32_t endAddr,
+		uint32_t matchValue, uint32_t matchValueMask)
 	{
-		return WithDebugger(int32_t, GetMcpHooks()->RegisterExecHook(cpu, startAddr, endAddr));
+		return WithDebugger(int32_t, GetMcpHooks()->RegisterHook(
+			(McpHookKind)kind, cpu, startAddr, endAddr, matchValue, matchValueMask));
 	}
 
 	DllExport bool __stdcall McpRemoveHook(int32_t handle)
