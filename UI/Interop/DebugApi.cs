@@ -1732,6 +1732,7 @@ namespace Mesen.Interop
 		Exec = 0,
 		Read = 1,
 		Write = 2,
+		Frame = 3,
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
