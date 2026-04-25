@@ -30,7 +30,7 @@ print(s.recv(4096))
 "
 ```
 
-For a Python client with typed methods, copy [`mcp_client.py`](https://github.com/astrobleem/Mesen2/blob/master/AGENTS.md) and:
+A Python client with typed methods is shipped in the companion SNES project at `tools/mcp_client.py` (repo varies; see your project's `AGENTS.md`). Once on the path:
 
 ```python
 from mcp_client import McpSession
