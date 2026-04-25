@@ -14,6 +14,7 @@ enum class McpHookKind : uint8_t
 	Exec = 0,
 	Read = 1,
 	Write = 2,
+	Frame = 3,
 };
 
 struct McpHook

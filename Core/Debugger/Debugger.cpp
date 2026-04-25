@@ -601,6 +601,17 @@ void Debugger::ProcessEvent(EventType type, std::optional<CpuType> cpuTypeOpt)
 	CpuType evtCpuType = cpuTypeOpt.value_or(_mainCpuType);
 	_scriptManager->ProcessEvent(type, evtCpuType);
 
+	// MCP frame hooks: fire once per video frame on the main CPU only —
+	// SA-1 / SPC / etc. also raise EndFrame and would double-count. Pass
+	// the frame number as both addr and value so value-match filters
+	// (e.g. "every Nth frame") work uniformly.
+	if(type == EventType::EndFrame && evtCpuType == _mainCpuType
+			&& _mcpHooks->HasAnyHooks()) {
+		uint32_t frameNum = _emu->GetFrameCount();
+		_mcpHooks->OnMemoryOperation(evtCpuType, frameNum, frameNum,
+			McpHookKind::Frame, frameNum);
+	}
+
 	switch(type) {
 		default: break;
 

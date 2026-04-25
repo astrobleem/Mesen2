@@ -335,6 +335,12 @@ internal sealed class McpServer
 			["lookup_symbol"] = McpTools.LookupSymbol,
 			["disassemble"] = McpTools.Disassemble,
 			["run_until"] = McpTools.RunUntil,
+			["crop_screenshot"] = McpTools.CropScreenshot,
+			["save_state_slot"] = McpTools.SaveStateSlot,
+			["load_state_slot"] = McpTools.LoadStateSlot,
+			["read_dma_state"] = McpTools.ReadDmaState,
+			["add_frame_hook"] = McpTools.AddFrameHook,
+			["reset_emulator"] = McpTools.ResetEmulator,
 		};
 	}
 

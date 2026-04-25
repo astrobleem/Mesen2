@@ -137,6 +137,41 @@ internal static class McpTools
 				+ "Atomic 'pause -> set hook -> resume -> wait -> pause' so callers "
 				+ "don't have to roll the state machine themselves.",
 			BuildRunUntilSchema()),
+
+		new("crop_screenshot",
+			"Capture a screenshot, then crop a region (x, y, w, h). Returns path or "
+				+ "inline base64 like take_screenshot. For UI region checks where "
+				+ "the full frame is wasted bytes.",
+			BuildCropScreenshotSchema()),
+
+		new("save_state_slot",
+			"Save emulator state to numbered slot (0..9). Cheap checkpoint without "
+				+ "managing file paths. Pair with load_state_slot to fast-forward past "
+				+ "expensive boots.",
+			BuildSlotSchema()),
+
+		new("load_state_slot",
+			"Load emulator state from numbered slot.",
+			BuildSlotSchema()),
+
+		new("read_dma_state",
+			"Snapshot the 8 DMA/HDMA channel registers ($4300-$437F). Returns each "
+				+ "channel's control / target / source / count / table addr. Critical "
+				+ "for diagnosing per-scanline register effects (BG layer enables, "
+				+ "scroll registers, palette ramps).",
+			null),
+
+		new("add_frame_hook",
+			"Fire a notification once per emulator frame. Replaces the per-frame "
+				+ "polling loop most diagnostic Lua scripts open with. The notification "
+				+ "carries the frame number; use it to pace your client without sleeping.",
+			BuildAddFrameHookSchema()),
+
+		new("reset_emulator",
+			"Soft-reset the emulator (equivalent to the SNES reset button). State "
+				+ "wiped; the ROM stays loaded. Use to start each MCP-driven test "
+				+ "from a known initial state without respawning Mesen.",
+			null),
 	};
 
 	private static JsonNode BuildRunFramesSchema()
@@ -231,6 +266,59 @@ internal static class McpTools
 				["cpuType"] = new JsonObject {
 					["type"] = "string",
 					["description"] = "CPU type (default 'Snes')",
+				},
+			},
+			["required"] = required,
+		};
+	}
+
+	private static JsonNode BuildAddFrameHookSchema()
+	{
+		return new JsonObject {
+			["type"] = "object",
+			["properties"] = new JsonObject {
+				["everyN"] = new JsonObject {
+					["type"] = "integer",
+					["description"] = "Fire only every N-th frame (default 1, every frame). Higher values reduce notification volume.",
+				},
+				["cpuType"] = new JsonObject {
+					["type"] = "string",
+					["description"] = "CPU type the frame is associated with (default 'Snes'). Mostly cosmetic — frames are global.",
+				},
+			},
+		};
+	}
+
+	private static JsonNode BuildCropScreenshotSchema()
+	{
+		var required = new JsonArray();
+		required.Add(JsonValue.Create("x"));
+		required.Add(JsonValue.Create("y"));
+		required.Add(JsonValue.Create("width"));
+		required.Add(JsonValue.Create("height"));
+		return new JsonObject {
+			["type"] = "object",
+			["properties"] = new JsonObject {
+				["x"] = new JsonObject { ["type"] = "integer" },
+				["y"] = new JsonObject { ["type"] = "integer" },
+				["width"] = new JsonObject { ["type"] = "integer" },
+				["height"] = new JsonObject { ["type"] = "integer" },
+				["format"] = new JsonObject { ["type"] = "string", ["description"] = "'path' or 'base64'" },
+			},
+			["required"] = required,
+		};
+	}
+
+	private static JsonNode BuildSlotSchema()
+	{
+		var required = new JsonArray();
+		required.Add(JsonValue.Create("slot"));
+		return new JsonObject {
+			["type"] = "object",
+			["properties"] = new JsonObject {
+				["slot"] = new JsonObject {
+					["type"] = "integer",
+					["description"] = "Slot index 0..9",
 				},
 			},
 			["required"] = required,
@@ -517,6 +605,160 @@ internal static class McpTools
 			result["bytes"] = bytes.Length;
 		}
 		return result;
+	}
+
+	public static JsonNode CropScreenshot(JsonNode? args)
+	{
+		if(args == null) throw new McpException(-32602, "crop_screenshot requires arguments");
+		int x = (int)RequireUInt(args, "x");
+		int y = (int)RequireUInt(args, "y");
+		int w = (int)RequireUInt(args, "width");
+		int h = (int)RequireUInt(args, "height");
+		if(w <= 0 || h <= 0) throw new McpException(-32602, "width and height must be > 0");
+		string format = (args["format"]?.GetValue<string>() ?? "path").ToLowerInvariant();
+
+		// Reuse the regular screenshot path so we get the same async-flush
+		// behaviour, then crop the resulting PNG.
+		var raw = (JsonObject)TakeScreenshot(new JsonObject { ["format"] = "path" });
+		string srcPath = raw["path"]!.GetValue<string>();
+
+		using var src = SkiaSharp.SKBitmap.Decode(srcPath);
+		if(src == null) {
+			throw new McpException(-32603, "failed to decode screenshot: " + srcPath);
+		}
+		// Clamp the crop rect to the image bounds rather than throwing —
+		// callers usually know the SNES is 256x224 but small mistakes are
+		// cheap to fix on the way out.
+		int clampW = Math.Min(w, src.Width - x);
+		int clampH = Math.Min(h, src.Height - y);
+		if(clampW <= 0 || clampH <= 0) {
+			throw new McpException(-32602, $"crop region ({x},{y},{w}x{h}) is outside the {src.Width}x{src.Height} screenshot");
+		}
+
+		using var dst = new SkiaSharp.SKBitmap(clampW, clampH);
+		using(var canvas = new SkiaSharp.SKCanvas(dst)) {
+			canvas.DrawBitmap(src,
+				new SkiaSharp.SKRect(x, y, x + clampW, y + clampH),
+				new SkiaSharp.SKRect(0, 0, clampW, clampH));
+		}
+
+		string cropPath = System.IO.Path.ChangeExtension(srcPath, ".crop.png");
+		using(var stream = System.IO.File.OpenWrite(cropPath))
+		using(var img = SkiaSharp.SKImage.FromBitmap(dst))
+		using(var data = img.Encode(SkiaSharp.SKEncodedImageFormat.Png, 100)) {
+			data.SaveTo(stream);
+		}
+
+		var result = new JsonObject {
+			["path"] = cropPath,
+			["width"] = clampW,
+			["height"] = clampH,
+		};
+		if(format == "base64") {
+			byte[] bytes = System.IO.File.ReadAllBytes(cropPath);
+			result["base64"] = Convert.ToBase64String(bytes);
+			result["bytes"] = bytes.Length;
+		}
+		return result;
+	}
+
+	public static JsonNode SaveStateSlot(JsonNode? args)
+	{
+		if(args == null) throw new McpException(-32602, "save_state_slot requires arguments");
+		uint slot = RequireUInt(args, "slot");
+		if(slot > 9) throw new McpException(-32602, "slot out of range (0..9)");
+		EmuApi.SaveState(slot);
+		return new JsonObject { ["slot"] = slot };
+	}
+
+	public static JsonNode LoadStateSlot(JsonNode? args)
+	{
+		if(args == null) throw new McpException(-32602, "load_state_slot requires arguments");
+		uint slot = RequireUInt(args, "slot");
+		if(slot > 9) throw new McpException(-32602, "slot out of range (0..9)");
+		EmuApi.LoadState(slot);
+		return new JsonObject { ["slot"] = slot };
+	}
+
+	public static JsonNode AddFrameHook(JsonNode? args)
+	{
+		args ??= new JsonObject();
+		uint everyN = (uint)((args["everyN"]?.GetValue<long>()) ?? 1);
+		if(everyN == 0) throw new McpException(-32602, "everyN must be > 0");
+		string cpuStr = args["cpuType"]?.GetValue<string>() ?? "Snes";
+		if(!Enum.TryParse<CpuType>(cpuStr, ignoreCase: true, out var cpu)) {
+			throw new McpException(-32602, "unknown cpuType: " + cpuStr);
+		}
+		// Frame number ranges over uint32; address-range check passes if we
+		// give a hook the full uint32 span. everyN is implemented via the
+		// value-match: matchValueMask = (everyN-1) and matchValue = 0 only
+		// matches when (frame & mask) == 0.
+		uint mask = everyN - 1;
+		bool isPow2 = everyN != 0 && (everyN & mask) == 0;
+		if(!isPow2) {
+			// Fallback: no value match, fire every frame and let the client filter.
+			mask = 0;
+		}
+		int handle = DebugApi.McpAddHook((byte)McpHookKind.Frame, cpu, 0, uint.MaxValue, 0, mask);
+		return new JsonObject {
+			["handle"] = handle,
+			["kind"] = "Frame",
+			["everyN"] = isPow2 ? (long)everyN : 1,
+			["cpuType"] = cpu.ToString(),
+		};
+	}
+
+	public static JsonNode ResetEmulator(JsonNode? args)
+	{
+		// Power-cycle (full reset) is what tests usually want — equivalent to
+		// flipping the cart off and back on. Soft Reset preserves more
+		// state. Default to PowerCycle so frame counter actually rewinds.
+		bool power = args?["power"]?.GetValue<bool>() ?? true;
+		if(power) {
+			EmuApi.McpPowerCycle();
+		} else {
+			EmuApi.McpResetEmu();
+		}
+		// Reset is processed on the emu thread; give it a beat to land
+		// before the caller queries state.
+		for(int i = 0; i < 60; i++) {
+			System.Threading.Thread.Sleep(20);
+			if(EmuApi.GetFrameCount() < 30) break;  // counter rewound
+		}
+		return new JsonObject { ["reset"] = true, ["power"] = power };
+	}
+
+	public static JsonNode ReadDmaState(JsonNode? args)
+	{
+		// DMA registers live at $4300..$437F (8 channels × 16 bytes).
+		// They're CPU-bus-readable in debug mode. Most fields are valid
+		// for both DMA and HDMA; the active mode + interpretation
+		// depends on the channel control register bits.
+		var channels = new JsonArray();
+		for(int ch = 0; ch < 8; ch++) {
+			uint baseAddr = (uint)(0x4300 + ch * 0x10);
+			byte[] regs = DebugApi.GetMemoryValues(MemoryType.SnesMemory, baseAddr, baseAddr + 10);
+			channels.Add(new JsonObject {
+				["channel"] = ch,
+				["control"] = regs[0],
+				["bbus"] = regs[1],
+				["aBusAddrLo"] = regs[2],
+				["aBusAddrMid"] = regs[3],
+				["aBusBank"] = regs[4],
+				["countLo"] = regs[5],
+				["countHi"] = regs[6],
+				["indirectBank"] = regs[7],
+				["tableAddrLo"] = regs[8],
+				["tableAddrHi"] = regs[9],
+				["lineCounter"] = regs[10],
+				// Convenience: 24-bit A-bus source as a single number.
+				["aBusAddr"] = (uint)(regs[2] | (regs[3] << 8) | (regs[4] << 16)),
+				["tableAddr"] = (ushort)(regs[8] | (regs[9] << 8)),
+				["count"] = (ushort)(regs[5] | (regs[6] << 8)),
+				["targetReg"] = $"$21{regs[1]:X2}",
+			});
+		}
+		return new JsonObject { ["channels"] = channels };
 	}
 
 	public static JsonNode SaveState(JsonNode? args)

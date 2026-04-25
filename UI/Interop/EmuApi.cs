@@ -54,6 +54,8 @@ namespace Mesen.Interop
 
 		[DllImport(DllPath)] public static extern void TakeScreenshot();
 		[DllImport(DllPath)] public static extern UInt32 GetFrameCount();
+		[DllImport(DllPath)] public static extern void McpResetEmu();
+		[DllImport(DllPath)] public static extern void McpPowerCycle();
 
 		[DllImport(DllPath)] public static extern void ProcessAudioPlayerAction(AudioPlayerActionParams p);
 

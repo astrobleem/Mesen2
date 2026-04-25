@@ -174,6 +174,9 @@ extern "C" {
 
 	DllExport uint32_t __stdcall GetFrameCount() { return _emu->GetFrameCount(); }
 
+	DllExport void __stdcall McpResetEmu() { _emu->Reset(); }
+	DllExport void __stdcall McpPowerCycle() { _emu->PowerCycle(); }
+
 	DllExport void __stdcall ProcessAudioPlayerAction(AudioPlayerActionParams p) { _emu->ProcessAudioPlayerAction(p); }
 
 	DllExport void __stdcall GetArchiveRomList(char* filename, char* outBuffer, uint32_t maxLength) { 
