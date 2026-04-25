@@ -82,25 +82,97 @@ internal sealed class McpServer
 				AutoFlush = true,
 				NewLine = "\n",
 			};
-			while(!_shuttingDown) {
-				string? line;
-				try {
-					line = _in.ReadLine();
-				} catch(Exception ex) {
-					WriteLog($"[mcp] read error: {ex.Message}");
-					break;
+
+			// Kick off the event-drain pump. Reads hooks events from the
+			// emulator side via a small buffer and emits MCP notifications
+			// on this socket. Lifecycle is tied to the client: the thread
+			// exits as soon as _clientConnected flips false below.
+			Interop.DebugApi.McpResetHooks();  // defensive: start each session clean
+			var drainCts = new CancellationTokenSource();
+			var drainThread = new Thread(() => DrainLoop(drainCts.Token)) {
+				IsBackground = true,
+				Name = "mcp-event-drain",
+			};
+			drainThread.Start();
+
+			try {
+				while(!_shuttingDown) {
+					string? line;
+					try {
+						line = _in.ReadLine();
+					} catch(Exception ex) {
+						WriteLog($"[mcp] read error: {ex.Message}");
+						break;
+					}
+					if(line == null) {
+						break;
+					}
+					if(line.Length == 0) {
+						continue;
+					}
+					HandleMessage(line);
 				}
-				if(line == null) {
-					break;
-				}
-				if(line.Length == 0) {
-					continue;
-				}
-				HandleMessage(line);
+			} finally {
+				// Shut down the drain thread before tearing down socket fields
+				// so we can't race a notification write against a null writer.
+				drainCts.Cancel();
+				drainThread.Join(1000);
+				Interop.DebugApi.McpResetHooks();  // don't leak hooks to next client
 			}
 		}
 		_in = null;
 		_out = null;
+	}
+
+	private void DrainLoop(CancellationToken cancel)
+	{
+		// Buffer sized to amortize the P/Invoke cost per drain call. 256 events
+		// is ~5KB marshalled and hits well-behaved hooks once per a few frames.
+		var buf = new Interop.McpHookEvent[256];
+		while(!cancel.IsCancellationRequested) {
+			int n;
+			try {
+				n = Interop.DebugApi.McpDrainEvents(buf, buf.Length);
+			} catch {
+				// If the debugger isn't alive (e.g. Emu shutting down), bail.
+				break;
+			}
+
+			for(int i = 0; i < n; i++) {
+				SendHookNotification(buf[i]);
+			}
+
+			// Adaptive sleep: if we just drained a full buffer, assume more
+			// are queued and loop immediately. Otherwise sleep briefly so we
+			// don't hot-poll an idle session.
+			if(n < buf.Length) {
+				try {
+					cancel.WaitHandle.WaitOne(2);
+				} catch {
+					break;
+				}
+			}
+		}
+	}
+
+	private void SendHookNotification(Interop.McpHookEvent evt)
+	{
+		// Notification per MCP spec: no `id`, so it's not a response.
+		// Mirror the tool-result content envelope so clients can use the same
+		// deserialize path, but flag as a notification by routing via 'method'.
+		var msg = new JsonObject {
+			["jsonrpc"] = "2.0",
+			["method"] = "notifications/mesen/hookFired",
+			["params"] = new JsonObject {
+				["handle"] = evt.Handle,
+				["kind"] = evt.Kind.ToString(),
+				["cpuType"] = evt.Cpu.ToString(),
+				["address"] = evt.Address,
+				["value"] = evt.Value,
+				["frame"] = evt.FrameNumber,
+			},
+		};
+		WriteLine(msg);
 	}
 
 	private void HandleMessage(string raw)
@@ -244,6 +316,10 @@ internal sealed class McpServer
 			["load_state"] = McpTools.LoadState,
 			["set_input"] = McpTools.SetInput,
 			["get_ppu_state"] = McpTools.GetPpuState,
+			["add_exec_hook"] = McpTools.AddExecHook,
+			["remove_hook"] = McpTools.RemoveHook,
+			["list_hooks"] = McpTools.ListHooks,
+			["hook_diag"] = McpTools.HookDiag,
 		};
 	}
 

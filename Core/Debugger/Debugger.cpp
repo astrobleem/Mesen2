@@ -12,6 +12,7 @@
 #include "Debugger/DebugBreakHelper.h"
 #include "Debugger/LabelManager.h"
 #include "Debugger/ScriptManager.h"
+#include "Mcp/McpHookManager.h"
 #include "Debugger/ScriptHost.h"
 #include "Debugger/CallstackManager.h"
 #include "Debugger/ExpressionEvaluator.h"
@@ -80,6 +81,7 @@ Debugger::Debugger(Emulator* emu, IConsole* console)
 	_disassemblySearch.reset(new DisassemblySearch(_disassembler.get(), _labelManager.get()));
 	_memoryAccessCounter.reset(new MemoryAccessCounter(this));
 	_scriptManager.reset(new ScriptManager(this));
+	_mcpHooks.reset(new McpHookManager());
 	_traceLogSaver.reset(new TraceLogFileSaver());
 	_cdlManager.reset(new CdlManager(this, _disassembler.get()));
 
@@ -245,6 +247,11 @@ void Debugger::ProcessInstruction()
 		AddressInfo relAddr = { (int32_t)memOp.Address, memOp.MemType };
 		uint8_t value = (uint8_t)memOp.Value;
 		_scriptManager->ProcessMemoryOperation(relAddr, value, MemoryOperationType::ExecOpCode, type, true);
+	}
+
+	if(_mcpHooks->HasAnyHooks()) {
+		MemoryOperationInfo memOp = debugger->InstructionProgress.LastMemOperation;
+		_mcpHooks->OnMemoryOperation(type, memOp.Address, memOp.Value, McpHookKind::Exec, _emu->GetFrameCount());
 	}
 }
 

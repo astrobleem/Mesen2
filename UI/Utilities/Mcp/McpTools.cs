@@ -82,6 +82,29 @@ internal static class McpTools
 				+ "scroll + tile/tilemap addrs, window config. Essential for diagnosing "
 				+ "'black scanlines' / 'missing layer' bugs without eyeball + guesswork.",
 			null),
+
+		new("add_exec_hook",
+			"Register a hook that fires when the CPU executes an instruction at a "
+				+ "specific address (or within a range). Returns a handle; use "
+				+ "remove_hook to detach. When a hook fires the server sends a "
+				+ "notifications/event message with the handle, address, and frame.",
+			BuildAddExecHookSchema()),
+
+		new("remove_hook",
+			"Detach a previously-registered hook by handle. Returns whether the "
+				+ "handle was known.",
+			BuildRemoveHookSchema()),
+
+		new("list_hooks",
+			"List currently-registered hooks. Snapshot only; hooks can fire between "
+				+ "the list call and the response.",
+			null),
+
+		new("hook_diag",
+			"Diagnostic counters: total calls into the MCP hook hot-path + total "
+				+ "address-range matches since reset. Lets you confirm the hot-path "
+				+ "is alive even when no hook address has fired yet.",
+			null),
 	};
 
 	private static JsonNode BuildRunFramesSchema()
@@ -130,6 +153,46 @@ internal static class McpTools
 					["description"] = "'path' (default; writes PNG to Screenshots folder, returns path) or 'base64' (inline PNG bytes)",
 				},
 			},
+		};
+	}
+
+	private static JsonNode BuildAddExecHookSchema()
+	{
+		var required = new JsonArray();
+		required.Add(JsonValue.Create("address"));
+		return new JsonObject {
+			["type"] = "object",
+			["properties"] = new JsonObject {
+				["address"] = new JsonObject {
+					["type"] = "integer",
+					["description"] = "Start address (inclusive)",
+				},
+				["endAddress"] = new JsonObject {
+					["type"] = "integer",
+					["description"] = "End address (inclusive). Defaults to address for a single-PC hook.",
+				},
+				["cpuType"] = new JsonObject {
+					["type"] = "string",
+					["description"] = "CPU type (default 'Snes'; other valid: 'Sa1', 'Spc', 'Gameboy', etc).",
+				},
+			},
+			["required"] = required,
+		};
+	}
+
+	private static JsonNode BuildRemoveHookSchema()
+	{
+		var required = new JsonArray();
+		required.Add(JsonValue.Create("handle"));
+		return new JsonObject {
+			["type"] = "object",
+			["properties"] = new JsonObject {
+				["handle"] = new JsonObject {
+					["type"] = "integer",
+					["description"] = "Handle returned from add_exec_hook.",
+				},
+			},
+			["required"] = required,
 		};
 	}
 
@@ -366,6 +429,69 @@ internal static class McpTools
 		string path = RequireString(args, "path");
 		EmuApi.LoadStateFile(path);
 		return new JsonObject { ["path"] = path };
+	}
+
+	public static JsonNode AddExecHook(JsonNode? args)
+	{
+		if(args == null) throw new McpException(-32602, "add_exec_hook requires arguments");
+		uint addr = RequireUInt(args, "address");
+		uint endAddr = (uint?)args["endAddress"]?.GetValue<long>() ?? addr;
+		string cpuStr = args["cpuType"]?.GetValue<string>() ?? "Snes";
+		if(!Enum.TryParse<CpuType>(cpuStr, ignoreCase: true, out var cpu)) {
+			throw new McpException(-32602, "unknown cpuType: " + cpuStr);
+		}
+		if(endAddr < addr) {
+			throw new McpException(-32602, "endAddress must be >= address");
+		}
+		int handle = DebugApi.McpAddExecHook(cpu, addr, endAddr);
+		return new JsonObject {
+			["handle"] = handle,
+			["cpuType"] = cpu.ToString(),
+			["address"] = addr,
+			["endAddress"] = endAddr,
+		};
+	}
+
+	public static JsonNode RemoveHook(JsonNode? args)
+	{
+		if(args == null) throw new McpException(-32602, "remove_hook requires arguments");
+		int handle = (int)RequireUInt(args, "handle");
+		bool ok = DebugApi.McpRemoveHook(handle);
+		return new JsonObject {
+			["handle"] = handle,
+			["removed"] = ok,
+		};
+	}
+
+	public static JsonNode HookDiag(JsonNode? args)
+	{
+		DebugApi.McpHookDiagCounters(out ulong calls, out ulong matches);
+		return new JsonObject {
+			["onMemoryOperationCalls"] = calls,
+			["matchedEventsEmitted"] = matches,
+		};
+	}
+
+	public static JsonNode ListHooks(JsonNode? args)
+	{
+		var buf = new McpHook[256];
+		int n = DebugApi.McpListHooks(buf, buf.Length);
+		var arr = new JsonArray();
+		for(int i = 0; i < n; i++) {
+			var h = buf[i];
+			arr.Add(new JsonObject {
+				["handle"] = h.Handle,
+				["kind"] = h.Kind.ToString(),
+				["cpuType"] = h.Cpu.ToString(),
+				["startAddr"] = h.StartAddr,
+				["endAddr"] = h.EndAddr,
+				["active"] = h.Active,
+			});
+		}
+		return new JsonObject {
+			["count"] = n,
+			["hooks"] = arr,
+		};
 	}
 
 	public static JsonNode GetPpuState(JsonNode? args)

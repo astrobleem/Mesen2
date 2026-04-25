@@ -16,6 +16,7 @@
 #include "Core/Debugger/CallstackManager.h"
 #include "Core/Debugger/LabelManager.h"
 #include "Core/Debugger/ScriptManager.h"
+#include "Core/Mcp/McpHookManager.h"
 #include "Core/Debugger/Profiler.h"
 #include "Core/Debugger/IAssembler.h"
 #include "Core/Debugger/BaseEventManager.h"
@@ -88,6 +89,48 @@ extern "C"
 	DllExport void __stdcall SetBreakpoints(Breakpoint breakpoints[], uint32_t length) { WithDebugger(void, SetBreakpoints(breakpoints, length)); }
 	
 	DllExport void __stdcall SetInputOverrides(uint32_t index, DebugControllerState state) { WithDebugger(void, SetInputOverrides(index, state)); }
+
+	// --- MCP hook management --------------------------------------------
+	DllExport int32_t __stdcall McpAddExecHook(CpuType cpu, uint32_t startAddr, uint32_t endAddr)
+	{
+		return WithDebugger(int32_t, GetMcpHooks()->RegisterExecHook(cpu, startAddr, endAddr));
+	}
+
+	DllExport bool __stdcall McpRemoveHook(int32_t handle)
+	{
+		return WithDebugger(bool, GetMcpHooks()->UnregisterHook(handle));
+	}
+
+	DllExport int32_t __stdcall McpListHooks(McpHook* out, int32_t maxCount)
+	{
+		if(maxCount <= 0) return 0;
+		return (int32_t)WithDebugger(size_t, GetMcpHooks()->CopyActiveHooks(out, (size_t)maxCount));
+	}
+
+	DllExport int32_t __stdcall McpDrainEvents(McpHookEvent* out, int32_t maxCount)
+	{
+		if(maxCount <= 0) return 0;
+		return (int32_t)WithDebugger(size_t, GetMcpHooks()->DrainEvents(out, (size_t)maxCount));
+	}
+
+	DllExport void __stdcall McpResetHooks()
+	{
+		WithDebugger(void, GetMcpHooks()->Reset());
+	}
+
+	DllExport void __stdcall McpHookDiagCounters(uint64_t* calls, uint64_t* matches)
+	{
+		DebuggerRequest dbgRequest = _emu->GetDebugger(true);
+		if(Debugger* dbg = dbgRequest.GetDebugger()) {
+			if(calls) *calls = dbg->GetMcpHooks()->GetCallCount();
+			if(matches) *matches = dbg->GetMcpHooks()->GetMatchCount();
+		} else {
+			if(calls) *calls = 0;
+			if(matches) *matches = 0;
+		}
+	}
+
+
 	DllExport void __stdcall GetAvailableInputOverrides(uint8_t* availableIndexes) { WithDebugger(void, GetAvailableInputOverrides(availableIndexes)); }
 	
 	DllExport void __stdcall GetTokenList(CpuType cpuType, char* tokenList) { WithDebugger(void, GetTokenList(cpuType, tokenList)); }

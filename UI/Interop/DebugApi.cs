@@ -227,6 +227,13 @@ namespace Mesen.Interop
 		
 		[DllImport(DllPath)] public static extern void SetInputOverrides(UInt32 index, DebugControllerState state);
 		[DllImport(DllPath)] private static extern void GetAvailableInputOverrides([In, Out] byte[] availableIndexes);
+
+		[DllImport(DllPath)] public static extern Int32 McpAddExecHook(CpuType cpu, UInt32 startAddr, UInt32 endAddr);
+		[DllImport(DllPath)] [return: MarshalAs(UnmanagedType.I1)] public static extern bool McpRemoveHook(Int32 handle);
+		[DllImport(DllPath)] public static extern Int32 McpListHooks([In, Out] McpHook[] buffer, Int32 maxCount);
+		[DllImport(DllPath)] public static extern Int32 McpDrainEvents([In, Out] McpHookEvent[] buffer, Int32 maxCount);
+		[DllImport(DllPath)] public static extern void McpResetHooks();
+		[DllImport(DllPath)] public static extern void McpHookDiagCounters(out UInt64 calls, out UInt64 matches);
 		
 		public static List<int> GetAvailableInputOverrides()
 		{
@@ -1716,5 +1723,39 @@ namespace Mesen.Interop
 		[MarshalAs(UnmanagedType.I1)] public bool Right;
 		[MarshalAs(UnmanagedType.I1)] public bool Select;
 		[MarshalAs(UnmanagedType.I1)] public bool Start;
+	}
+
+	// Must match Core/Mcp/McpHookManager.h layouts byte-for-byte.
+	public enum McpHookKind : byte
+	{
+		Exec = 0,
+	}
+
+	[StructLayout(LayoutKind.Sequential)]
+	public struct McpHook
+	{
+		public Int32 Handle;
+		public McpHookKind Kind;
+		public CpuType Cpu;
+		public UInt16 _pad;
+		public UInt32 StartAddr;
+		public UInt32 EndAddr;
+		[MarshalAs(UnmanagedType.I1)] public bool Active;
+		public byte _pad2a;
+		public byte _pad2b;
+		public byte _pad2c;
+	}
+
+	[StructLayout(LayoutKind.Sequential)]
+	public struct McpHookEvent
+	{
+		public Int32 Handle;
+		public UInt32 Address;
+		public UInt32 Value;
+		public UInt32 FrameNumber;
+		public McpHookKind Kind;
+		public CpuType Cpu;
+		public byte _pad0;
+		public byte _pad1;
 	}
 }
