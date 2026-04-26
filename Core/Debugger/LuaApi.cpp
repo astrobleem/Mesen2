@@ -8,6 +8,9 @@
 #include "Debugger/MemoryAccessCounter.h"
 #include "Debugger/CdlManager.h"
 #include "Debugger/LabelManager.h"
+#include "Debugger/Disassembler.h"
+#include "Debugger/DisassemblyInfo.h"
+#include "Debugger/ITraceLogger.h"
 #include "Shared/SystemActionManager.h"
 #include "Shared/Video/DebugHud.h"
 #include "Shared/Video/VideoDecoder.h"
@@ -143,6 +146,9 @@ int LuaApi::GetLibrary(lua_State *lua)
 		{ "resetAccessCounters", LuaApi::ResetAccessCounters },
 
 		{ "getCdlData", LuaApi::GetCdlData},
+
+		{ "disassemble", LuaApi::Disassemble },
+		{ "getTraceLog", LuaApi::GetTraceLog },
 
 		{ "addCheat", LuaApi::AddCheat },
 		{ "clearCheats", LuaApi::ClearCheats },
@@ -974,6 +980,105 @@ int LuaApi::GetCdlData(lua_State* lua)
 		lua_rawseti(lua, -2, i);
 	}
 
+	return 1;
+}
+
+int LuaApi::Disassemble(lua_State* lua)
+{
+	LuaCallHelper l(lua);
+	l.ForceParamCount(3);
+	CpuType cpuType = (CpuType)l.ReadInteger((int)_context->GetDefaultCpuType());
+	int rowCount = l.ReadInteger(16);
+	uint32_t address = l.ReadInteger();
+	checkminparams(1);
+	checkEnum(CpuType, cpuType, "invalid cpu type");
+	errorCond(rowCount <= 0 || rowCount > 256, "rowCount must be 1..256");
+
+	int32_t startRow = _debugger->GetDisassembler()->GetDisassemblyRowAddress(cpuType, address, 0);
+	if(startRow < 0) {
+		lua_newtable(lua);
+		return 1;
+	}
+	vector<CodeLineData> lines;
+	lines.resize(rowCount);
+	uint32_t got = _debugger->GetDisassembler()->GetDisassemblyOutput(cpuType, (uint32_t)startRow, lines.data(), rowCount);
+
+	lua_newtable(lua);
+	for(uint32_t i = 0; i < got; i++) {
+		lua_pushinteger(lua, i + 1);
+		lua_newtable(lua);
+		lua_pushintvalue(address, lines[i].Address);
+		lua_pushintvalue(opSize, lines[i].OpSize);
+		lua_pushliteral(lua, "text");
+		lua_pushstring(lua, lines[i].Text);
+		lua_settable(lua, -3);
+		lua_pushliteral(lua, "byteCode");
+		string bc;
+		int n = std::min<int>(lines[i].OpSize, sizeof(lines[i].ByteCode));
+		for(int j = 0; j < n; j++) {
+			char buf[3];
+			snprintf(buf, sizeof(buf), "%02X", lines[i].ByteCode[j]);
+			bc += buf;
+		}
+		lua_pushstring(lua, bc.c_str());
+		lua_settable(lua, -3);
+		lua_settable(lua, -3);
+	}
+	return 1;
+}
+
+int LuaApi::GetTraceLog(lua_State* lua)
+{
+	LuaCallHelper l(lua);
+	l.ForceParamCount(2);
+	CpuType cpuType = (CpuType)l.ReadInteger((int)_context->GetDefaultCpuType());
+	int count = l.ReadInteger(100);
+	checkminparams(0);
+	checkEnum(CpuType, cpuType, "invalid cpu type");
+	errorCond(count <= 0 || count > 4096, "count must be 1..4096");
+
+	// Auto-enable trace logger on first call. Without this, GetExecutionTrace
+	// returns empty because logger->IsEnabled() gates row population. Caller
+	// then has to know about a separate "enable trace" call -- tedious.
+	ITraceLogger* logger = _debugger->GetTraceLogger(cpuType);
+	if(logger && !logger->IsEnabled()) {
+		TraceLoggerOptions opts = {};
+		opts.Enabled = true;
+		opts.IndentCode = false;
+		opts.UseLabels = true;
+		strncpy(opts.Format, "[PC] [ByteCode] [Disassembly]", sizeof(opts.Format) - 1);
+		logger->SetOptions(opts);
+	}
+
+	// Match McpTools.GetTraceLog: fetch the LAST `count` rows, filter by cpuType.
+	vector<TraceRow> rows;
+	rows.resize(count);
+	uint32_t got = _debugger->GetExecutionTrace(rows.data(), 0, (uint32_t)count);
+
+	lua_newtable(lua);
+	int outIdx = 0;
+	for(uint32_t i = 0; i < got; i++) {
+		if(rows[i].Type != cpuType) {
+			continue;
+		}
+		outIdx++;
+		lua_pushinteger(lua, outIdx);
+		lua_newtable(lua);
+		lua_pushintvalue(pc, rows[i].ProgramCounter);
+		lua_pushliteral(lua, "text");
+		lua_pushlstring(lua, rows[i].LogOutput, rows[i].LogSize);
+		lua_settable(lua, -3);
+		lua_pushliteral(lua, "byteCode");
+		string bc;
+		for(int j = 0; j < rows[i].ByteCodeSize && j < 8; j++) {
+			char buf[3];
+			snprintf(buf, sizeof(buf), "%02X", rows[i].ByteCode[j]);
+			bc += buf;
+		}
+		lua_pushstring(lua, bc.c_str());
+		lua_settable(lua, -3);
+		lua_settable(lua, -3);
+	}
 	return 1;
 }
 

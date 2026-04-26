@@ -92,6 +92,9 @@ public:
 
 	static int GetCdlData(lua_State* lua);
 
+	static int Disassemble(lua_State* lua);
+	static int GetTraceLog(lua_State* lua);
+
 private:
 	static FrameInfo InternalGetScreenSize();
 
