@@ -6,10 +6,9 @@ debugger that any MCP client (Claude Code, Cursor, your own scripts)
 can drive over a TCP loopback socket.
 
 The companion Python package `mesen_mcp` provides a stdio bridge and
-typed client wrappers — see
-[the SuperMonkeyIsland repo's `tools/mesen_mcp/` directory](https://github.com/astrobleem/SNES-SuperMonkeyIsland/tree/master/tools/mesen_mcp)
-for source + agent-onboarding docs (`AGENTS.md`, `README.md`,
-`CHANGELOG.md`).
+typed client wrappers. The package and agent-onboarding docs live in
+this repo under `python/` (`python/AGENTS.md`, `python/README.md`,
+`python/CHANGELOG.md`).
 
 ## What you get
 
@@ -54,15 +53,34 @@ dedicated thread on the C# side).
 
 ## Build
 
+If your native core is already current, the managed UI build is:
+
 ```bash
 git clone https://github.com/astrobleem/Mesen2
 cd Mesen2
 dotnet build UI/UI.csproj -c Release
 ```
 
-Outputs `UI/bin/Release/net*/Mesen.exe`. The `--mcp` mode is gated only
-by command-line argument parsing in `UI/Utilities/Mcp/McpRunner.cs` —
-no extra build flags or feature toggles.
+The `--mcp` mode is gated only by command-line argument parsing in
+`UI/Utilities/Mcp/McpRunner.cs` - no extra feature flags are needed.
+
+On Windows, a fresh checkout needs both halves of the build:
+
+```powershell
+msbuild Mesen.sln /p:Configuration=Release /p:Platform=x64 /m
+dotnet build UI/UI.csproj -c Release -p:SolutionDir="$PWD\"
+```
+
+The first command builds the native `MesenCore.dll` with MCP hook exports;
+the second builds the managed UI. If you build `UI/UI.csproj` directly,
+pass `SolutionDir` explicitly. Otherwise MSBuild may resolve
+`$(SolutionDir)` to a drive-level path such as `E:\bin\...` instead of the
+repo-local `bin\win-x64\Release\` folder.
+
+Point `MESEN_EXE` at the directory that contains a matched set of
+`Mesen.exe`, `Mesen.dll`, and `MesenCore.dll`. A stale publish folder can
+launch but never open the MCP socket if its managed UI or native core was
+built before the MCP changes.
 
 ## Source layout
 
