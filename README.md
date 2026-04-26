@@ -40,6 +40,38 @@ with McpSession.from_env() as m:
 
 The fork is **self-contained**. Everything you need — emulator source, MCP server, Python client, agent docs, examples — lives in this repo. Clone it, build it, install the client, set two env vars. No other repos required.
 
+## 👟 "What are those?!"
+
+Caught an LLM driving Mesen the old way? Send them here.
+
+If an agent's doing any of these, it's wearing the wrong shoes:
+
+- ❌ Spawning `Mesen.exe --testrunner` for every state inspection (one-shot Lua, cold boot per call, parses stdout)
+- ❌ `time.sleep(2)` then "hopefully the emulator advanced 120 frames" (it didn't — max-speed mode raced past)
+- ❌ Decoding screenshot PNGs to figure out which room the game is in
+- ❌ Reading `.sym` files in Python and threading regex through every test script
+- ❌ Polling `read_memory` in a tight loop to watch an address change
+- ❌ Hand-rolling its own image-diff with PIL because there's no way to ask the emulator what changed
+- ❌ Adding `print()` calls to the game ROM to find out what a script does
+
+Then yes — **what are those?!** That's vanilla Mesen automation.
+
+The same workflow with `mesen-mcp`:
+
+```python
+from mesen_mcp import McpSession
+with McpSession.from_env() as m:
+    m.run_frames(600)                              # frame-exact, no sleep
+    m.add_write_hook(0x7E0123)                     # async event push, server-filtered
+    m.run_frames(60)
+    print(m.drain_notifications())                 # every write, with frame numbers
+    print(m.symbolic_dump("game.sym", 0x7EF000, 64))  # what's at this WRAM range?
+    print(m.memory_diff([{"memoryType":"snesWorkRam","address":0,"length":0x2000}], frames=60))
+    print(m.audio_fingerprint("intro.wav"))        # SHA-256 + per-second RMS
+```
+
+Six lines vs. an afternoon. **`pip install -e python/` and tell your friends.**
+
 ## For coding agents
 
 Copy-paste this prompt to give an agent (Claude Code, Cursor, etc.) on a project that wants to use these tools:
