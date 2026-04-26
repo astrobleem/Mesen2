@@ -76,15 +76,15 @@ Six lines vs. an afternoon. **`pip install -e python/` and tell your friends.**
 
 Copy-paste this prompt to give an agent (Claude Code, Cursor, etc.) on a project that wants to use these tools:
 
-> I want to drive the [`astrobleem/Mesen2`](https://github.com/astrobleem/Mesen2) fork's MCP debugger from this project. Clone the repo, build `Mesen.exe` (`dotnet build UI/UI.csproj -c Release`), then `pip install -e <fork>/python/mesen_mcp`. Read `<fork>/python/mesen_mcp/AGENTS.md` for the tool surface (46 tools across state/memory/screenshot/savestate/movies/ppu/hooks/debugging/input/audio) and the first-call protocol. Wire up `<my-project>/.mcp.json` with a `mesen-inproc` server pointing at `mesen-mcp-bridge` (the console script the package installs), with `MESEN_EXE` and `MESEN_ROM` set in its `env` block. Then `mesen-mcp-tools` lists every tool with one-line summaries — use that for discovery before each session.
+> I want to drive the [`astrobleem/Mesen2`](https://github.com/astrobleem/Mesen2) fork's MCP debugger from this project. Clone the **`mesen-mcp-v0.1`** tag (`git clone --branch mesen-mcp-v0.1 https://github.com/astrobleem/Mesen2`), build the native + managed sides on Windows (`msbuild Mesen.sln /p:Configuration=Release /p:Platform=x64 /m` then `dotnet build UI/UI.csproj -c Release -p:SolutionDir="$PWD\"`), then `pip install -e <fork>/python`. Read `<fork>/python/AGENTS.md` for the tool surface (46 tools across state/memory/screenshot/savestate/movies/ppu/hooks/debugging/input/audio) and the first-call protocol. Wire up `<my-project>/.mcp.json` with a `mesen-inproc` server pointing at `mesen-mcp-bridge` (the console script the package installs), with `MESEN_EXE` and `MESEN_ROM` set in its `env` block. `MESEN_EXE` must point at a folder containing a matched `Mesen.exe`, `Mesen.dll`, and `MesenCore.dll` — the bridge fails fast if any are missing or stale. Then `mesen-mcp-tools` lists every tool with one-line summaries — use that for discovery before each session.
 
 Useful entry points after install:
 
 - `mesen-mcp-tools` — categorised tool listing (CLI). `--filter <substr>` / `--category <cat>` / `--names`.
 - `mesen-mcp-bridge` — stdio↔TCP bridge. Wire this into `.mcp.json` for any MCP-aware client.
 - `python -m mesen_mcp.examples.boot_and_screenshot` — runnable starter template.
-- `python/mesen_mcp/AGENTS.md` — first-call protocol, recipes, pitfalls.
-- `python/mesen_mcp/README.md` — install steps, full tool table, env vars.
+- `python/AGENTS.md` — first-call protocol, recipes, pitfalls.
+- `python/README.md` — install steps, full tool table, env vars.
 
 ## What's in the protocol
 
