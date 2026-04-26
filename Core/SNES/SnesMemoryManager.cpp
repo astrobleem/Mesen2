@@ -329,16 +329,43 @@ uint8_t SnesMemoryManager::ReadDma(uint32_t addr, bool forBusA)
 
 uint8_t SnesMemoryManager::Peek(uint32_t addr)
 {
+	// $7E/$7F WRAM short-circuit. Under SA-1, the mapping table for these
+	// banks can return 0 instead of the live WRAM byte (the SA-1 module
+	// re-registers handlers for $0000-$0FFF + iRam, and some configurations
+	// leave the upper-bank Peek path returning open-bus / zero). The MCP
+	// `read_memory` tool already works around this by routing $7E/$7F to
+	// MemoryType::SnesWorkRam directly; do the same in Peek so every other
+	// caller of this debug-side path (debugger UI, watch lists, AVI/movie
+	// frame metadata, etc.) gets correct values automatically.
+	uint8_t bank = (addr >> 16) & 0xFF;
+	if(bank == 0x7E || bank == 0x7F) {
+		return _workRam[addr & 0x1FFFF];
+	}
 	return _mappings.Peek(addr);
 }
 
 uint16_t SnesMemoryManager::PeekWord(uint32_t addr)
 {
+	uint8_t bank = (addr >> 16) & 0xFF;
+	if(bank == 0x7E || bank == 0x7F) {
+		uint8_t lsb = _workRam[addr & 0x1FFFF];
+		uint8_t msb = _workRam[(addr + 1) & 0x1FFFF];
+		return (uint16_t)((msb << 8) | lsb);
+	}
 	return _mappings.PeekWord(addr);
 }
 
 void SnesMemoryManager::PeekBlock(uint32_t addr, uint8_t *dest)
 {
+	uint8_t bank = (addr >> 16) & 0xFF;
+	if(bank == 0x7E || bank == 0x7F) {
+		// PeekBlock is called with addr aligned to 0x1000; the mapping path
+		// reads through the matching RamHandler. Going direct to _workRam
+		// avoids that detour and avoids the SA-1 hole.
+		uint32_t base = addr & 0x1F000;
+		memcpy(dest, _workRam + base, 0x1000);
+		return;
+	}
 	_mappings.PeekBlock(addr, dest);
 }
 
