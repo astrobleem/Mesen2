@@ -76,7 +76,7 @@ Six lines vs. an afternoon. **`pip install -e python/` and tell your friends.**
 
 Copy-paste this prompt to give an agent (Claude Code, Cursor, etc.) on a project that wants to use these tools:
 
-> I want to drive the [`astrobleem/Mesen2`](https://github.com/astrobleem/Mesen2) fork's MCP debugger from this project. Clone the **`mesen-mcp-v0.1`** tag (`git clone --branch mesen-mcp-v0.1 https://github.com/astrobleem/Mesen2`), build the native + managed sides on Windows (`msbuild Mesen.sln /p:Configuration=Release /p:Platform=x64 /m` then `dotnet build UI/UI.csproj -c Release -p:SolutionDir="$PWD\"`), then `pip install -e <fork>/python`. Read `<fork>/python/AGENTS.md` for the tool surface (46 tools across state/memory/screenshot/savestate/movies/ppu/hooks/debugging/input/audio) and the first-call protocol. Wire up `<my-project>/.mcp.json` with a `mesen-inproc` server pointing at `mesen-mcp-bridge` (the console script the package installs), with `MESEN_EXE` and `MESEN_ROM` set in its `env` block. `MESEN_EXE` must point at a folder containing a matched `Mesen.exe`, `Mesen.dll`, and `MesenCore.dll` — the bridge fails fast if any are missing or stale. Then `mesen-mcp-tools` lists every tool with one-line summaries — use that for discovery before each session.
+> I want to drive the [`astrobleem/Mesen2`](https://github.com/astrobleem/Mesen2) fork's MCP debugger from this project. Use the latest **`mesen-mcp-v*`** GitHub release zip if one exists; otherwise clone the matching tag (`git clone --branch mesen-mcp-v0.1 https://github.com/astrobleem/Mesen2`) and build the native + managed sides on Windows (`msbuild Mesen.sln /p:Configuration=Release /p:Platform=x64 /m` then `dotnet build UI/UI.csproj -c Release -p:SolutionDir="$PWD\"`). Then `pip install -e <fork>/python`. Read `<fork>/python/AGENTS.md` for the tool surface (46 tools across state/memory/screenshot/savestate/movies/ppu/hooks/debugging/input/audio) and the first-call protocol. Wire up `<my-project>/.mcp.json` with a `mesen-inproc` server pointing at `mesen-mcp-bridge` (the console script the package installs), with `MESEN_EXE` and `MESEN_ROM` set in its `env` block. `MESEN_EXE` must point at a folder containing a matched `Mesen.exe`, `Mesen.dll`, and `MesenCore.dll` - the bridge fails fast if any are missing or stale. Then `mesen-mcp-tools` lists every tool with one-line summaries - use that for discovery before each session.
 
 Useful entry points after install:
 
@@ -127,7 +127,9 @@ The non-MCP code paths are unchanged. Vanilla Mesen workflows still work.
 
 ## Releases / pre-built binaries
 
-This fork is currently source-only. Vanilla Mesen pre-builds are at the [upstream releases page](https://github.com/SourMesen/Mesen2/releases).
+MCP tags named `mesen-mcp-v*` are built by **Mesen MCP Release** on GitHub Actions. The workflow publishes a Windows x64 zip to the tag's GitHub Release and can also be run manually against an existing tag, such as `mesen-mcp-v0.1`.
+
+The release zip includes the matched `Mesen.exe`, `Mesen.dll`, `MesenCore.dll`, the Python MCP package, and install notes. Vanilla Mesen pre-builds remain available from the [upstream releases page](https://github.com/SourMesen/Mesen2/releases).
 
 ## Compiling
 

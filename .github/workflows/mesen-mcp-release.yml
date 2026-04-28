@@ -1,0 +1,131 @@
+name: Mesen MCP Release
+
+on:
+  push:
+    tags:
+      - "mesen-mcp-v*"
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Tag or ref to build"
+        required: true
+        default: "mesen-mcp-v0.1"
+
+permissions:
+  contents: write
+
+env:
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+
+jobs:
+  windows-x64:
+    name: Windows x64 release
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout release ref
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.ref || github.ref_name }}
+
+      - name: Resolve release tag
+        id: release
+        shell: pwsh
+        run: |
+          $ref = "${{ github.event_name == 'workflow_dispatch' && inputs.ref || github.ref_name }}"
+          $tag = $ref -replace '^refs/tags/', ''
+          "ref=$ref" >> $env:GITHUB_OUTPUT
+          "tag=$tag" >> $env:GITHUB_OUTPUT
+
+      - name: Install .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.x
+
+      - name: Setup MSBuild.exe
+        uses: microsoft/setup-msbuild@v2
+        with:
+          msbuild-architecture: x64
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Restore managed dependencies
+        run: dotnet restore UI/UI.csproj -r win-x64
+
+      - name: Build native core
+        run: msbuild Mesen.sln /p:Configuration=Release /p:Platform=x64 /t:Core,InteropDLL /m
+
+      - name: Build managed UI
+        run: dotnet build UI/UI.csproj -c Release "-p:SolutionDir=${{ github.workspace }}\"
+
+      - name: Install Python MCP package
+        run: python -m pip install -e python
+
+      - name: Validate MCP build
+        run: |
+          mesen-mcp-tools --names
+          python -c "from mesen_mcp.validate import validate_mesen_build; validate_mesen_build(r'${{ github.workspace }}\bin\win-x64\Release\Mesen.exe')"
+
+      - name: Package release zip
+        shell: pwsh
+        run: |
+          $releaseTag = "${{ steps.release.outputs.tag }}"
+          $runtime = Join-Path $env:GITHUB_WORKSPACE "bin/win-x64/Release"
+          $stageRoot = Join-Path $env:GITHUB_WORKSPACE "artifacts/Mesen-MCP-Windows-x64-$releaseTag"
+          $mesenStage = Join-Path $stageRoot "Mesen"
+          $zipPath = Join-Path $env:GITHUB_WORKSPACE "artifacts/Mesen-MCP-Windows-x64-$releaseTag.zip"
+
+          New-Item -ItemType Directory -Force -Path $mesenStage | Out-Null
+
+          $excludedExtensions = @(".pdb", ".lib", ".exp", ".iobj", ".ipdb")
+          Get-ChildItem -Path $runtime -File |
+            Where-Object { $excludedExtensions -notcontains $_.Extension.ToLowerInvariant() } |
+            Copy-Item -Destination $mesenStage
+
+          $dependencies = Join-Path $runtime "Dependencies"
+          if (Test-Path $dependencies) {
+            Copy-Item -Path $dependencies -Destination $mesenStage -Recurse
+          }
+
+          Copy-Item -Path (Join-Path $env:GITHUB_WORKSPACE "python") -Destination $stageRoot -Recurse
+          Copy-Item -Path `
+            (Join-Path $env:GITHUB_WORKSPACE "README.md"), `
+            (Join-Path $env:GITHUB_WORKSPACE "README.MCP.md"), `
+            (Join-Path $env:GITHUB_WORKSPACE "LICENSE") `
+            -Destination $stageRoot
+
+          @"
+          Mesen-MCP Windows x64 release
+
+          1. Install the Python package:
+             python -m pip install -e python
+
+          2. Set MESEN_EXE to:
+             Mesen/Mesen.exe
+
+          3. Set MESEN_ROM to your ROM path.
+
+          4. For MCP clients, point .mcp.json at mesen-mcp-bridge.
+             Read python/AGENTS.md before the first session.
+          "@ | Set-Content -Path (Join-Path $stageRoot "INSTALL-MCP.txt") -Encoding UTF8
+
+          Compress-Archive -Path (Join-Path $stageRoot "*") -DestinationPath $zipPath -Force
+
+      - name: Upload workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Mesen-MCP-Windows-x64
+          path: artifacts/*.zip
+
+      - name: Publish GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.release.outputs.tag }}
+          name: Mesen-MCP ${{ steps.release.outputs.tag }}
+          files: artifacts/*.zip
+          generate_release_notes: true
