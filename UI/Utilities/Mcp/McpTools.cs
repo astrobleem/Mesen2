@@ -60,7 +60,8 @@ internal static class McpTools
 
 		new("take_screenshot",
 			"Capture the current PPU frame as a PNG. Returns path (default) or "
-				+ "base64-encoded bytes. Pause first or accept mid-render.",
+				+ "base64-encoded bytes, plus width, height, and unique_colors of the image. "
+				+ "Pause first or accept mid-render.",
 			BuildScreenshotSchema()),
 
 		new("save_state",
@@ -1150,8 +1151,25 @@ internal static class McpTools
 			throw new McpException(-32603, "TakeScreenshot did not produce a file within 2s");
 		}
 
+		// Decode the PNG to read its dimensions and count unique colors.
+		using var bmp = SkiaSharp.SKBitmap.Decode(path);
+		int width = bmp?.Width ?? 0;
+		int height = bmp?.Height ?? 0;
+		int uniqueColors = 0;
+		if(bmp != null) {
+			var seen = new HashSet<uint>();
+			SkiaSharp.SKColor[] pixels = bmp.Pixels;
+			foreach(SkiaSharp.SKColor c in pixels) {
+				seen.Add((uint)((c.Alpha << 24) | (c.Red << 16) | (c.Green << 8) | c.Blue));
+			}
+			uniqueColors = seen.Count;
+		}
+
 		var result = new JsonObject {
 			["path"] = path,
+			["width"] = width,
+			["height"] = height,
+			["unique_colors"] = uniqueColors,
 		};
 
 		if(format == "base64") {

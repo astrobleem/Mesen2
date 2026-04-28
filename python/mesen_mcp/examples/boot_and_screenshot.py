@@ -16,7 +16,7 @@ def main() -> int:
     with McpSession.from_env() as m:
         m.run_frames(600)
         shot = m.take_screenshot()
-        print(f"saved: {shot['path']}  ({shot['width']}x{shot['height']})")
+        print(f"saved: {shot['path']}  ({shot['width']}x{shot['height']}, {shot['unique_colors']} unique colors)")
     return 0
 
 
