@@ -641,6 +641,45 @@ namespace {
 		EXPECT_EQ(vram[0x0000], 0xAB);
 	}
 
+	TEST(GenesisVdpDmaStartupLatencyTests, DmaFillAfterSeedDataWriteUsesNormalPortWriteAndKeepsLatchedFillWord) {
+		vector<uint8_t> rom = BuildDmaSourceRom();
+
+		Emulator emu;
+		emu.Initialize(false);
+		GenesisMemoryManager mm;
+		mm.Init(&emu, nullptr, rom, nullptr, nullptr, nullptr);
+
+		GenesisVdp vdp;
+		vdp.Init(&emu, nullptr, nullptr, &mm);
+
+		vdp.WriteControlPort(0x8110); // DMA enable, display disabled
+		vdp.WriteControlPort(0x8c01); // H40
+		vdp.WriteControlPort(0x8f02); // auto-increment = 2
+		vdp.WriteControlPort(0x9301); // length low = 1 unit
+		vdp.WriteControlPort(0x9400); // length high
+		vdp.WriteControlPort(0x9780); // fill mode (mode 2)
+
+		// CRAM destination + DMA trigger.
+		vdp.WriteControlPort(0xC000);
+		vdp.WriteControlPort(0x0080);
+
+		// First write seeds fill data and must not perform an immediate write.
+		vdp.WriteDataPort(0xABCDu);
+		// Second write occurs after seed: should be treated as a normal CRAM write.
+		vdp.WriteDataPort(0x1122u);
+
+		vdp.Run(80);
+
+		GenesisVdpState done = vdp.GetState();
+		uint16_t* cram = vdp.GetCramPointer();
+		EXPECT_FALSE(done.DmaActive);
+		EXPECT_EQ(done.Registers[19], 0x00);
+		EXPECT_EQ(done.StatusRegister & VdpStatus::DmaBusy, 0);
+		EXPECT_EQ(done.AddressRegister, 0x0004);
+		EXPECT_EQ(cram[0], 0x1122u);
+		EXPECT_EQ(cram[1], 0xABCDu);
+	}
+
 	TEST(GenesisVdpDmaStartupLatencyTests, ActiveDisplayDmaFillAdvancesOnlyOnExternalSlots) {
 		vector<uint8_t> rom = BuildDmaSourceRom();
 

@@ -1465,7 +1465,7 @@ void GenesisVdp::WriteDataPort(uint16_t value) {
 	// DMA fill takes its fill byte from the first data-port write after the DMA command.
 	if (_state.DmaActive) {
 		uint8_t dmaMode = _dmaLatchedMode;
-		if (dmaMode == 2) {
+		if (dmaMode == 2 && _dmaFillDataPending) {
 			_dmaFillWord = value;
 			_dmaFillByte = (uint8_t)((value >> 8) & 0xFF);
 			_dmaFillDataPending = false;
