@@ -231,6 +231,31 @@ namespace {
 		EXPECT_EQ((uint16_t)(done.StatusRegister & VdpStatus::DmaBusy), (uint16_t)0);
 	}
 
+	TEST(GenesisVdpDmaStartupLatencyTests, BusDmaSourceAddressUsesTriggerLatchedRegistersDespitePostTriggerR21Write) {
+		vector<uint8_t> rom = BuildDmaSourceRom();
+
+		Emulator emu;
+		emu.Initialize(false);
+		GenesisMemoryManager mm;
+		mm.Init(&emu, nullptr, rom, nullptr, nullptr, nullptr);
+
+		GenesisVdp vdp;
+		vdp.Init(&emu, nullptr, nullptr, &mm);
+
+		ConfigureBusDmaTransferDisplayOff(vdp, true, 0x01); // trigger bus DMA from source 0x000000
+		WriteReg(vdp, 21, 0x10); // mutate source low byte after trigger
+
+		vdp.Run(13);
+		GenesisVdpState done = vdp.GetState();
+		EXPECT_FALSE(done.DmaActive);
+		EXPECT_EQ(done.Registers[19], 0x00);
+		EXPECT_EQ((uint16_t)(done.StatusRegister & VdpStatus::DmaBusy), (uint16_t)0);
+
+		uint8_t* vram = vdp.GetVramPointer();
+		EXPECT_EQ(vram[0x0000], 0x00u);
+		EXPECT_EQ(vram[0x0001], 0xFFu);
+	}
+
 	TEST(GenesisVdpDmaStartupLatencyTests, BusDmaStartupDelayLatchesH32AtTriggerInBlankingDespitePostTriggerModeWrite) {
 		vector<uint8_t> rom = BuildDmaSourceRom();
 

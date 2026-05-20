@@ -1661,6 +1661,11 @@ void GenesisVdp::WriteControlPort(uint16_t value) {
 			_dmaLatchedDestCode = _accessMode & 0x0Fu;
 			uint8_t dmaMode = (uint8_t)((_state.Registers[23] >> 6) & 3u);
 			_dmaLatchedMode = dmaMode;
+			_dmaSourceReg23Latched = _state.Registers[23];
+			_dmaSourceAddress = ((uint32_t)(_state.Registers[23] & 0x7Fu) << 17)
+				| ((uint32_t)_state.Registers[22] << 9)
+				| ((uint32_t)_state.Registers[21] << 1);
+			_dmaCopySourceAddress = ((uint16_t)_state.Registers[22] << 8) | _state.Registers[21];
 			if (dmaMode == 2u) {
 				// Fill DMA can be seeded by an immediate data-port write before the first
 				// ProcessDma() tick, so arm pending state at trigger time.
@@ -1805,17 +1810,10 @@ void GenesisVdp::ProcessDma() {
 	if (!_state.DmaActive) return;
 
 	if (!_dmaInitialized) {
-		_dmaSourceReg23Latched = _state.Registers[23];
 		_dmaRemainingWords = ((uint16_t)_state.Registers[20] << 8) | _state.Registers[19];
 		if (_dmaRemainingWords == 0) {
 			_dmaRemainingWords = 0x10000;
 		}
-
-		// Reference implementation keeps the full low 7 bits of R23 in the initial bus-DMA source assembly.
-		_dmaSourceAddress = ((uint32_t)(_state.Registers[23] & 0x7F) << 17)
-		                | ((uint32_t)_state.Registers[22] << 9)
-		                | ((uint32_t)_state.Registers[21] << 1);
-		_dmaCopySourceAddress = ((uint16_t)_state.Registers[22] << 8) | _state.Registers[21];
 
 		if (_dmaLatchedMode <= 1) {
 			_state.DmaMode = 0;
