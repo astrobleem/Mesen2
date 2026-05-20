@@ -866,3 +866,62 @@ TEST(GenesisExecutionStartupTests, StartupProfileTransitionsReloadTmssPortGating
 	EXPECT_EQ(std::get<2>(logoCompat), true);
 	EXPECT_EQ(std::get<3>(logoCompat), true);
 }
+
+TEST(GenesisExecutionStartupTests, StartupMixedDelayAndProfileTransitionsRemainIsolatedAcrossRuns) {
+	auto captureMixedState = [](const char* profile, const char* tmssStrict, const char* forceUntilUnlock, const char* unlockDelayMclk) {
+		ScopedStartupEnv env({
+			{ "NEXEN_GENESIS_STARTUP_PROFILE", profile },
+			{ "NEXEN_GENESIS_TMSS_STRICT", tmssStrict },
+			{ "NEXEN_GENESIS_TMSS_FORCE_UNTIL_UNLOCK", forceUntilUnlock },
+			{ "NEXEN_GENESIS_TMSS_UNLOCK_DELAY_MCLK", unlockDelayMclk }
+		});
+
+		constexpr uint32_t InitialSp = 0x00FFFE00;
+		constexpr uint32_t InitialPc = 0x00000100;
+		std::vector<uint8_t> romData = BuildNopBootRom(InitialSp, InitialPc, 0x4000, true);
+		VirtualFile rom(romData.data(), romData.size(), "boot-tmss-mixed-transition.md");
+		Emulator emu;
+		emu.GetSettings()->GetGenesisConfig().EnableTmss = true;
+		GenesisConsole console(&emu);
+
+		if (console.LoadRom(rom) != LoadRomResult::Success || !console.GetMemoryManager()) {
+			return std::tuple<bool, bool, bool, bool, uint16_t>(false, false, false, false, 0xffffu);
+		}
+
+		auto* mm = console.GetMemoryManager();
+		mm->Write8(0xA14000, 'S');
+		mm->Write8(0xA14001, 'E');
+		mm->Write8(0xA14002, 'G');
+		mm->Write8(0xA14003, 'A');
+		mm->Exec(4);
+
+		return std::tuple<bool, bool, bool, bool, uint16_t>(
+			mm->GetTmssUnlockPending(),
+			mm->GetTmssUnlocked(),
+			mm->IsTmssLockedReadAllowedForAddr(0xC00000),
+			mm->IsTmssLockedWriteAllowedForAddr(0xC00000),
+			mm->GetTmssUnlockDelayMclk());
+	};
+
+	auto strictSlow = captureMixedState("strict", "1", "1", "64");
+	auto logoCompat = captureMixedState("logo-compat", "0", "0", "0");
+	auto strictFast = captureMixedState("strict", "1", "1", "4");
+
+	EXPECT_EQ(std::get<0>(strictSlow), true);
+	EXPECT_EQ(std::get<1>(strictSlow), false);
+	EXPECT_EQ(std::get<2>(strictSlow), false);
+	EXPECT_EQ(std::get<3>(strictSlow), false);
+	EXPECT_GT(std::get<4>(strictSlow), 0u);
+
+	EXPECT_EQ(std::get<0>(logoCompat), false);
+	EXPECT_EQ(std::get<1>(logoCompat), true);
+	EXPECT_EQ(std::get<2>(logoCompat), true);
+	EXPECT_EQ(std::get<3>(logoCompat), true);
+	EXPECT_EQ(std::get<4>(logoCompat), 0u);
+
+	EXPECT_EQ(std::get<0>(strictFast), false);
+	EXPECT_EQ(std::get<1>(strictFast), true);
+	EXPECT_EQ(std::get<2>(strictFast), true);
+	EXPECT_EQ(std::get<3>(strictFast), true);
+	EXPECT_EQ(std::get<4>(strictFast), 0u);
+}
