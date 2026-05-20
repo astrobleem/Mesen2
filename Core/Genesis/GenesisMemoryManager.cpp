@@ -655,6 +655,10 @@ namespace {
 		}
 	}
 
+	static void InvalidateNexenStartupTraceConfigCache() {
+		sNexenStartupTraceConfigLoaded = false;
+	}
+
 	static void EnsureNexenWramTraceOpen() {
 		if (sNexenWramTraceFile) {
 			return;
@@ -969,6 +973,7 @@ void GenesisMemoryManager::Init(Emulator* emu, GenesisConsole* console, vector<u
 	_ymTimerBLoad = false;
 	_ymTimerAIrqEnable = false;
 	_ymTimerBIrqEnable = false;
+	InvalidateNexenStartupTraceConfigCache();
 	ApplyStartupEnvironmentProfile();
 	_z80Reset = sNexenGenesisPowerOnZ80ResetAsserted;
 	_startupLastDisplayEnabled = _vdp ? ((_vdp->GetState().Registers[VdpReg::ModeSet2] & 0x40) != 0) : false;
@@ -5615,11 +5620,12 @@ void GenesisMemoryManager::SaveBattery() {
 void GenesisMemoryManager::ResetRuntimeState(bool hardReset) {
 	(void)hardReset;
 	EnsureNexenWramTraceOpen();
-	EnsureNexenStartupTraceOpen();
+	InvalidateNexenStartupTraceConfigCache();
 	if (_emu && _emu->GetSettings()) {
 		_tmssEnabled = _emu->GetSettings()->GetGenesisConfig().EnableTmss;
 	}
 	ApplyStartupEnvironmentProfile();
+	EnsureNexenStartupTraceOpen();
 
 	bool nextZ80BusRequest = false;
 	bool nextZ80Reset = sNexenGenesisPowerOnZ80ResetAsserted;
