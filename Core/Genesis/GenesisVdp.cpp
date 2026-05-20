@@ -1662,7 +1662,7 @@ void GenesisVdp::WriteControlPort(uint16_t value) {
 			uint8_t dmaMode = (uint8_t)((_state.Registers[23] >> 6) & 3u);
 			_dmaLatchedMode = dmaMode;
 			_dmaSourceReg23Latched = _state.Registers[23];
-			_dmaSourceAddress = ((uint32_t)(_state.Registers[23] & 0x7Fu) << 17)
+			_dmaSourceAddress = ((uint32_t)(_dmaSourceReg23Latched & 0x7Fu) << 17)
 				| ((uint32_t)_state.Registers[22] << 9)
 				| ((uint32_t)_state.Registers[21] << 1);
 			_dmaCopySourceAddress = ((uint16_t)_state.Registers[22] << 8) | _state.Registers[21];
