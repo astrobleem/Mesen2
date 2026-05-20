@@ -943,6 +943,71 @@ namespace {
 		EXPECT_EQ(vram[0x0002], 0x66);
 	}
 
+	TEST(GenesisVdpDmaStartupLatencyTests, ActiveDisplayVramCopyWithTwoQueuedWritesDrainsBothBeforeCopyProgress) {
+		vector<uint8_t> rom = BuildDmaSourceRom();
+
+		Emulator emu;
+		emu.Initialize(false);
+		GenesisMemoryManager mm;
+		mm.Init(&emu, nullptr, rom, nullptr, nullptr, nullptr);
+
+		GenesisVdp vdp;
+		vdp.Init(&emu, nullptr, nullptr, &mm);
+
+		vdp.WriteControlPort(0x8150); // DMA + display enable
+		vdp.WriteControlPort(0x8c01); // H40
+		vdp.WriteControlPort(0x8f02); // auto-increment = 2
+		vdp.WriteControlPort(0x9303); // length low = 3 units
+		vdp.WriteControlPort(0x9400); // length high
+		vdp.WriteControlPort(0x9510); // copy source low
+		vdp.WriteControlPort(0x9600); // copy source high
+		vdp.WriteControlPort(0x97c0); // copy mode (mode 3)
+
+		// VRAM destination + DMA trigger.
+		vdp.WriteControlPort(0x4000);
+		vdp.WriteControlPort(0x0080);
+
+		uint8_t* vram = vdp.GetVramPointer();
+		vram[0x0010] = 0x66;
+		vram[0x0011] = 0x77;
+		vram[0x0012] = 0x88;
+
+		// Queue two normal active-display data writes.
+		vdp.WriteDataPort(0x3344u);
+		vdp.WriteDataPort(0x5566u);
+
+		vdp.Run(40);
+		GenesisVdpState beforeSlots = vdp.GetState();
+		EXPECT_TRUE(beforeSlots.DmaActive);
+		EXPECT_EQ(beforeSlots.Registers[19], 0x03);
+
+		// Slot 41: drain first queued write.
+		vdp.Run(41);
+		GenesisVdpState afterSlot41 = vdp.GetState();
+		EXPECT_TRUE(afterSlot41.DmaActive);
+		EXPECT_EQ(afterSlot41.Registers[19], 0x03);
+		EXPECT_EQ(vram[0x0000], 0x33);
+		EXPECT_EQ(vram[0x0001], 0x44);
+
+		// Slot 43: drain second queued write.
+		vdp.Run(43);
+		GenesisVdpState afterSlot43 = vdp.GetState();
+		EXPECT_TRUE(afterSlot43.DmaActive);
+		EXPECT_EQ(afterSlot43.Registers[19], 0x03);
+		EXPECT_EQ(vram[0x0002], 0x55);
+		EXPECT_EQ(vram[0x0003], 0x66);
+
+		// Allow normal slot pacing to complete remaining copy transfers.
+		vdp.Run(200);
+		GenesisVdpState done = vdp.GetState();
+		EXPECT_FALSE(done.DmaActive);
+		EXPECT_EQ(done.Registers[19], 0x00);
+		EXPECT_EQ(done.StatusRegister & VdpStatus::DmaBusy, 0);
+		EXPECT_EQ(vram[0x0004], 0x66);
+		EXPECT_EQ(vram[0x0006], 0x77);
+		EXPECT_EQ(vram[0x0008], 0x88);
+	}
+
 	TEST(GenesisVdpDmaStartupLatencyTests, VramCopySourceUsesTriggerLatchedRegistersDespitePostTriggerR21Write) {
 		vector<uint8_t> rom = BuildDmaSourceRom();
 
