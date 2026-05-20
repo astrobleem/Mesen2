@@ -205,6 +205,32 @@ namespace {
 		EXPECT_NE((uint16_t)(afterDma & VdpStatus::FifoEmpty), (uint16_t)0);
 	}
 
+	TEST(GenesisVdpDmaStartupLatencyTests, BusDmaModeAndFifoStatusUseTriggerLatchedModeDespitePostTriggerR23Write) {
+		vector<uint8_t> rom = BuildDmaSourceRom();
+
+		Emulator emu;
+		emu.Initialize(false);
+		GenesisMemoryManager mm;
+		mm.Init(&emu, nullptr, rom, nullptr, nullptr, nullptr);
+
+		GenesisVdp vdp;
+		vdp.Init(&emu, nullptr, nullptr, &mm);
+
+		ConfigureBusDmaTransferDisplayOff(vdp, true, 0x01); // trigger bus DMA
+		vdp.WriteControlPort(0x9780); // switch live R23 mode bits to fill after trigger
+
+		uint16_t preRunStatus = vdp.ReadControlPort();
+		EXPECT_NE((uint16_t)(preRunStatus & VdpStatus::DmaBusy), (uint16_t)0);
+		EXPECT_NE((uint16_t)(preRunStatus & VdpStatus::FifoFull), (uint16_t)0);
+		EXPECT_EQ((uint16_t)(preRunStatus & VdpStatus::FifoEmpty), (uint16_t)0);
+
+		vdp.Run(13);
+		GenesisVdpState done = vdp.GetState();
+		EXPECT_FALSE(done.DmaActive);
+		EXPECT_EQ(done.Registers[19], 0x00);
+		EXPECT_EQ((uint16_t)(done.StatusRegister & VdpStatus::DmaBusy), (uint16_t)0);
+	}
+
 	TEST(GenesisVdpDmaStartupLatencyTests, BusDmaStartupDelayLatchesH32AtTriggerInBlankingDespitePostTriggerModeWrite) {
 		vector<uint8_t> rom = BuildDmaSourceRom();
 

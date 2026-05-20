@@ -486,8 +486,7 @@ bool GenesisVdp::IsBusDmaTransferActiveForStatus() const {
 	}
 
 	if (!_dmaInitialized) {
-		uint8_t configuredMode = (uint8_t)((_state.Registers[23] >> 6) & 0x03u);
-		return configuredMode <= 1;
+		return _dmaLatchedMode <= 1;
 	}
 
 	if (_dmaLatchedMode > 1) {
@@ -1465,7 +1464,7 @@ void GenesisVdp::WriteDataPort(uint16_t value) {
 
 	// DMA fill takes its fill byte from the first data-port write after the DMA command.
 	if (_state.DmaActive) {
-		uint8_t dmaMode = _dmaInitialized ? _dmaLatchedMode : (uint8_t)((_state.Registers[23] >> 6) & 3);
+		uint8_t dmaMode = _dmaLatchedMode;
 		if (dmaMode == 2) {
 			_dmaFillWord = value;
 			_dmaFillByte = (uint8_t)((value >> 8) & 0xFF);
@@ -1661,6 +1660,7 @@ void GenesisVdp::WriteControlPort(uint16_t value) {
 			_dmaTriggerH40Mode = IsH40Mode();
 			_dmaLatchedDestCode = _accessMode & 0x0Fu;
 			uint8_t dmaMode = (uint8_t)((_state.Registers[23] >> 6) & 3u);
+			_dmaLatchedMode = dmaMode;
 			if (dmaMode == 2u) {
 				// Fill DMA can be seeded by an immediate data-port write before the first
 				// ProcessDma() tick, so arm pending state at trigger time.
@@ -1806,7 +1806,6 @@ void GenesisVdp::ProcessDma() {
 
 	if (!_dmaInitialized) {
 		_dmaSourceReg23Latched = _state.Registers[23];
-		_dmaLatchedMode = (uint8_t)((_state.Registers[23] >> 6) & 3);
 		_dmaRemainingWords = ((uint16_t)_state.Registers[20] << 8) | _state.Registers[19];
 		if (_dmaRemainingWords == 0) {
 			_dmaRemainingWords = 0x10000;
