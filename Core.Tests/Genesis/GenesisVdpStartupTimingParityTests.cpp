@@ -49,6 +49,28 @@ namespace {
 		EXPECT_EQ(statusAfterAckRead & VdpStatus::VIntPending, 0u);
 	}
 
+	TEST(GenesisVdpStartupTimingParityTests, PalModeFirstVBlankLineUsesDeferredVBlankAndVIntSetPoints) {
+		GenesisVdp vdp;
+		vdp.Init(nullptr, nullptr, nullptr, nullptr);
+		vdp.SetRegion(true);
+
+		WriteReg(vdp, 1, 0x64); // display + VINT enable
+
+		uint64_t vblankLineStartPal = LineStartCycle(240);
+		vdp.Run(vblankLineStartPal);
+		uint16_t statusAtLineStart = ReadStatus(vdp);
+		EXPECT_EQ(statusAtLineStart & VdpStatus::VBlankFlag, 0u);
+		EXPECT_EQ(statusAtLineStart & VdpStatus::VIntPending, 0u);
+
+		vdp.Run(vblankLineStartPal + 64ull);
+		uint16_t statusAfterVblankDelay = ReadStatus(vdp);
+		EXPECT_NE(statusAfterVblankDelay & VdpStatus::VBlankFlag, 0u);
+
+		vdp.Run(vblankLineStartPal + 128ull);
+		uint16_t statusAfterVintDelay = ReadStatus(vdp);
+		EXPECT_NE(statusAfterVintDelay & VdpStatus::VIntPending, 0u);
+	}
+
 	TEST(GenesisVdpStartupTimingParityTests, HBlankFlagTransitionsWithinVisibleLine) {
 		GenesisVdp vdp;
 		vdp.Init(nullptr, nullptr, nullptr, nullptr);
@@ -150,4 +172,5 @@ namespace {
 		GenesisVdpState afterAckEnabled = vdp.GetState();
 		EXPECT_EQ(afterAckEnabled.StatusRegister & VdpStatus::VIntPending, 0u);
 	}
+
 }

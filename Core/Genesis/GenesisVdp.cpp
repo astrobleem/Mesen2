@@ -719,7 +719,9 @@ void GenesisVdp::Run(uint64_t targetCycle) {
 				}
 				_currentBuffer ^= 1;
 				_state.FrameCount++;
-				_emu->GetNotificationManager()->SendNotification(ConsoleNotificationType::PpuFrameDone);
+				if (_emu) {
+					_emu->GetNotificationManager()->SendNotification(ConsoleNotificationType::PpuFrameDone);
+				}
 
 				if ((_state.FrameCount - _lastFrameLog) >= 120) {
 					_lastFrameLog = _state.FrameCount;

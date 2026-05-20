@@ -127,6 +127,20 @@ namespace {
 		EXPECT_EQ(ntscState.StatusRegister & VdpStatus::PalMode, 0u);
 	}
 
+	TEST(GenesisVdpObjectRunSafetyTests, FullFrameRunWithNullEmulatorDoesNotCrashAtFrameBoundary) {
+		GenesisVdp vdp;
+		vdp.Init(nullptr, nullptr, nullptr, nullptr);
+
+		constexpr uint64_t clocksPerLine = 488ull;
+		constexpr uint64_t ntscLines = 262ull;
+		vdp.Run(clocksPerLine * ntscLines);
+
+		GenesisVdpState state = vdp.GetState();
+		EXPECT_EQ(state.FrameCount, 1u);
+		EXPECT_EQ(state.VCounter, 0u);
+		EXPECT_EQ(state.HCounter, 0u);
+	}
+
 	TEST(GenesisVdpObjectRunSafetyTests, ResetAppliesStartupDefaultsForModeAndAutoIncrement) {
 		GenesisVdp vdp;
 		vdp.Init(nullptr, nullptr, nullptr, nullptr);
