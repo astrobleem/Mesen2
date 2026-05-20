@@ -35,7 +35,8 @@ namespace {
 		// Write reg1 display enable during active display.
 		WriteVdpRegister(scaffold.GetBus(), 1, 0x40);
 		EXPECT_EQ(scaffold.GetBus().GetVdpRegister(1), 0x40u);
-		EXPECT_TRUE((scaffold.GetBus().GetVdpStatus() & 0x0008u) != 0);
+		// Bit 3 is VBlank status and must remain clear on active scanlines.
+		EXPECT_TRUE((scaffold.GetBus().GetVdpStatus() & 0x0008u) == 0);
 	}
 
 	TEST(GenesisVdpActiveScanlineRegisterTests, MidFrameDisplayEnableToggleAffectsStatusBit) {
@@ -45,20 +46,20 @@ namespace {
 		// Advance to scanline 50.
 		scaffold.StepFrameScaffold(CyclesPerScanline * 50);
 
-		// Enable display → status bit 3 set.
+		// Enable display during active scanline: VBlank status bit stays clear.
 		WriteVdpRegister(scaffold.GetBus(), 1, 0x40);
-		EXPECT_TRUE((scaffold.GetBus().GetVdpStatus() & 0x0008u) != 0);
+		EXPECT_TRUE((scaffold.GetBus().GetVdpStatus() & 0x0008u) == 0);
 
 		// Advance a few more scanlines while display is still active.
 		scaffold.StepFrameScaffold(CyclesPerScanline * 5);
 
-		// Disable display mid-frame → status bit 3 cleared.
+		// Disable display mid-frame: VBlank status bit remains clear.
 		WriteVdpRegister(scaffold.GetBus(), 1, 0x00);
 		EXPECT_TRUE((scaffold.GetBus().GetVdpStatus() & 0x0008u) == 0);
 
-		// Re-enable → status bit 3 set again.
+		// Re-enable: still active scanline, VBlank status bit remains clear.
 		WriteVdpRegister(scaffold.GetBus(), 1, 0x40);
-		EXPECT_TRUE((scaffold.GetBus().GetVdpStatus() & 0x0008u) != 0);
+		EXPECT_TRUE((scaffold.GetBus().GetVdpStatus() & 0x0008u) == 0);
 	}
 
 	TEST(GenesisVdpActiveScanlineRegisterTests, MultipleRegisterWritesWithinSingleScanlineAllApplied) {
@@ -190,7 +191,7 @@ namespace {
 		// Step 1: Enable display.
 		WriteVdpRegister(scaffold.GetBus(), 1, 0x40);
 		EXPECT_EQ(scaffold.GetBus().GetVdpRegister(1), 0x40u);
-		EXPECT_TRUE((scaffold.GetBus().GetVdpStatus() & 0x0008u) != 0);
+		EXPECT_TRUE((scaffold.GetBus().GetVdpStatus() & 0x0008u) == 0);
 
 		// Step 2: Command word.
 		WriteVdpCommand(scaffold.GetBus(), 0x4000);
