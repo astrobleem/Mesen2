@@ -684,25 +684,6 @@ void GenesisVdp::Run(uint64_t targetCycle) {
 			_scanline++;
 			_state.VCounter = VCounterValue(_scanline);
 
-			if (_scanline == _screenHeight) {
-				_state.StatusRegister |= VdpStatus::VBlankFlag;
-				_vblankEnteredThisFrame = true;
-
-				if (!_vintFiredThisFrame) {
-					_vintFiredThisFrame = true;
-					_vintPending = true;
-					_state.StatusRegister |= VdpStatus::VIntPending;
-					if (IsVBlankInterruptEnabled()) {
-						_vintNew = true;
-						if (_cpu) {
-							_cpu->SetInterrupt(6);
-						}
-					} else {
-						_vintNew = false;
-					}
-				}
-			}
-
 			// Latch mode/display at scanline boundaries to avoid mid-line timing drift.
 			_lineDisplayEnabled = IsDisplayEnabled();
 			_lineH40Mode = IsH40Mode();

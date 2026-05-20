@@ -2208,7 +2208,7 @@ namespace {
 		expectBackdrop(0x0e00, 0x7c00);
 	}
 
-	TEST(GenesisVdpObjectRunSafetyTests, VBlankAndVIntStartAtFirstVBlankLineBoundary) {
+	TEST(GenesisVdpObjectRunSafetyTests, VBlankAndVIntAreDeferredWithinFirstVBlankLine) {
 		Emulator emu;
 		emu.Initialize(false);
 		GenesisM68k cpu;
@@ -2218,27 +2218,23 @@ namespace {
 		// Enable VBlank interrupt while keeping display disabled startup mode.
 		vdp.WriteControlPort(0x8124);
 
-		GenesisVdpState prev = vdp.GetState();
-		bool reachedVBlankBoundary = false;
-		constexpr uint32_t MaxCycles = 200000;
+		constexpr uint64_t clocksPerLine = 488ull;
+		uint64_t vblankLineStart = clocksPerLine * 224ull;
 
-		for (uint32_t cycle = 1; cycle <= MaxCycles; cycle++) {
-			vdp.Run(cycle);
-			GenesisVdpState curr = vdp.GetState();
+		vdp.Run(vblankLineStart);
+		GenesisVdpState atBoundary = vdp.GetState();
+		EXPECT_EQ(atBoundary.VCounter, 224u);
+		EXPECT_EQ(atBoundary.HCounter, 0u);
+		EXPECT_EQ(atBoundary.StatusRegister & VdpStatus::VBlankFlag, 0u);
+		EXPECT_EQ(atBoundary.StatusRegister & VdpStatus::VIntPending, 0u);
 
-			if (curr.VCounter == 224 && curr.HCounter == 0) {
-				reachedVBlankBoundary = true;
-				EXPECT_EQ(prev.VCounter, 223u);
-				EXPECT_EQ(prev.StatusRegister & VdpStatus::VBlankFlag, 0u);
-				EXPECT_NE(curr.StatusRegister & VdpStatus::VBlankFlag, 0u);
-				EXPECT_NE(curr.StatusRegister & VdpStatus::VIntPending, 0u);
-				break;
-			}
+		vdp.Run(vblankLineStart + 64ull);
+		GenesisVdpState afterVblankDelay = vdp.GetState();
+		EXPECT_NE(afterVblankDelay.StatusRegister & VdpStatus::VBlankFlag, 0u);
 
-			prev = curr;
-		}
-
-		EXPECT_TRUE(reachedVBlankBoundary);
+		vdp.Run(vblankLineStart + 128ull);
+		GenesisVdpState afterVintDelay = vdp.GetState();
+		EXPECT_NE(afterVintDelay.StatusRegister & VdpStatus::VIntPending, 0u);
 	}
 
 	TEST(GenesisVdpObjectRunSafetyTests, FrameStartBoundaryClearsVBlankFlag) {
