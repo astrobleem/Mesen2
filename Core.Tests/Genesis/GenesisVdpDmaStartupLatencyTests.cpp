@@ -443,6 +443,47 @@ namespace {
 		EXPECT_EQ(afterSecondSlot.StatusRegister & VdpStatus::DmaBusy, 0);
 	}
 
+	TEST(GenesisVdpDmaStartupLatencyTests, ActiveDisplayBusDmaDefersUntilQueuedDataWriteFifoEntryDrains) {
+		vector<uint8_t> rom = BuildDmaSourceRom();
+
+		Emulator emu;
+		emu.Initialize(false);
+		GenesisMemoryManager mm;
+		mm.Init(&emu, nullptr, rom, nullptr, nullptr, nullptr);
+
+		GenesisVdp vdp;
+		vdp.Init(&emu, nullptr, nullptr, &mm);
+		ConfigureBusDmaTransfer(vdp, true, 0x02);
+
+		// Queue a normal data-port write while bus DMA is active.
+		vdp.WriteDataPort(0x1122u);
+		uint8_t* vram = vdp.GetVramPointer();
+
+		vdp.Run(40);
+		GenesisVdpState beforeSlot = vdp.GetState();
+		EXPECT_TRUE(beforeSlot.DmaActive);
+		EXPECT_EQ(beforeSlot.Registers[19], 0x02);
+		EXPECT_EQ(vram[0x0000], 0x00);
+		EXPECT_EQ(vram[0x0002], 0x00);
+
+		// First external slot drains queued write, DMA length must not decrement.
+		vdp.Run(41);
+		GenesisVdpState afterFirstSlot = vdp.GetState();
+		EXPECT_TRUE(afterFirstSlot.DmaActive);
+		EXPECT_EQ(afterFirstSlot.Registers[19], 0x02);
+		EXPECT_EQ(vram[0x0000], 0x11);
+		EXPECT_EQ(vram[0x0001], 0x22);
+		EXPECT_EQ(vram[0x0002], 0x00);
+
+		// Next eligible slot performs first DMA transfer.
+		vdp.Run(43);
+		GenesisVdpState afterSecondSlot = vdp.GetState();
+		EXPECT_TRUE(afterSecondSlot.DmaActive);
+		EXPECT_EQ(afterSecondSlot.Registers[19], 0x01);
+		EXPECT_EQ(vram[0x0002], 0x00);
+		EXPECT_EQ(vram[0x0003], 0xFF);
+	}
+
 	TEST(GenesisVdpDmaStartupLatencyTests, BusDmaSourceWritebackPreservesR23LatchedValueAfterFirstSlot) {
 		vector<uint8_t> rom((size_t)0x900000, 0);
 		rom[0x000000] = 0x11;

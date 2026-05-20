@@ -23,6 +23,9 @@ namespace {
 		GenesisVdpState preRunState = vdp.GetState();
 		EXPECT_TRUE(preRunState.DmaActive);
 
+		// Fill DMA starts when the first post-trigger data-port write provides seed data.
+		vdp.WriteDataPort(0x00ff);
+
 		// One scanline is sufficient for this simplified VDP model to process DMA.
 		vdp.Run(488);
 

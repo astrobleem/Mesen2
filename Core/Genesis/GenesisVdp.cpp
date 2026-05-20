@@ -692,27 +692,6 @@ void GenesisVdp::Run(uint64_t targetCycle) {
 			// Keep startup timing checkpoints stable on 68K line boundaries.
 			_currentLineCycleTarget = 488;
 
-			// Assert VBlank flag and fire VInt immediately at the first VBlank scanline
-			// boundary so that the status register is consistent when HCounter resets to 0.
-			if (_scanline == _screenHeight) {
-				_vblankEnteredThisFrame = true;
-				_state.StatusRegister |= VdpStatus::VBlankFlag;
-				if (!_vintFiredThisFrame) {
-					_vintFiredThisFrame = true;
-					_vintPending = true;
-					if (IsVBlankInterruptEnabled()) {
-						_vintNew = true;
-						_state.StatusRegister |= VdpStatus::VIntPending;
-						if (_cpu) {
-							_cpu->SetInterrupt(6);
-						}
-					} else {
-						_vintNew = false;
-						_state.StatusRegister |= VdpStatus::VIntPending;
-					}
-				}
-			}
-
 			if (_scanline >= _totalLines) {
 				// End of frame
 				_scanline = 0;
@@ -1852,6 +1831,12 @@ void GenesisVdp::ProcessDma() {
 		}
 
 		if (activeDisplay) {
+			// External slots are shared with queued data-port writes during active display.
+			// Drain queued writes first before advancing bus DMA.
+			if (_writeFifoCount > 0) {
+				return;
+			}
+
 			_dmaBusCycleRemainder = 0;
 			if (!CanConsumeActiveDisplayDmaSlot()) {
 				return;

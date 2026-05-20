@@ -5747,6 +5747,7 @@ void GenesisMemoryManager::ResetRuntimeState(bool hardReset) {
 	_m32xHostDeterminismLatch = 0;
 
 	ClearDebugTranscriptLane();
+	TraceStartupEvent("STARTUP_BOOT", 0x000000, 0, 0);
 }
 
 
