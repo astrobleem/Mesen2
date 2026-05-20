@@ -1559,14 +1559,6 @@ void GenesisM68kBoundaryScaffold::AdvanceTiming(uint32_t cpuCycles) {
 	while (_timingCycleRemainder >= TimingCyclesPerScanline) {
 		_timingCycleRemainder -= TimingCyclesPerScanline;
 		uint32_t nextScanline = _timingScanline + 1;
-		bool enteringVBlank = !_inVBlank && nextScanline == TimingActiveDisplayScanlines;
-		if (enteringVBlank) {
-			_inVBlank = true;
-			_vblankEnterCount++;
-			_bus.SetVdpVBlankState(true);
-			_timingEvents.push_back(std::format("VBLANK_ENTER frame={} scanline={}", _timingFrame, nextScanline));
-		}
-
 		_timingScanline = nextScanline;
 
 		bool hintWindow = !_inVBlank && _timingScanline > 0;
@@ -1576,16 +1568,25 @@ void GenesisM68kBoundaryScaffold::AdvanceTiming(uint32_t cpuCycles) {
 			_timingEvents.push_back(std::format("HINT frame={} scanline={} count={}", _timingFrame, _timingScanline, _hInterruptCount));
 		}
 
+		bool enteringVBlank = !_inVBlank && _timingScanline == TimingActiveDisplayScanlines;
+		if (enteringVBlank) {
+			_inVBlank = true;
+			_vblankEnterCount++;
+			_bus.SetVdpVBlankState(true);
+			_timingEvents.push_back(std::format("VBLANK_ENTER frame={} scanline={}", _timingFrame, _timingScanline));
+		}
+
 		if (_timingScanline >= TimingScanlinesPerFrame) {
+			uint32_t nextFrame = _timingFrame + 1;
 			if (_vInterruptEnabled) {
 				_cpu.SetInterrupt(6);
 				_bus.SetVdpInterruptPending(true);
 				_vInterruptCount++;
-				_timingEvents.push_back(std::format("VINT frame={} count={}", _timingFrame + 1, _vInterruptCount));
+				_timingEvents.push_back(std::format("VINT frame={} count={}", nextFrame, _vInterruptCount));
 			}
 
 			_timingScanline = 0;
-			_timingFrame++;
+			_timingFrame = nextFrame;
 			if (_inVBlank) {
 				_inVBlank = false;
 				_vblankExitCount++;

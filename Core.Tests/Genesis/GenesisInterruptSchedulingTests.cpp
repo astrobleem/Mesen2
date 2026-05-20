@@ -85,7 +85,7 @@ namespace {
 		const vector<string>& events = scaffold.GetTimingEvents();
 
 		ASSERT_GE(events.size(), 4u);
-		EXPECT_TRUE(events.at(events.size() - 4).starts_with("HINT frame=0 scanline=223"));
+		EXPECT_TRUE(events.at(events.size() - 4).starts_with("HINT frame=0 scanline=224"));
 		EXPECT_TRUE(events.at(events.size() - 3).starts_with("VBLANK_ENTER frame=0 scanline=224"));
 		EXPECT_TRUE(events.at(events.size() - 2).starts_with("VINT frame=1"));
 		EXPECT_TRUE(events.at(events.size() - 1).starts_with("VBLANK_EXIT frame=1"));

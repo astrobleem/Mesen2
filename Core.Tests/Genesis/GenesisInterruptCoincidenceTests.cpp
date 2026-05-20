@@ -67,10 +67,21 @@ namespace {
 		EXPECT_EQ(scaffold.GetHorizontalInterruptCount(), expectedHints);
 		EXPECT_EQ(scaffold.GetVerticalInterruptCount(), 1u);
 
-		// V-INT should always be the last event in the frame.
+		// V-INT should occur after the last H-INT in the frame.
 		const auto& events = scaffold.GetTimingEvents();
 		ASSERT_FALSE(events.empty());
-		EXPECT_TRUE(events.back().starts_with("VINT "));
+		size_t lastHint = 0;
+		size_t vintPos = events.size();
+		for (size_t i = 0; i < events.size(); i++) {
+			if (events[i].starts_with("HINT ")) {
+				lastHint = i;
+			}
+			if (events[i].starts_with("VINT ")) {
+				vintPos = i;
+			}
+		}
+		ASSERT_LT(vintPos, events.size());
+		EXPECT_LT(lastHint, vintPos);
 	}
 
 	TEST(GenesisInterruptCoincidenceTests, CoincidenceWindowOrderingIsHIntThenVInt) {
