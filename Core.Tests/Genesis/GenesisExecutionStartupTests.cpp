@@ -1046,3 +1046,46 @@ TEST(GenesisExecutionStartupTests, ResetPathProfileAndEnableTmssTransitionsRemai
 	EXPECT_EQ(std::get<2>(logoCompatDisabled), true);
 	EXPECT_EQ(std::get<3>(logoCompatDisabled), true);
 }
+
+TEST(GenesisExecutionStartupTests, ResetClearsTmssUnlockPendingStateUnderStrictProfile) {
+	ScopedStartupEnv strictEnv({
+		{ "NEXEN_GENESIS_STARTUP_PROFILE", "strict" },
+		{ "NEXEN_GENESIS_TMSS_STRICT", "1" },
+		{ "NEXEN_GENESIS_TMSS_FORCE_UNTIL_UNLOCK", "1" },
+		{ "NEXEN_GENESIS_TMSS_UNLOCK_DELAY_MCLK", "64" }
+	});
+
+	constexpr uint32_t InitialSp = 0x00FFFE00;
+	constexpr uint32_t InitialPc = 0x00000100;
+	std::vector<uint8_t> romData = BuildNopBootRom(InitialSp, InitialPc, 0x4000, true);
+	VirtualFile rom(romData.data(), romData.size(), "boot-tmss-reset-clear-pending.md");
+	Emulator emu;
+	emu.GetSettings()->GetGenesisConfig().EnableTmss = true;
+	GenesisConsole console(&emu);
+
+	ASSERT_EQ(console.LoadRom(rom), LoadRomResult::Success);
+	ASSERT_NE(console.GetMemoryManager(), nullptr);
+	auto* mm = console.GetMemoryManager();
+
+	mm->Write8(0xA14000, 'S');
+	mm->Write8(0xA14001, 'E');
+	mm->Write8(0xA14002, 'G');
+	mm->Write8(0xA14003, 'A');
+	mm->Exec(4);
+
+	EXPECT_TRUE(mm->GetTmssUnlockPending());
+	EXPECT_FALSE(mm->GetTmssUnlocked());
+	EXPECT_GT(mm->GetTmssUnlockDelayMclk(), 0u);
+	EXPECT_FALSE(mm->IsTmssLockedReadAllowedForAddr(0xC00000));
+	EXPECT_FALSE(mm->IsTmssLockedWriteAllowedForAddr(0xC00000));
+
+	console.Reset();
+	ASSERT_NE(console.GetMemoryManager(), nullptr);
+	mm = console.GetMemoryManager();
+
+	EXPECT_FALSE(mm->GetTmssUnlockPending());
+	EXPECT_FALSE(mm->GetTmssUnlocked());
+	EXPECT_EQ(mm->GetTmssUnlockDelayMclk(), 0u);
+	EXPECT_FALSE(mm->IsTmssLockedReadAllowedForAddr(0xC00000));
+	EXPECT_FALSE(mm->IsTmssLockedWriteAllowedForAddr(0xC00000));
+}
