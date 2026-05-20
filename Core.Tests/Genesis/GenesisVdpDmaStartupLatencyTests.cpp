@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Genesis/GenesisVdp.h"
 #include "Genesis/GenesisMemoryManager.h"
 #include "Shared/Emulator.h"
@@ -796,6 +796,119 @@ namespace {
 		EXPECT_EQ(afterSecondSlot.AddressRegister, 0x0004);
 		EXPECT_EQ(vram[0x0002], 0x77);
 		EXPECT_EQ(afterSecondSlot.StatusRegister & VdpStatus::DmaBusy, 0);
+	}
+
+	TEST(GenesisVdpDmaStartupLatencyTests, VramCopySourceUsesTriggerLatchedRegistersDespitePostTriggerR21Write) {
+		vector<uint8_t> rom = BuildDmaSourceRom();
+
+		Emulator emu;
+		emu.Initialize(false);
+		GenesisMemoryManager mm;
+		mm.Init(&emu, nullptr, rom, nullptr, nullptr, nullptr);
+
+		GenesisVdp vdp;
+		vdp.Init(&emu, nullptr, nullptr, &mm);
+
+		vdp.WriteControlPort(0x8150); // DMA + display enable
+		vdp.WriteControlPort(0x8c01); // H40
+		vdp.WriteControlPort(0x8f02); // auto-increment = 2
+		vdp.WriteControlPort(0x9301); // length low = 1 unit
+		vdp.WriteControlPort(0x9400); // length high
+		vdp.WriteControlPort(0x9510); // copy source low
+		vdp.WriteControlPort(0x9600); // copy source high
+		vdp.WriteControlPort(0x97c0); // copy mode (mode 3)
+
+		vdp.WriteControlPort(0x4000);
+		vdp.WriteControlPort(0x0080);
+
+		uint8_t* vram = vdp.GetVramPointer();
+		vram[0x0010] = 0x66;
+		vram[0x0020] = 0x99;
+
+		WriteReg(vdp, 21, 0x20); // mutate live source low byte after trigger
+
+		vdp.Run(41);
+		GenesisVdpState done = vdp.GetState();
+		EXPECT_FALSE(done.DmaActive);
+		EXPECT_EQ(done.Registers[19], 0x00);
+		EXPECT_EQ(done.AddressRegister, 0x0002);
+		EXPECT_EQ(done.StatusRegister & VdpStatus::DmaBusy, 0);
+		EXPECT_EQ(vram[0x0000], 0x66);
+	}
+
+	TEST(GenesisVdpDmaStartupLatencyTests, VramCopySourceUsesTriggerLatchedRegistersDespitePostTriggerR22Write) {
+		vector<uint8_t> rom = BuildDmaSourceRom();
+
+		Emulator emu;
+		emu.Initialize(false);
+		GenesisMemoryManager mm;
+		mm.Init(&emu, nullptr, rom, nullptr, nullptr, nullptr);
+
+		GenesisVdp vdp;
+		vdp.Init(&emu, nullptr, nullptr, &mm);
+
+		vdp.WriteControlPort(0x8150); // DMA + display enable
+		vdp.WriteControlPort(0x8c01); // H40
+		vdp.WriteControlPort(0x8f02); // auto-increment = 2
+		vdp.WriteControlPort(0x9301); // length low = 1 unit
+		vdp.WriteControlPort(0x9400); // length high
+		vdp.WriteControlPort(0x9510); // copy source low
+		vdp.WriteControlPort(0x9600); // copy source high
+		vdp.WriteControlPort(0x97c0); // copy mode (mode 3)
+
+		vdp.WriteControlPort(0x4000);
+		vdp.WriteControlPort(0x0080);
+
+		uint8_t* vram = vdp.GetVramPointer();
+		vram[0x0010] = 0x66;
+		vram[0x0110] = 0x99;
+
+		WriteReg(vdp, 22, 0x01); // mutate live source high byte after trigger
+
+		vdp.Run(41);
+		GenesisVdpState done = vdp.GetState();
+		EXPECT_FALSE(done.DmaActive);
+		EXPECT_EQ(done.Registers[19], 0x00);
+		EXPECT_EQ(done.AddressRegister, 0x0002);
+		EXPECT_EQ(done.StatusRegister & VdpStatus::DmaBusy, 0);
+		EXPECT_EQ(vram[0x0000], 0x66);
+	}
+
+	TEST(GenesisVdpDmaStartupLatencyTests, VramCopyModeUsesTriggerLatchedModeDespitePostTriggerR23Write) {
+		vector<uint8_t> rom = BuildDmaSourceRom();
+
+		Emulator emu;
+		emu.Initialize(false);
+		GenesisMemoryManager mm;
+		mm.Init(&emu, nullptr, rom, nullptr, nullptr, nullptr);
+
+		GenesisVdp vdp;
+		vdp.Init(&emu, nullptr, nullptr, &mm);
+
+		vdp.WriteControlPort(0x8150); // DMA + display enable
+		vdp.WriteControlPort(0x8c01); // H40
+		vdp.WriteControlPort(0x8f02); // auto-increment = 2
+		vdp.WriteControlPort(0x9301); // length low = 1 unit
+		vdp.WriteControlPort(0x9400); // length high
+		vdp.WriteControlPort(0x9510); // copy source low
+		vdp.WriteControlPort(0x9600); // copy source high
+		vdp.WriteControlPort(0x97c0); // copy mode (mode 3)
+
+		vdp.WriteControlPort(0x4000);
+		vdp.WriteControlPort(0x0080);
+
+		uint8_t* vram = vdp.GetVramPointer();
+		vram[0x0010] = 0x66;
+
+		WriteReg(vdp, 23, 0x40); // switch live mode bits to bus DMA after trigger
+
+		vdp.Run(41);
+		GenesisVdpState done = vdp.GetState();
+		EXPECT_FALSE(done.DmaActive);
+		EXPECT_EQ(done.Registers[19], 0x00);
+		EXPECT_EQ(done.AddressRegister, 0x0002);
+		EXPECT_EQ(done.StatusRegister & VdpStatus::DmaBusy, 0);
+		EXPECT_EQ(vram[0x0000], 0x66);
 	}
 
 	TEST(GenesisVdpDmaStartupLatencyTests, ActiveDisplayVramCopyWithAutoIncrement4AdvancesOnExternalSlots) {
