@@ -970,3 +970,79 @@ TEST(GenesisExecutionStartupTests, RuntimeEnableTmssToggleRemainsAuthoritativeAc
 	EXPECT_EQ(std::get<2>(tmssEnabled), false);
 	EXPECT_EQ(std::get<3>(tmssEnabled), false);
 }
+
+TEST(GenesisExecutionStartupTests, ResetPathProfileAndEnableTmssTransitionsRemainIsolatedWithinSingleHarness) {
+	constexpr uint32_t InitialSp = 0x00FFFE00;
+	constexpr uint32_t InitialPc = 0x00000100;
+	std::vector<uint8_t> romData = BuildNopBootRom(InitialSp, InitialPc, 0x4000, true);
+	VirtualFile rom(romData.data(), romData.size(), "boot-tmss-reset-transition.md");
+	Emulator emu;
+	GenesisConsole console(&emu);
+
+	auto captureState = [&console]() {
+		auto* mm = console.GetMemoryManager();
+		if (!mm) {
+			return std::tuple<bool, bool, bool, bool>(false, false, false, false);
+		}
+
+		return std::tuple<bool, bool, bool, bool>(
+			mm->GetTmssEnabled(),
+			mm->GetTmssStrictMode(),
+			mm->IsTmssLockedReadAllowedForAddr(0xC00000),
+			mm->IsTmssLockedWriteAllowedForAddr(0xC00000));
+	};
+
+	std::tuple<bool, bool, bool, bool> strictA = {};
+	std::tuple<bool, bool, bool, bool> logoCompatDisabled = {};
+	std::tuple<bool, bool, bool, bool> strictB = {};
+
+	{
+		ScopedStartupEnv strictEnv({
+			{ "NEXEN_GENESIS_STARTUP_PROFILE", "strict" },
+			{ "NEXEN_GENESIS_TMSS_STRICT", "1" },
+			{ "NEXEN_GENESIS_TMSS_FORCE_UNTIL_UNLOCK", "1" },
+			{ "NEXEN_GENESIS_TMSS_UNLOCK_DELAY_MCLK", "64" }
+		});
+
+		emu.GetSettings()->GetGenesisConfig().EnableTmss = true;
+		ASSERT_EQ(console.LoadRom(rom), LoadRomResult::Success);
+		strictA = captureState();
+	}
+
+	{
+		ScopedStartupEnv logoCompatEnv({
+			{ "NEXEN_GENESIS_STARTUP_PROFILE", "logo-compat" },
+			{ "NEXEN_GENESIS_TMSS_STRICT", "0" },
+			{ "NEXEN_GENESIS_TMSS_FORCE_UNTIL_UNLOCK", "0" },
+			{ "NEXEN_GENESIS_TMSS_UNLOCK_DELAY_MCLK", "0" }
+		});
+
+		emu.GetSettings()->GetGenesisConfig().EnableTmss = false;
+		console.Reset();
+		logoCompatDisabled = captureState();
+	}
+
+	{
+		ScopedStartupEnv strictEnv({
+			{ "NEXEN_GENESIS_STARTUP_PROFILE", "strict" },
+			{ "NEXEN_GENESIS_TMSS_STRICT", "1" },
+			{ "NEXEN_GENESIS_TMSS_FORCE_UNTIL_UNLOCK", "1" },
+			{ "NEXEN_GENESIS_TMSS_UNLOCK_DELAY_MCLK", "64" }
+		});
+
+		emu.GetSettings()->GetGenesisConfig().EnableTmss = true;
+		console.Reset();
+		strictB = captureState();
+	}
+
+	EXPECT_EQ(strictA, strictB);
+
+	EXPECT_EQ(std::get<0>(strictA), true);
+	EXPECT_EQ(std::get<1>(strictA), true);
+	EXPECT_EQ(std::get<2>(strictA), false);
+	EXPECT_EQ(std::get<3>(strictA), false);
+
+	EXPECT_EQ(std::get<0>(logoCompatDisabled), false);
+	EXPECT_EQ(std::get<2>(logoCompatDisabled), true);
+	EXPECT_EQ(std::get<3>(logoCompatDisabled), true);
+}
