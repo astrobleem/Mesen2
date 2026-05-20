@@ -795,7 +795,7 @@ namespace {
 		EXPECT_EQ(vram[0x0006], 0x34);
 	}
 
-	TEST(GenesisVdpDmaStartupLatencyTests, DmaFillToCramUsesLatchedFillWordAndMasksTo0Eee) {
+	TEST(GenesisVdpDmaStartupLatencyTests, DmaFillToCramUsesLatchedFillWordWithoutMasking) {
 		vector<uint8_t> rom = BuildDmaSourceRom();
 
 		Emulator emu;
@@ -821,7 +821,7 @@ namespace {
 		vdp.Run(80);
 
 		uint16_t* cram = vdp.GetCramPointer();
-		EXPECT_EQ(cram[0], (uint16_t)(0x0ACFu & 0x0EEEu));
+		EXPECT_EQ(cram[0], 0x0ACFu);
 
 		GenesisVdpState state = vdp.GetState();
 		EXPECT_EQ(state.Registers[15], 0x02);

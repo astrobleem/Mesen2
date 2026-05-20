@@ -348,7 +348,7 @@ namespace {
 		EXPECT_EQ((uint16_t)(state.AddressRegister - beforeWrite.AddressRegister), (uint16_t)beforeWrite.Registers[15]);
 	}
 
-	TEST(GenesisVdpReadPortParityTests, CramWriteMasksToHardwareColorBits) {
+	TEST(GenesisVdpReadPortParityTests, CramWritePreservesFullWordReadback) {
 		GenesisVdp vdp;
 		vdp.Init(nullptr, nullptr, nullptr, nullptr);
 
@@ -356,11 +356,11 @@ namespace {
 		vdp.WriteDataPort(0xFFFF);
 
 		uint16_t* cram = vdp.GetCramPointer();
-		EXPECT_EQ(cram[0], 0x0eeeu);
+		EXPECT_EQ(cram[0], 0xFFFFu);
 
 		SetDataPortReadCram(vdp, 0x0000);
 		uint16_t first = vdp.ReadDataPort();
-		EXPECT_EQ(first, 0x0eeeu);
+		EXPECT_EQ(first, 0xFFFFu);
 	}
 
 	TEST(GenesisVdpReadPortParityTests, VsramWriteMirrorsOutOfRangeAddressesUsingHardwareMask) {

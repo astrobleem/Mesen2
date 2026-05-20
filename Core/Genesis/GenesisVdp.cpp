@@ -1611,7 +1611,7 @@ void GenesisVdp::ApplyPortWrite(uint8_t accessMode, uint16_t address, uint16_t v
 		}
 		case 0x03: {
 			uint8_t idx = (uint8_t)((address >> 1) & 0x3Fu);
-			_cram[idx] = (uint16_t)(value & 0x0eeeu);
+			_cram[idx] = value;
 			UpdatePaletteEntry(idx);
 			break;
 		}
@@ -1909,7 +1909,7 @@ void GenesisVdp::ProcessDma() {
 				}
 				case 0x03: {
 					uint8_t idx = (uint8_t)((dmaDst >> 1) & 0x3Fu);
-					_cram[idx] = word & 0x0EEEu;
+					_cram[idx] = word;
 					UpdatePaletteEntry(idx);
 					break;
 				}
@@ -1953,7 +1953,7 @@ void GenesisVdp::ProcessDma() {
 					break;
 				case 0x03u: {
 					uint8_t idx = (uint8_t)((addr >> 1) & 0x3Fu);
-					_cram[idx] = (uint16_t)(fillWord & 0x0EEEu);
+					_cram[idx] = fillWord;
 					UpdatePaletteEntry(idx);
 					break;
 				}
