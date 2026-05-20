@@ -672,7 +672,7 @@ void GenesisVdp::Run(uint64_t targetCycle) {
 
 		if (_writeFifoCount > 0) {
 			bool activeDisplay = IsDisplayEnabled() && _scanline < _screenHeight;
-			if (!activeDisplay || IsActiveDisplayExternalDmaSlot()) {
+			if (!activeDisplay || CanConsumeActiveDisplayDmaSlot()) {
 				DrainWriteFifoOne();
 			}
 		}
@@ -1872,6 +1872,12 @@ void GenesisVdp::ProcessDma() {
 	}
 
 	if ((_dmaLatchedMode == 2 || _dmaLatchedMode == 3) && activeDisplay) {
+		// External slots are shared with data-port FIFO writes during active display.
+		// Match expanded behavior by draining queued port writes first.
+		if (_writeFifoCount > 0) {
+			return;
+		}
+
 		if (!CanConsumeActiveDisplayDmaSlot()) {
 			return;
 		}
