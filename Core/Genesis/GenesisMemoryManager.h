@@ -120,6 +120,13 @@ private:
 	bool _startupTmssUnlockLogged = false;
 	uint32_t _startupTraceSequence = 0;
 	uint32_t _startupEarlyCpuProbeCount = 0;
+	bool _startupSetupHasLastD6 = false;
+	uint16_t _startupSetupLastD6 = 0;
+	uint32_t _startupSetupD6ChangeEmitCount = 0;
+	uint32_t _startupEarlyPcEmitCount = 0;
+	uint32_t _startupD6SeedWindowEmitCount = 0;
+	uint32_t _startupMovemWindowEmitCount = 0;
+	uint32_t _startupLowD6EmitCount = 0;
 	uint64_t _startupTraceDigest = 0;
 	bool _startupHasNexenClockAnchor = false;
 	uint64_t _startupNexenClockAnchor = 0;

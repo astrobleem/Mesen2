@@ -528,6 +528,9 @@ namespace {
 	}
 
 	static void LoadNexenStartupTraceConfigFromEnv() {
+		if (sNexenStartupTraceConfigLoaded) {
+			return;
+		}
 		sNexenStartupTraceConfigLoaded = true;
 
 		// Profile defaults: favor broader Sonic-era startup compatibility while preserving deterministic traces.
@@ -733,6 +736,14 @@ namespace {
 	}
 
 	static bool ShouldLogNexenStartupTrace(uint32_t frame) {
+		LoadNexenStartupTraceConfigFromEnv();
+		if (!sNexenStartupTraceEnabled) {
+			return false;
+		}
+		if (frame > sNexenStartupTraceFrameEnd) {
+			return false;
+		}
+
 		EnsureNexenStartupTraceOpen();
 		if (!sNexenStartupTraceFile) {
 			return false;
@@ -740,6 +751,15 @@ namespace {
 		if (sNexenStartupTraceLines >= sNexenStartupTraceMaxLines) {
 			return false;
 		}
+		return true;
+	}
+
+	static bool ShouldCaptureNexenStartupTrace(uint32_t frame) {
+		LoadNexenStartupTraceConfigFromEnv();
+		if (!sNexenStartupTraceEnabled) {
+			return false;
+		}
+
 		return frame <= sNexenStartupTraceFrameEnd;
 	}
 
@@ -1132,23 +1152,19 @@ void GenesisMemoryManager::UpdateExecutionHeartbeat(uint32_t instructionProgramC
 			TraceStartupEvent("CPU_MMU_PC_SETUP_240", instructionProgramCounter, d5, (uint16_t)(((d7 & 0x00ffu) << 8) | (a5 & 0x00ffu)));
 		}
 		if (frame <= 10u && pc >= 0x000220u && pc <= 0x000260u) {
-			static uint16_t lastD6 = 0;
-			static bool hasLastD6 = false;
-			static uint32_t emitCount = 0;
 			uint16_t d6 = (uint16_t)(cpuState.D[6] & 0xFFFFu);
-			if ((!hasLastD6 || d6 != lastD6) && emitCount < 128u) {
-				hasLastD6 = true;
-				lastD6 = d6;
-				emitCount++;
+			if ((!_startupSetupHasLastD6 || d6 != _startupSetupLastD6) && _startupSetupD6ChangeEmitCount < 128u) {
+				_startupSetupHasLastD6 = true;
+				_startupSetupLastD6 = d6;
+				_startupSetupD6ChangeEmitCount++;
 				uint16_t d5 = (uint16_t)(cpuState.D[5] & 0xFFFFu);
 				uint16_t a6 = (uint16_t)(cpuState.A[6] & 0xFFFFu);
 				TraceStartupEvent("CPU_MMU_PC_SETUP_D6CHG", instructionProgramCounter, d6, (uint16_t)(((d5 & 0x00ffu) << 8) | (a6 & 0x00ffu)));
 			}
 		}
 		if (pc < 0x000300u) {
-			static uint32_t earlyEmitCount = 0;
-			if (earlyEmitCount < 512u) {
-				earlyEmitCount++;
+			if (_startupEarlyPcEmitCount < 512u) {
+				_startupEarlyPcEmitCount++;
 				uint16_t d6 = (uint16_t)(cpuState.D[6] & 0xFFFFu);
 				uint16_t d7 = (uint16_t)(cpuState.D[7] & 0xFFFFu);
 				TraceStartupEvent("CPU_MMU_EARLY_PC", instructionProgramCounter, d6, d7);
@@ -1165,9 +1181,8 @@ void GenesisMemoryManager::TraceCpuEarlyProbe(uint32_t instructionProgramCounter
 	uint32_t pc = instructionProgramCounter & 0x00ffffffu;
 	uint16_t d6 = (uint16_t)(cpuState.D[6] & 0xFFFFu);
 	if (d6 >= 0x0100u && d6 <= 0x0120u) {
-		static uint32_t d6SeedWindowEmitCount = 0;
-		if (d6SeedWindowEmitCount < 1024u) {
-			d6SeedWindowEmitCount++;
+		if (_startupD6SeedWindowEmitCount < 1024u) {
+			_startupD6SeedWindowEmitCount++;
 			uint16_t d5 = (uint16_t)(cpuState.D[5] & 0xFFFFu);
 			uint16_t a6 = (uint16_t)(cpuState.A[6] & 0xFFFFu);
 			TraceStartupEvent("CPU_MMU_D6SEED_WIN", pc, d6, (uint16_t)(((d5 & 0x00ffu) << 8) | (a6 & 0x00ffu)));
@@ -1186,9 +1201,8 @@ void GenesisMemoryManager::TraceCpuEarlyProbe(uint32_t instructionProgramCounter
 	if ((pc == 0x00021au || pc == 0x00021eu || pc == 0x000220u
 		|| pc == 0x00025cu || pc == 0x00025eu || pc == 0x000260u || pc == 0x000262u || pc == 0x000264u)
 		&& _startupEarlyCpuProbeCount <= 72000u) {
-		static uint32_t movemWindowEmitCount = 0;
-		if (movemWindowEmitCount < 1024u) {
-			movemWindowEmitCount++;
+		if (_startupMovemWindowEmitCount < 1024u) {
+			_startupMovemWindowEmitCount++;
 			uint16_t d5 = (uint16_t)(cpuState.D[5] & 0xFFFFu);
 			uint16_t a5 = (uint16_t)(cpuState.A[5] & 0xFFFFu);
 			uint16_t a6 = (uint16_t)(cpuState.A[6] & 0xFFFFu);
@@ -1199,9 +1213,8 @@ void GenesisMemoryManager::TraceCpuEarlyProbe(uint32_t instructionProgramCounter
 	}
 
 	if (d6 <= 0x0020u && pc >= 0x000220u && pc <= 0x000280u) {
-		static uint32_t lowD6EmitCount = 0;
-		if (lowD6EmitCount < 1024u) {
-			lowD6EmitCount++;
+		if (_startupLowD6EmitCount < 1024u) {
+			_startupLowD6EmitCount++;
 			uint16_t d5 = (uint16_t)(cpuState.D[5] & 0xFFFFu);
 			uint16_t a6 = (uint16_t)(cpuState.A[6] & 0xFFFFu);
 			TraceStartupEvent("CPU_MMU_PC_D6LOW", pc, d6, (uint16_t)(((d5 & 0x00ffu) << 8) | (a6 & 0x00ffu)));
@@ -1823,7 +1836,7 @@ void GenesisMemoryManager::EmitStartupTransitionMarkers() {
 	}
 
 	uint32_t frame = _vdp->GetFrameCount();
-	if (!ShouldLogNexenStartupTrace(frame)) {
+	if (!ShouldCaptureNexenStartupTrace(frame)) {
 		return;
 	}
 
@@ -2083,7 +2096,7 @@ void GenesisMemoryManager::TraceStartupEvent(const char* tag, uint32_t addr, uin
 	}
 
 	uint32_t frame = _vdp->GetFrameCount();
-	if (!ShouldLogNexenStartupTrace(frame)) {
+	if (!ShouldCaptureNexenStartupTrace(frame)) {
 		return;
 	}
 
@@ -2137,7 +2150,9 @@ void GenesisMemoryManager::TraceStartupEvent(const char* tag, uint32_t addr, uin
 	_startupTraceDigest *= 1099511628211ull;
 
 	uint16_t line = _vdp->GetScanline();
-	LogNexenStartupTrace(frame, line, tag, addr, value, auxValue, pc, traceClock);
+	if (ShouldLogNexenStartupTrace(frame)) {
+		LogNexenStartupTrace(frame, line, tag, addr, value, auxValue, pc, traceClock);
+	}
 	_startupTraceSequence++;
 }
 
@@ -5631,6 +5646,13 @@ void GenesisMemoryManager::ResetRuntimeState(bool hardReset) {
 	_tmssCartRegister = 0;
 	_startupTraceSequence = 0;
 	_startupEarlyCpuProbeCount = 0;
+	_startupSetupHasLastD6 = false;
+	_startupSetupLastD6 = 0;
+	_startupSetupD6ChangeEmitCount = 0;
+	_startupEarlyPcEmitCount = 0;
+	_startupD6SeedWindowEmitCount = 0;
+	_startupMovemWindowEmitCount = 0;
+	_startupLowD6EmitCount = 0;
 	_startupTraceDigest = 1469598103934665603ull;
 	_startupHasNexenClockAnchor = false;
 	_startupNexenClockAnchor = 0;
