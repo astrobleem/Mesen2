@@ -925,3 +925,48 @@ TEST(GenesisExecutionStartupTests, StartupMixedDelayAndProfileTransitionsRemainI
 	EXPECT_EQ(std::get<3>(strictFast), true);
 	EXPECT_EQ(std::get<4>(strictFast), 0u);
 }
+
+TEST(GenesisExecutionStartupTests, RuntimeEnableTmssToggleRemainsAuthoritativeAcrossConsecutiveHarnessRuns) {
+	auto captureToggleState = [](bool enableTmss) {
+		ScopedStartupEnv env({
+			{ "NEXEN_GENESIS_STARTUP_PROFILE", "strict" },
+			{ "NEXEN_GENESIS_TMSS_STRICT", "1" },
+			{ "NEXEN_GENESIS_TMSS_FORCE_UNTIL_UNLOCK", "1" },
+			{ "NEXEN_GENESIS_TMSS_UNLOCK_DELAY_MCLK", "64" }
+		});
+
+		constexpr uint32_t InitialSp = 0x00FFFE00;
+		constexpr uint32_t InitialPc = 0x00000100;
+		std::vector<uint8_t> romData = BuildNopBootRom(InitialSp, InitialPc, 0x4000, true);
+		VirtualFile rom(romData.data(), romData.size(), "boot-tmss-runtime-toggle.md");
+		Emulator emu;
+		emu.GetSettings()->GetGenesisConfig().EnableTmss = enableTmss;
+		GenesisConsole console(&emu);
+
+		if (console.LoadRom(rom) != LoadRomResult::Success || !console.GetMemoryManager()) {
+			return std::tuple<bool, bool, bool, bool>(false, false, false, false);
+		}
+
+		auto* mm = console.GetMemoryManager();
+		return std::tuple<bool, bool, bool, bool>(
+			mm->GetTmssEnabled(),
+			mm->GetTmssStrictMode(),
+			mm->IsTmssLockedReadAllowedForAddr(0xC00000),
+			mm->IsTmssLockedWriteAllowedForAddr(0xC00000));
+	};
+
+	auto tmssDisabledA = captureToggleState(false);
+	auto tmssEnabled = captureToggleState(true);
+	auto tmssDisabledB = captureToggleState(false);
+
+	EXPECT_EQ(tmssDisabledA, tmssDisabledB);
+
+	EXPECT_EQ(std::get<0>(tmssDisabledA), false);
+	EXPECT_EQ(std::get<2>(tmssDisabledA), true);
+	EXPECT_EQ(std::get<3>(tmssDisabledA), true);
+
+	EXPECT_EQ(std::get<0>(tmssEnabled), true);
+	EXPECT_EQ(std::get<1>(tmssEnabled), true);
+	EXPECT_EQ(std::get<2>(tmssEnabled), false);
+	EXPECT_EQ(std::get<3>(tmssEnabled), false);
+}
