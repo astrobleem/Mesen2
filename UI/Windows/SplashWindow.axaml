@@ -1,4 +1,4 @@
-<Window
+﻿<Window
 	xmlns="https://github.com/avaloniaui"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -9,14 +9,14 @@
 	CanResize="False"
 	WindowDecorations="None"
 	WindowStartupLocation="CenterScreen"
-	Background="Transparent"
+	Background="{DynamicResource NexenStartupWindowBackgroundBrush}"
 	TransparencyLevelHint="Transparent"
 	Topmost="True"
 >
 	<Border
 		CornerRadius="12"
-		Background="#1a1a2e"
-		BorderBrush="#3a3a5e"
+		Background="{DynamicResource NexenStartupSplashBackgroundBrush}"
+		BorderBrush="{DynamicResource NexenStartupSplashBorderBrush}"
 		BorderThickness="1"
 		Padding="24"
 	>
@@ -37,8 +37,8 @@
 				<TextBlock
 					Name="StatusText"
 					Text="Loading..."
-					FontSize="11"
-					Foreground="#6666aa"
+					FontSize="{DynamicResource NexenFontSize}"
+					Foreground="{DynamicResource NexenStartupSplashStatusBrush}"
 					HorizontalAlignment="Center"
 				/>
 				<ProgressBar
@@ -47,8 +47,8 @@
 					Width="200"
 					Height="3"
 					Margin="0 8 0 0"
-					Foreground="#6666cc"
-					Background="#2a2a4e"
+					Foreground="{DynamicResource NexenStartupProgressForegroundBrush}"
+					Background="{DynamicResource NexenStartupProgressBackgroundBrush}"
 				/>
 			</StackPanel>
 		</Grid>

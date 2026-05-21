@@ -205,11 +205,7 @@ public sealed partial class PreferencesConfig : BaseConfig<PreferencesConfig> {
 
 	public static void UpdateTheme() {
 		if (Application.Current is not null) {
-			ThemeVariant newTheme = ConfigManager.Config.Preferences.Theme == NexenTheme.Dark ? ThemeVariant.Dark : ThemeVariant.Light;
-			if (Application.Current.RequestedThemeVariant != newTheme) {
-				ConfigManager.ActiveTheme = ConfigManager.Config.Preferences.Theme;
-				Application.Current.RequestedThemeVariant = newTheme;
-			}
+			NexenThemeManager.ApplyTheme(Application.Current, ConfigManager.Config.Preferences.Theme);
 		}
 	}
 

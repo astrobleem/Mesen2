@@ -28,7 +28,7 @@ public partial class App : Application {
 		string languageCode = StartupLanguageResolver.ResolveLanguageCode(Design.IsDesignMode, ShowConfigWindow, () => ConfigManager.Config.Preferences.UiLanguage);
 		if (!Design.IsDesignMode && !ShowConfigWindow) {
 			try {
-				theme = ConfigManager.Config.Preferences.Theme == NexenTheme.Dark ? ThemeVariant.Dark : ThemeVariant.Light;
+				theme = NexenThemeManager.ResolveThemeVariant(ConfigManager.Config.Preferences.Theme);
 			} catch (Exception ex) {
 				Log.Error(ex, "[App] Failed to read theme preference, defaulting to Light");
 			}

@@ -13,6 +13,7 @@ This directory contains internal development documentation for Nexen contributor
 | [Code Documentation Style](CODE-DOCUMENTATION-STYLE.md) | XML comment style for Doxygen |
 | [Profiling Guide](PROFILING-GUIDE.md) | Performance profiling techniques |
 | [ASan Guide](ASAN-GUIDE.md) | AddressSanitizer for memory debugging |
+| [UI Theme System Guide](ui-theme-system.md) | Centralized brown/orange brand theme tokens and migration guidance for UI contributors |
 
 ## 🎮 Emulation Core Documentation
 
@@ -177,6 +178,7 @@ The Pansy export feature enables exporting and importing debug metadata in a uni
 | [Platform Parity Benchmark and Correctness Gates](plans/platform-parity-benchmark-and-correctness-gates.md) | Cross-phase quality gates and evidence framework (#703) |
 | [Atari 2600 + Genesis Parity Tracker](plans/atari2600-genesis-parity-tracker.md) | Active multi-phase checklist, issue linkage, and closure criteria for parity execution (#750) |
 | [UI Settings Completeness Plan](plans/ui-settings-completeness-epic-18.md) | Epic #1040 execution plan for cross-platform settings/input/movie/savestate UX completeness |
+| [Epic 12 UI Theme System Plan (2026-05-21)](plans/2026-05-21-epic-12-ui-theme-system-plan.md) | Centralized UI theme tokens and brown/orange brand application plan for startup/setup surfaces (#2257-#2260) |
 | [Epic 22 Stability and Modernization Plan](plans/epic-22-stability-modernization-plan-2026-03-28.md) | Execution plan for crash/segfault mitigation, runtime compatibility, warning hardening, and modernization gates (#1048-#1055) |
 | [Modern Library Baseline and Upgrade Policy (2026-03-29)](plans/modern-library-baseline-policy-2026-03-29.md) | Dependency baseline snapshot, upgrade cadence, and rollback criteria for #1050 |
 | [Epic 22 Validation Pack](testing/epic-22-validation-pack-2026-03-28.md) | Build/test/benchmark/runtime evidence snapshot for the 2026-03-28 stabilization pass |

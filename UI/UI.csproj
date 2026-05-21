@@ -92,6 +92,7 @@
 	  <None Remove="Styles\DebugStatusStyles.xaml" />
 	  <None Remove="Styles\DockStyles.xaml" />
 	  <None Remove="Styles\NexenStyles.Light.xaml" />
+	  <None Remove="Styles\NexenBrandTheme.xaml" />
 	  <None Remove="Styles\StartupStyles.xaml" />
 	  <None Remove="Utilities\DipSwitchDefinitions.xml" />
 	</ItemGroup>
@@ -625,6 +626,9 @@
 		<Generator>MSBuild:Compile</Generator>
 	  </AvaloniaResource>
 	  <AvaloniaResource Include="Styles\NexenStyles.Light.xaml">
+		<Generator>MSBuild:Compile</Generator>
+	  </AvaloniaResource>
+	  <AvaloniaResource Include="Styles\NexenBrandTheme.xaml">
 		<Generator>MSBuild:Compile</Generator>
 	  </AvaloniaResource>
 	  <AvaloniaResource Include="Styles\StartupStyles.xaml">

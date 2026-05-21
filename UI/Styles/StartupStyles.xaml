@@ -1,4 +1,4 @@
-<Styles
+﻿<Styles
 	xmlns="https://github.com/avaloniaui"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:sys="using:System"
@@ -10,7 +10,7 @@
 	</Styles.Resources>
 
 	<Style Selector="Window">
-		<Setter Property="Background" Value="#181818"/>
+		<Setter Property="Background" Value="{DynamicResource NexenStartupWindowBackgroundBrush}"/>
 		<Setter Property="Icon" Value="/Assets/NexenIcon.ico" />
 		<Setter Property="Template">
 			<ControlTemplate>
