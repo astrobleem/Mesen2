@@ -101,7 +101,7 @@ public partial class PreferencesConfigView : UserControl {
 		}
 
 		model.ActivateSelectedThemeProfile();
-		await NexenMsgBox.Show(TopLevel.GetTopLevel(this) as Window, "Theme profile applied.", MessageBoxButtons.OK, MessageBoxIcon.Info);
+		await NexenMsgBox.Show(TopLevel.GetTopLevel(this) as Window, "ThemeProfileApplied", MessageBoxButtons.OK, MessageBoxIcon.Info);
 	}
 
 	private async void btnSaveThemeProfile_OnClick(object sender, RoutedEventArgs e) {
@@ -111,7 +111,7 @@ public partial class PreferencesConfigView : UserControl {
 		}
 
 		model.SaveCurrentToSelectedThemeProfile();
-		await NexenMsgBox.Show(TopLevel.GetTopLevel(this) as Window, "Current theme settings saved to profile.", MessageBoxButtons.OK, MessageBoxIcon.Info);
+		await NexenMsgBox.Show(TopLevel.GetTopLevel(this) as Window, "ThemeProfileSaved", MessageBoxButtons.OK, MessageBoxIcon.Info);
 	}
 
 	private async void btnDeleteThemeProfile_OnClick(object sender, RoutedEventArgs e) {
@@ -122,7 +122,7 @@ public partial class PreferencesConfigView : UserControl {
 
 		bool removed = model.DeleteSelectedThemeProfile();
 		if (!removed) {
-			await NexenMsgBox.Show(TopLevel.GetTopLevel(this) as Window, "Unable to delete profile.", MessageBoxButtons.OK, MessageBoxIcon.Info);
+			await NexenMsgBox.Show(TopLevel.GetTopLevel(this) as Window, "ThemeProfileDeleteFailed", MessageBoxButtons.OK, MessageBoxIcon.Info);
 		}
 	}
 
@@ -133,7 +133,7 @@ public partial class PreferencesConfigView : UserControl {
 		}
 
 		if (!model.RenameSelectedThemeProfile()) {
-			await NexenMsgBox.Show(TopLevel.GetTopLevel(this) as Window, "Unable to rename profile.", MessageBoxButtons.OK, MessageBoxIcon.Info);
+			await NexenMsgBox.Show(TopLevel.GetTopLevel(this) as Window, "ThemeProfileRenameFailed", MessageBoxButtons.OK, MessageBoxIcon.Info);
 		}
 	}
 
@@ -144,7 +144,7 @@ public partial class PreferencesConfigView : UserControl {
 		}
 
 		if (!model.DuplicateSelectedThemeProfile()) {
-			await NexenMsgBox.Show(TopLevel.GetTopLevel(this) as Window, "Unable to duplicate profile.", MessageBoxButtons.OK, MessageBoxIcon.Info);
+			await NexenMsgBox.Show(TopLevel.GetTopLevel(this) as Window, "ThemeProfileDuplicateFailed", MessageBoxButtons.OK, MessageBoxIcon.Info);
 		}
 	}
 
@@ -163,14 +163,30 @@ public partial class PreferencesConfigView : UserControl {
 			string json = File.ReadAllText(path);
 			ThemeProfileFile? profileFile = (ThemeProfileFile?)JsonSerializer.Deserialize(json, typeof(ThemeProfileFile), NexenSerializerContext.Default);
 			if (profileFile?.Profile is null || !profileFile.IsValid()) {
-				await NexenMsgBox.Show(TopLevel.GetTopLevel(this) as Window, "Invalid theme profile file.", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				await NexenMsgBox.Show(TopLevel.GetTopLevel(this) as Window, "ThemeProfileImportInvalid", MessageBoxButtons.OK, MessageBoxIcon.Error);
 				return;
 			}
 
-			model.UpsertImportedThemeProfile(profileFile.Profile, true);
-			await NexenMsgBox.Show(TopLevel.GetTopLevel(this) as Window, "Theme profile imported.", MessageBoxButtons.OK, MessageBoxIcon.Info);
+			ThemeProfile importProfile = profileFile.Profile;
+			ThemeProfile? existing = model.Config.GetThemeProfileByName(importProfile.Name);
+			if (existing is not null) {
+				DialogResult overwrite = await NexenMsgBox.Show(
+					TopLevel.GetTopLevel(this) as Window,
+					"ThemeProfileImportConflict",
+					MessageBoxButtons.OKCancel,
+					MessageBoxIcon.Question,
+					importProfile.Name
+				);
+
+				if (overwrite != DialogResult.OK) {
+					importProfile.Name = model.Config.GenerateUniqueThemeProfileName(importProfile.Name);
+				}
+			}
+
+			model.UpsertImportedThemeProfile(importProfile, true);
+			await NexenMsgBox.Show(TopLevel.GetTopLevel(this) as Window, "ThemeProfileImportComplete", MessageBoxButtons.OK, MessageBoxIcon.Info, importProfile.Name);
 		} catch (Exception ex) {
-			await NexenMsgBox.Show(TopLevel.GetTopLevel(this) as Window, "Failed to import profile: " + ex.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
+			await NexenMsgBox.Show(TopLevel.GetTopLevel(this) as Window, "ThemeProfileImportFailed", MessageBoxButtons.OK, MessageBoxIcon.Error, ex.Message);
 		}
 	}
 
@@ -182,7 +198,7 @@ public partial class PreferencesConfigView : UserControl {
 
 		ThemeProfile? profile = model.GetSelectedThemeProfile();
 		if (profile is null) {
-			await NexenMsgBox.Show(TopLevel.GetTopLevel(this) as Window, "No theme profile selected.", MessageBoxButtons.OK, MessageBoxIcon.Info);
+			await NexenMsgBox.Show(TopLevel.GetTopLevel(this) as Window, "ThemeProfileExportNoSelection", MessageBoxButtons.OK, MessageBoxIcon.Info);
 			return;
 		}
 

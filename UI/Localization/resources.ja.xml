@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+﻿<?xml version='1.0' encoding='utf-8'?>
 <Resources>
 	<Forms>
 		<Form ID="MainMenuView">
@@ -674,6 +674,21 @@
 		<Form ID="PreferencesConfigView">
 			<Control ID="tpgGeneral">一般</Control>
 			<Control ID="lblTheme">テーマ:</Control>
+			<Control ID="lblThemeProfiles">テーマプロファイル</Control>
+			<Control ID="lblThemeProfile">プロファイル</Control>
+			<Control ID="btnThemeApply">適用</Control>
+			<Control ID="btnThemeSaveCurrent">現在値を保存</Control>
+			<Control ID="btnThemeDelete">削除</Control>
+			<Control ID="btnThemeImportProfile">プロファイルをインポート</Control>
+			<Control ID="btnThemeExportProfile">プロファイルをエクスポート</Control>
+			<Control ID="lblThemeRenameTo">新しい名前</Control>
+			<Control ID="btnThemeRename">名前変更</Control>
+			<Control ID="lblThemeDuplicateAs">複製名</Control>
+			<Control ID="btnThemeDuplicate">複製</Control>
+			<Control ID="lblThemeStartupBackground">起動画面背景</Control>
+			<Control ID="lblThemeStartupText">起動画面テキスト</Control>
+			<Control ID="lblThemePrimaryAction">主要アクション</Control>
+			<Control ID="btnThemePickColor">選択</Control>
 			<Control ID="lblRequiresRestart">(再起動が必要)</Control>
 			<Control ID="lblDisplayLanguage">表示言語:</Control>
 			<Control ID="lblAvailableLanguages">利用可能な言語:</Control>
@@ -1904,6 +1919,16 @@ supported by the watch window can be used.</Message>
 		<Message ID="lblExportComplete">エクスポートが完了しました</Message>
 		<Message ID="lblExportSuccessful">エクスポートは正常に完了しました。</Message>
 		<Message ID="lblExportFailed">エクスポートに失敗しました</Message>
+		<Message ID="ThemeProfileApplied">テーマプロファイルを適用しました。</Message>
+		<Message ID="ThemeProfileSaved">現在のテーマ設定をプロファイルに保存しました。</Message>
+		<Message ID="ThemeProfileDeleteFailed">プロファイルを削除できませんでした。</Message>
+		<Message ID="ThemeProfileRenameFailed">プロファイル名を変更できませんでした。</Message>
+		<Message ID="ThemeProfileDuplicateFailed">プロファイルを複製できませんでした。</Message>
+		<Message ID="ThemeProfileImportInvalid">テーマプロファイルファイルが無効です。</Message>
+		<Message ID="ThemeProfileImportComplete">テーマプロファイルをインポートしました: {0}</Message>
+		<Message ID="ThemeProfileImportFailed">プロファイルのインポートに失敗しました: {0}</Message>
+		<Message ID="ThemeProfileImportConflict">'{0}' という名前のプロファイルが既に存在します。&#xA;&#xA;OKで上書き、キャンセルでコピーとしてインポートします。</Message>
+		<Message ID="ThemeProfileExportNoSelection">テーマプロファイルが選択されていません。</Message>
 	</Messages>
 	<Enums>
 		<Enum ID="EmulatorShortcut">

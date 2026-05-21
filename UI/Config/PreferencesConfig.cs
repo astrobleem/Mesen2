@@ -172,6 +172,7 @@ public sealed partial class PreferencesConfig : BaseConfig<PreferencesConfig> {
 
 	public void UpsertThemeProfile(ThemeProfile profile, bool activateProfile) {
 		EnsureThemeProfiles();
+		profile.Name = profile.Name.Trim();
 		ThemeProfile? existing = ThemeProfiles.FirstOrDefault(p => p.Name == profile.Name);
 		if (existing is not null) {
 			existing.Theme = profile.Theme;
@@ -200,6 +201,22 @@ public sealed partial class PreferencesConfig : BaseConfig<PreferencesConfig> {
 		if (activateProfile) {
 			SetActiveThemeProfile(profile.Name);
 		}
+	}
+
+	public string GenerateUniqueThemeProfileName(string baseName) {
+		string sanitized = string.IsNullOrWhiteSpace(baseName) ? "Imported Theme" : baseName.Trim();
+		if (!ThemeProfiles.Any(p => p.Name == sanitized)) {
+			return sanitized;
+		}
+
+		int index = 2;
+		string candidate = sanitized + " (Copy)";
+		while (ThemeProfiles.Any(p => p.Name == candidate)) {
+			candidate = sanitized + " (Copy " + index + ")";
+			index++;
+		}
+
+		return candidate;
 	}
 
 	public void ApplyThemeProfile(ThemeProfile profile) {

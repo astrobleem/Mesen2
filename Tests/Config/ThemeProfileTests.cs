@@ -1,4 +1,4 @@
-using Nexen.Config;
+﻿using Nexen.Config;
 using Xunit;
 
 namespace Nexen.Tests.Config;
@@ -85,5 +85,25 @@ public sealed class ThemeProfileTests {
 		Assert.Equal(13, config.NexenFont.FontSize);
 		Assert.Equal("Consolas", config.NexenMenuFont.FontFamily);
 		Assert.Equal(14, config.NexenMenuFont.FontSize);
+	}
+
+	[Fact]
+	public void PreferencesConfig_GenerateUniqueThemeProfileName_ReturnsCopyNameOnConflict() {
+		PreferencesConfig config = new PreferencesConfig();
+
+		string unique = config.GenerateUniqueThemeProfileName("Default Dark");
+
+		Assert.Equal("Default Dark (Copy)", unique);
+	}
+
+	[Fact]
+	public void PreferencesConfig_GenerateUniqueThemeProfileName_IncrementsCopySuffixWhenNeeded() {
+		PreferencesConfig config = new PreferencesConfig();
+		config.UpsertThemeProfile(ThemeProfile.CreateDefault("Default Dark (Copy)", NexenTheme.Dark), false);
+		config.UpsertThemeProfile(ThemeProfile.CreateDefault("Default Dark (Copy 2)", NexenTheme.Dark), false);
+
+		string unique = config.GenerateUniqueThemeProfileName("Default Dark");
+
+		Assert.Equal("Default Dark (Copy 3)", unique);
 	}
 }

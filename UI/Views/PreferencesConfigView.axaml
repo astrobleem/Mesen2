@@ -27,39 +27,39 @@
 						<c:EnumComboBox SelectedItem="{Binding Config.Theme}" Width="75" />
 					</StackPanel>
 
-					<c:OptionSection Header="Theme Profiles">
+					<c:OptionSection Header="{l:Translate lblThemeProfiles}">
 						<StackPanel Orientation="Horizontal" Spacing="8">
-							<TextBlock Text="Profile" VerticalAlignment="Center" />
+							<TextBlock Text="{l:Translate lblThemeProfile}" VerticalAlignment="Center" />
 							<ComboBox Width="220" ItemsSource="{Binding ThemeProfileNames}" SelectedItem="{Binding SelectedThemeProfileName}" />
-							<Button Content="Apply" Click="btnApplyThemeProfile_OnClick" />
-							<Button Content="Save Current" Click="btnSaveThemeProfile_OnClick" />
-							<Button Content="Delete" Click="btnDeleteThemeProfile_OnClick" />
+							<Button Content="{l:Translate btnThemeApply}" Click="btnApplyThemeProfile_OnClick" />
+							<Button Content="{l:Translate btnThemeSaveCurrent}" Click="btnSaveThemeProfile_OnClick" />
+							<Button Content="{l:Translate btnThemeDelete}" Click="btnDeleteThemeProfile_OnClick" />
 						</StackPanel>
 						<StackPanel Orientation="Horizontal" Spacing="8" Margin="0 6 0 0">
-							<Button Content="Import Profile" Click="btnImportThemeProfile_OnClick" />
-							<Button Content="Export Profile" Click="btnExportThemeProfile_OnClick" />
+							<Button Content="{l:Translate btnThemeImportProfile}" Click="btnImportThemeProfile_OnClick" />
+							<Button Content="{l:Translate btnThemeExportProfile}" Click="btnExportThemeProfile_OnClick" />
 						</StackPanel>
 						<StackPanel Orientation="Horizontal" Spacing="8" Margin="0 6 0 0">
-							<TextBlock Text="Rename To" VerticalAlignment="Center" />
+							<TextBlock Text="{l:Translate lblThemeRenameTo}" VerticalAlignment="Center" />
 							<TextBox Width="190" Text="{Binding RenameThemeProfileName}" />
-							<Button Content="Rename" Click="btnRenameThemeProfile_OnClick" />
+							<Button Content="{l:Translate btnThemeRename}" Click="btnRenameThemeProfile_OnClick" />
 						</StackPanel>
 						<StackPanel Orientation="Horizontal" Spacing="8" Margin="0 6 0 0">
-							<TextBlock Text="Duplicate As" VerticalAlignment="Center" />
+							<TextBlock Text="{l:Translate lblThemeDuplicateAs}" VerticalAlignment="Center" />
 							<TextBox Width="190" Text="{Binding DuplicateThemeProfileName}" />
-							<Button Content="Duplicate" Click="btnDuplicateThemeProfile_OnClick" />
+							<Button Content="{l:Translate btnThemeDuplicate}" Click="btnDuplicateThemeProfile_OnClick" />
 						</StackPanel>
 						<Grid ColumnDefinitions="Auto,Auto,*" RowDefinitions="Auto,Auto,Auto" Margin="0 8 0 0">
-							<TextBlock Grid.Row="0" Text="Startup Background" VerticalAlignment="Center" />
-							<Button Grid.Row="0" Grid.Column="1" Margin="8 0 8 0" Content="Pick" Click="btnPickThemeBackgroundColor_OnClick" />
+							<TextBlock Grid.Row="0" Text="{l:Translate lblThemeStartupBackground}" VerticalAlignment="Center" />
+							<Button Grid.Row="0" Grid.Column="1" Margin="8 0 8 0" Content="{l:Translate btnThemePickColor}" Click="btnPickThemeBackgroundColor_OnClick" />
 							<TextBox Grid.Row="0" Grid.Column="2" IsReadOnly="True" Text="{Binding SelectedProfileStartupBackgroundColor}" />
 
-							<TextBlock Grid.Row="1" Text="Startup Text" VerticalAlignment="Center" />
-							<Button Grid.Row="1" Grid.Column="1" Margin="8 0 8 0" Content="Pick" Click="btnPickThemeTextColor_OnClick" />
+							<TextBlock Grid.Row="1" Text="{l:Translate lblThemeStartupText}" VerticalAlignment="Center" />
+							<Button Grid.Row="1" Grid.Column="1" Margin="8 0 8 0" Content="{l:Translate btnThemePickColor}" Click="btnPickThemeTextColor_OnClick" />
 							<TextBox Grid.Row="1" Grid.Column="2" IsReadOnly="True" Text="{Binding SelectedProfileStartupTextColor}" />
 
-							<TextBlock Grid.Row="2" Text="Primary Action" VerticalAlignment="Center" />
-							<Button Grid.Row="2" Grid.Column="1" Margin="8 0 8 0" Content="Pick" Click="btnPickThemePrimaryActionColor_OnClick" />
+							<TextBlock Grid.Row="2" Text="{l:Translate lblThemePrimaryAction}" VerticalAlignment="Center" />
+							<Button Grid.Row="2" Grid.Column="1" Margin="8 0 8 0" Content="{l:Translate btnThemePickColor}" Click="btnPickThemePrimaryActionColor_OnClick" />
 							<TextBox Grid.Row="2" Grid.Column="2" IsReadOnly="True" Text="{Binding SelectedProfileStartupPrimaryActionColor}" />
 						</Grid>
 					</c:OptionSection>

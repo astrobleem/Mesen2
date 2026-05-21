@@ -798,6 +798,21 @@
 		<Form ID="PreferencesConfigView">
 			<Control ID="tpgGeneral">General</Control>
 			<Control ID="lblTheme">Theme:</Control>
+			<Control ID="lblThemeProfiles">Theme Profiles</Control>
+			<Control ID="lblThemeProfile">Profile</Control>
+			<Control ID="btnThemeApply">Apply</Control>
+			<Control ID="btnThemeSaveCurrent">Save Current</Control>
+			<Control ID="btnThemeDelete">Delete</Control>
+			<Control ID="btnThemeImportProfile">Import Profile</Control>
+			<Control ID="btnThemeExportProfile">Export Profile</Control>
+			<Control ID="lblThemeRenameTo">Rename To</Control>
+			<Control ID="btnThemeRename">Rename</Control>
+			<Control ID="lblThemeDuplicateAs">Duplicate As</Control>
+			<Control ID="btnThemeDuplicate">Duplicate</Control>
+			<Control ID="lblThemeStartupBackground">Startup Background</Control>
+			<Control ID="lblThemeStartupText">Startup Text</Control>
+			<Control ID="lblThemePrimaryAction">Primary Action</Control>
+			<Control ID="btnThemePickColor">Pick</Control>
 			<Control ID="lblRequiresRestart">(requires restart)</Control>
 
 			<Control ID="lblDisplayLanguage">Display Language:</Control>
@@ -2011,6 +2026,16 @@ E
 		<Message ID="ConfirmGameDataMigration">Legacy data was found for this game ({0} file(s)).&#xA;&#xA;Migrate now to the per-game GameData folder?&#xA;&#xA;This copies files and keeps legacy files as fallback.</Message>
 		<Message ID="ConfirmCleanupLegacyData">This will delete {0} legacy file(s) from {1} game(s) that have already been migrated to per-game folders.&#xA;&#xA;The new copies in the GameData folder will not be affected.&#xA;&#xA;Continue?</Message>
 		<Message ID="CleanupComplete">Cleaned up {0} legacy file(s).</Message>
+		<Message ID="ThemeProfileApplied">Theme profile applied.</Message>
+		<Message ID="ThemeProfileSaved">Current theme settings saved to profile.</Message>
+		<Message ID="ThemeProfileDeleteFailed">Unable to delete profile.</Message>
+		<Message ID="ThemeProfileRenameFailed">Unable to rename profile.</Message>
+		<Message ID="ThemeProfileDuplicateFailed">Unable to duplicate profile.</Message>
+		<Message ID="ThemeProfileImportInvalid">Invalid theme profile file.</Message>
+		<Message ID="ThemeProfileImportComplete">Theme profile imported: {0}</Message>
+		<Message ID="ThemeProfileImportFailed">Failed to import profile: {0}</Message>
+		<Message ID="ThemeProfileImportConflict">A profile named '{0}' already exists.&#xA;&#xA;Press OK to overwrite it, or Cancel to import as a copy.</Message>
+		<Message ID="ThemeProfileExportNoSelection">No theme profile selected.</Message>
 
 		<Message ID="ResetWorkspaceConfirmation">Warning: This operation will empty the watch window, remove all breakpoints and reset labels to their default state.&#xA;&#xA;This resets the workspace of all CPUs for the current ROM.&#xA;&#xA;Are you sure?</Message>
 		<Message ID="ImportLabels">Import completed: {0} labels imported.</Message>

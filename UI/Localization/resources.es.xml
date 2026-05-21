@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+﻿<?xml version='1.0' encoding='utf-8'?>
 <Resources>
 	<Forms>
 		<Form ID="MainMenuView">
@@ -674,6 +674,21 @@
 		<Form ID="PreferencesConfigView">
 			<Control ID="tpgGeneral">generales</Control>
 			<Control ID="lblTheme">Tema:</Control>
+			<Control ID="lblThemeProfiles">Perfiles de tema</Control>
+			<Control ID="lblThemeProfile">Perfil</Control>
+			<Control ID="btnThemeApply">Aplicar</Control>
+			<Control ID="btnThemeSaveCurrent">Guardar actual</Control>
+			<Control ID="btnThemeDelete">Eliminar</Control>
+			<Control ID="btnThemeImportProfile">Importar perfil</Control>
+			<Control ID="btnThemeExportProfile">Exportar perfil</Control>
+			<Control ID="lblThemeRenameTo">Renombrar a</Control>
+			<Control ID="btnThemeRename">Renombrar</Control>
+			<Control ID="lblThemeDuplicateAs">Duplicar como</Control>
+			<Control ID="btnThemeDuplicate">Duplicar</Control>
+			<Control ID="lblThemeStartupBackground">Fondo de inicio</Control>
+			<Control ID="lblThemeStartupText">Texto de inicio</Control>
+			<Control ID="lblThemePrimaryAction">Accion principal</Control>
+			<Control ID="btnThemePickColor">Elegir</Control>
 			<Control ID="lblRequiresRestart">(requiere reinicio)</Control>
 			<Control ID="lblDisplayLanguage">Idioma de la interfaz:</Control>
 			<Control ID="lblAvailableLanguages">Idiomas disponibles:</Control>
@@ -1905,6 +1920,16 @@ supported by the watch window can be used.</Message>
 		<Message ID="lblExportComplete">Exportación completa</Message>
 		<Message ID="lblExportSuccessful">Exportación completada exitosamente.</Message>
 		<Message ID="lblExportFailed">Exportación fallida</Message>
+		<Message ID="ThemeProfileApplied">Perfil de tema aplicado.</Message>
+		<Message ID="ThemeProfileSaved">La configuracion actual del tema se guardo en el perfil.</Message>
+		<Message ID="ThemeProfileDeleteFailed">No se pudo eliminar el perfil.</Message>
+		<Message ID="ThemeProfileRenameFailed">No se pudo renombrar el perfil.</Message>
+		<Message ID="ThemeProfileDuplicateFailed">No se pudo duplicar el perfil.</Message>
+		<Message ID="ThemeProfileImportInvalid">Archivo de perfil de tema no valido.</Message>
+		<Message ID="ThemeProfileImportComplete">Perfil de tema importado: {0}</Message>
+		<Message ID="ThemeProfileImportFailed">No se pudo importar el perfil: {0}</Message>
+		<Message ID="ThemeProfileImportConflict">Ya existe un perfil llamado '{0}'.&#xA;&#xA;Pulse Aceptar para sobrescribirlo o Cancelar para importarlo como copia.</Message>
+		<Message ID="ThemeProfileExportNoSelection">No hay perfil de tema seleccionado.</Message>
 	</Messages>
 	<Enums>
 		<Enum ID="EmulatorShortcut">
