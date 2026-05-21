@@ -11,7 +11,19 @@ namespace {
 	}
 
 	static uint64_t LineStartCycle(uint32_t line) {
-		return (uint64_t)line * 488ull;
+		uint64_t cycle = 0;
+		uint8_t remainder = 0;
+		uint16_t lineCycles = 488;
+		for (uint32_t i = 0; i < line; i++) {
+			cycle += lineCycles;
+			remainder = (uint8_t)(remainder + 4u);
+			lineCycles = 488;
+			if (remainder >= 7u) {
+				remainder = (uint8_t)(remainder - 7u);
+				lineCycles = 489;
+			}
+		}
+		return cycle;
 	}
 
 	TEST(GenesisVdpStartupTimingParityTests, VBlankFlagIsDeferredOnFirstVBlankLine) {
@@ -22,10 +34,15 @@ namespace {
 
 		uint64_t vblankLineStart = LineStartCycle(224);
 		vdp.Run(vblankLineStart);
+		GenesisVdpState stateAtLineStart = vdp.GetState();
+		EXPECT_EQ(stateAtLineStart.VCounter, 224u);
+		EXPECT_EQ(stateAtLineStart.HCounter, 0u);
 		uint16_t statusAtLineStart = ReadStatus(vdp);
 		EXPECT_EQ(statusAtLineStart & VdpStatus::VBlankFlag, 0u);
 
 		vdp.Run(vblankLineStart + 64ull);
+		GenesisVdpState stateAfterDelay = vdp.GetState();
+		EXPECT_EQ(stateAfterDelay.VCounter, 224u);
 		uint16_t statusAfterDelay = ReadStatus(vdp);
 		EXPECT_NE(statusAfterDelay & VdpStatus::VBlankFlag, 0u);
 	}
@@ -38,10 +55,15 @@ namespace {
 
 		uint64_t vblankLineStart = LineStartCycle(224);
 		vdp.Run(vblankLineStart);
+		GenesisVdpState stateAtLineStart = vdp.GetState();
+		EXPECT_EQ(stateAtLineStart.VCounter, 224u);
+		EXPECT_EQ(stateAtLineStart.HCounter, 0u);
 		uint16_t statusAtLineStart = ReadStatus(vdp);
 		EXPECT_EQ(statusAtLineStart & VdpStatus::VIntPending, 0u);
 
 		vdp.Run(vblankLineStart + 128ull);
+		GenesisVdpState stateAfterDelay = vdp.GetState();
+		EXPECT_EQ(stateAfterDelay.VCounter, 224u);
 		uint16_t statusAfterDelay = ReadStatus(vdp);
 		EXPECT_NE(statusAfterDelay & VdpStatus::VIntPending, 0u);
 
@@ -58,6 +80,9 @@ namespace {
 
 		uint64_t vblankLineStartPal = LineStartCycle(240);
 		vdp.Run(vblankLineStartPal);
+		GenesisVdpState stateAtPalLineStart = vdp.GetState();
+		EXPECT_EQ(stateAtPalLineStart.VCounter, 240u);
+		EXPECT_EQ(stateAtPalLineStart.HCounter, 0u);
 		uint16_t statusAtLineStart = ReadStatus(vdp);
 		EXPECT_EQ(statusAtLineStart & VdpStatus::VBlankFlag, 0u);
 		EXPECT_EQ(statusAtLineStart & VdpStatus::VIntPending, 0u);

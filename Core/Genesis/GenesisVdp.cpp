@@ -690,8 +690,14 @@ void GenesisVdp::Run(uint64_t targetCycle) {
 			_lineScreenWidth = _lineH40Mode ? 320 : 256;
 			_screenWidth = _lineScreenWidth;
 
-			// Keep startup timing checkpoints stable on 68K line boundaries.
+			// One line is 3420 MCLK = 488 + 4/7 68k cycles.
+			// Carry the 4/7 remainder forward to avoid fixed-phase drift.
+			_lineCycleRemainder = (uint8_t)(_lineCycleRemainder + 4u);
 			_currentLineCycleTarget = 488;
+			if (_lineCycleRemainder >= 7u) {
+				_lineCycleRemainder = (uint8_t)(_lineCycleRemainder - 7u);
+				_currentLineCycleTarget = 489;
+			}
 
 			if (_scanline >= _totalLines) {
 				// End of frame
