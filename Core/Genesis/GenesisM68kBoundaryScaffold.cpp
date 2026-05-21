@@ -1555,6 +1555,8 @@ GenesisM68kBoundaryScaffold::GenesisM68kBoundaryScaffold() {
 }
 
 void GenesisM68kBoundaryScaffold::AdvanceTiming(uint32_t cpuCycles) {
+	uint32_t timingScanlinesPerFrame = GetTimingScanlinesPerFrameForProfile();
+	uint32_t timingActiveDisplayScanlines = GetTimingActiveDisplayScanlinesForProfile();
 	_timingCycleRemainder += cpuCycles;
 	while (_timingCycleRemainder >= TimingCyclesPerScanline) {
 		_timingCycleRemainder -= TimingCyclesPerScanline;
@@ -1568,7 +1570,7 @@ void GenesisM68kBoundaryScaffold::AdvanceTiming(uint32_t cpuCycles) {
 			_timingEvents.push_back(std::format("HINT frame={} scanline={} count={}", _timingFrame, _timingScanline, _hInterruptCount));
 		}
 
-		bool enteringVBlank = !_inVBlank && _timingScanline == TimingActiveDisplayScanlines;
+		bool enteringVBlank = !_inVBlank && _timingScanline == timingActiveDisplayScanlines;
 		if (enteringVBlank) {
 			_inVBlank = true;
 			_vblankEnterCount++;
@@ -1576,7 +1578,7 @@ void GenesisM68kBoundaryScaffold::AdvanceTiming(uint32_t cpuCycles) {
 			_timingEvents.push_back(std::format("VBLANK_ENTER frame={} scanline={}", _timingFrame, _timingScanline));
 		}
 
-		if (_timingScanline >= TimingScanlinesPerFrame) {
+		if (_timingScanline >= timingScanlinesPerFrame) {
 			uint32_t nextFrame = _timingFrame + 1;
 			if (_vInterruptEnabled) {
 				_cpu.SetInterrupt(6);
@@ -1619,6 +1621,10 @@ void GenesisM68kBoundaryScaffold::Startup() {
 	_bus.SetVdpInterruptPending(false);
 }
 
+void GenesisM68kBoundaryScaffold::ConfigureTimingProfile(GenesisTimingProfile timingProfile) {
+	_timingProfile = timingProfile;
+}
+
 void GenesisM68kBoundaryScaffold::ConfigureInterruptSchedule(bool hInterruptEnabled, uint32_t hInterruptIntervalScanlines, bool vInterruptEnabled) {
 	_hInterruptEnabled = hInterruptEnabled;
 	_hInterruptIntervalScanlines = std::max<uint32_t>(1, hInterruptIntervalScanlines);
@@ -1647,6 +1653,7 @@ GenesisBoundaryScaffoldSaveState GenesisM68kBoundaryScaffold::SaveState() const 
 	GenesisBoundaryScaffoldSaveState state = {};
 	state.Bus = _bus.SaveState();
 	state.Cpu = _cpu.SaveState();
+	state.TimingProfile = _timingProfile;
 	state.Started = _started;
 	state.TimingScanline = _timingScanline;
 	state.TimingFrame = _timingFrame;
@@ -1667,6 +1674,7 @@ void GenesisM68kBoundaryScaffold::LoadState(const GenesisBoundaryScaffoldSaveSta
 	_bus.LoadState(state.Bus);
 	_cpu.LoadState(state.Cpu);
 	_cpu.AttachBus(&_bus);
+	_timingProfile = state.TimingProfile;
 	_started = state.Started;
 	_timingScanline = state.TimingScanline;
 	_timingFrame = state.TimingFrame;

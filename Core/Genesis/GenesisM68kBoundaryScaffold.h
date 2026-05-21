@@ -24,6 +24,11 @@ enum class GenesisVdpDmaMode : uint8_t {
 	VramCopy = 3
 };
 
+enum class GenesisTimingProfile : uint8_t {
+	Ntsc = 0,
+	Pal = 1
+};
+
 struct GenesisPlatformBusSaveState {
 	vector<uint8_t> Rom;
 	vector<uint8_t> WorkRam;
@@ -148,6 +153,7 @@ struct GenesisM68kCpuSaveState {
 struct GenesisBoundaryScaffoldSaveState {
 	GenesisPlatformBusSaveState Bus;
 	GenesisM68kCpuSaveState Cpu;
+	GenesisTimingProfile TimingProfile = GenesisTimingProfile::Ntsc;
 	bool Started = false;
 	uint32_t TimingScanline = 0;
 	uint32_t TimingFrame = 0;
@@ -415,11 +421,14 @@ public:
 class GenesisM68kBoundaryScaffold {
 private:
 	static constexpr uint32_t TimingCyclesPerScanline = 488;
-	static constexpr uint32_t TimingScanlinesPerFrame = 262;
-	static constexpr uint32_t TimingActiveDisplayScanlines = 224;
+	static constexpr uint32_t TimingScanlinesPerFrameNtsc = 262;
+	static constexpr uint32_t TimingScanlinesPerFramePal = 313;
+	static constexpr uint32_t TimingActiveDisplayScanlinesNtsc = 224;
+	static constexpr uint32_t TimingActiveDisplayScanlinesPal = 240;
 
 	GenesisPlatformBusStub _bus;
 	GenesisM68kCpuStub _cpu;
+	GenesisTimingProfile _timingProfile = GenesisTimingProfile::Ntsc;
 	bool _started = false;
 	uint32_t _timingScanline = 0;
 	uint32_t _timingFrame = 0;
@@ -434,6 +443,14 @@ private:
 	uint32_t _vblankExitCount = 0;
 	vector<string> _timingEvents;
 
+	[[nodiscard]] uint32_t GetTimingScanlinesPerFrameForProfile() const {
+		return _timingProfile == GenesisTimingProfile::Pal ? TimingScanlinesPerFramePal : TimingScanlinesPerFrameNtsc;
+	}
+
+	[[nodiscard]] uint32_t GetTimingActiveDisplayScanlinesForProfile() const {
+		return _timingProfile == GenesisTimingProfile::Pal ? TimingActiveDisplayScanlinesPal : TimingActiveDisplayScanlinesNtsc;
+	}
+
 	void AdvanceTiming(uint32_t cpuCycles);
 
 public:
@@ -441,10 +458,12 @@ public:
 	void LoadRom(const vector<uint8_t>& romData);
 	void Startup();
 	void StepFrameScaffold(uint32_t cpuCycles = 12000);
+	void ConfigureTimingProfile(GenesisTimingProfile timingProfile);
 	void ConfigureInterruptSchedule(bool hInterruptEnabled, uint32_t hInterruptIntervalScanlines, bool vInterruptEnabled);
 	void ClearTimingEvents();
 
 	[[nodiscard]] bool IsStarted() const { return _started; }
+	[[nodiscard]] GenesisTimingProfile GetTimingProfile() const { return _timingProfile; }
 	[[nodiscard]] uint32_t GetTimingScanline() const { return _timingScanline; }
 	[[nodiscard]] uint32_t GetTimingFrame() const { return _timingFrame; }
 	[[nodiscard]] bool IsInVBlank() const { return _inVBlank; }
