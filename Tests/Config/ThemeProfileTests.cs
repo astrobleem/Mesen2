@@ -125,4 +125,33 @@ public sealed class ThemeProfileTests {
 		Assert.Equal("#ffd47a22", resetProfile.StartupPrimaryActionColor);
 		Assert.Equal(11, resetProfile.UiFontSize);
 	}
+
+	[Fact]
+	public void PreferencesConfig_ApplyThemePresetToProfile_AppliesLightDefaults() {
+		PreferencesConfig config = new PreferencesConfig();
+
+		bool applied = config.ApplyThemePresetToProfile("Default Dark", NexenTheme.Light);
+		ThemeProfile? profile = config.GetThemeProfileByName("Default Dark");
+
+		Assert.True(applied);
+		Assert.NotNull(profile);
+		Assert.Equal(NexenTheme.Light, profile!.Theme);
+		Assert.Equal("#fff6e7da", profile.StartupWindowBackgroundColor);
+		Assert.Equal("#ffeea55d", profile.StartupPrimaryActionColor);
+	}
+
+	[Fact]
+	public void PreferencesConfig_ApplyThemePresetToProfile_AppliesDarkDefaults() {
+		PreferencesConfig config = new PreferencesConfig();
+		config.ApplyThemePresetToProfile("Default Light", NexenTheme.Light);
+
+		bool applied = config.ApplyThemePresetToProfile("Default Light", NexenTheme.Dark);
+		ThemeProfile? profile = config.GetThemeProfileByName("Default Light");
+
+		Assert.True(applied);
+		Assert.NotNull(profile);
+		Assert.Equal(NexenTheme.Dark, profile!.Theme);
+		Assert.Equal("#ff1d130d", profile.StartupWindowBackgroundColor);
+		Assert.Equal("#ffd47a22", profile.StartupPrimaryActionColor);
+	}
 }

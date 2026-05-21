@@ -247,6 +247,18 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 		return reset;
 	}
 
+	public bool ApplyLightPresetToSelectedThemeProfile() {
+		bool applied = Config.ApplyThemePresetToProfile(SelectedThemeProfileName, NexenTheme.Light);
+		RefreshThemeProfiles();
+		return applied;
+	}
+
+	public bool ApplyDarkPresetToSelectedThemeProfile() {
+		bool applied = Config.ApplyThemePresetToProfile(SelectedThemeProfileName, NexenTheme.Dark);
+		RefreshThemeProfiles();
+		return applied;
+	}
+
 	public void UpsertImportedThemeProfile(ThemeProfile profile, bool activateProfile) {
 		Config.UpsertThemeProfile(profile, activateProfile);
 		RefreshThemeProfiles();

@@ -161,6 +161,32 @@ public partial class PreferencesConfigView : UserControl {
 		}
 	}
 
+	private async void btnApplyThemeLightPreset_OnClick(object sender, RoutedEventArgs e) {
+		PreferencesConfigViewModel? model = GetViewModel();
+		if (model is null) {
+			return;
+		}
+
+		if (model.ApplyLightPresetToSelectedThemeProfile()) {
+			await NexenMsgBox.Show(TopLevel.GetTopLevel(this) as Window, "ThemeProfilePresetLightApplied", MessageBoxButtons.OK, MessageBoxIcon.Info);
+		} else {
+			await NexenMsgBox.Show(TopLevel.GetTopLevel(this) as Window, "ThemeProfilePresetApplyFailed", MessageBoxButtons.OK, MessageBoxIcon.Info);
+		}
+	}
+
+	private async void btnApplyThemeDarkPreset_OnClick(object sender, RoutedEventArgs e) {
+		PreferencesConfigViewModel? model = GetViewModel();
+		if (model is null) {
+			return;
+		}
+
+		if (model.ApplyDarkPresetToSelectedThemeProfile()) {
+			await NexenMsgBox.Show(TopLevel.GetTopLevel(this) as Window, "ThemeProfilePresetDarkApplied", MessageBoxButtons.OK, MessageBoxIcon.Info);
+		} else {
+			await NexenMsgBox.Show(TopLevel.GetTopLevel(this) as Window, "ThemeProfilePresetApplyFailed", MessageBoxButtons.OK, MessageBoxIcon.Info);
+		}
+	}
+
 	private async void btnImportThemeProfile_OnClick(object sender, RoutedEventArgs e) {
 		PreferencesConfigViewModel? model = GetViewModel();
 		if (model is null) {

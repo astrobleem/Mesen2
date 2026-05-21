@@ -63,6 +63,7 @@ This document describes the Nexen theme profile import and export JSON schema us
 	- Live swatch preview for startup background/text/primary action colors
 	- Import conflict handling (overwrite existing profile or import as uniquely named copy)
 	- Reset selected profile to centralized defaults for its light/dark variant
+	- Apply canonical light/dark preset defaults to selected profile in one click
 
 ## Runtime Application
 

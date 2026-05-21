@@ -682,6 +682,8 @@
 			<Control ID="btnThemeImportProfile">プロファイルをインポート</Control>
 			<Control ID="btnThemeExportProfile">プロファイルをエクスポート</Control>
 			<Control ID="btnThemeResetDefaults">既定値に戻す</Control>
+			<Control ID="btnThemeApplyLightPreset">ライトプリセットを適用</Control>
+			<Control ID="btnThemeApplyDarkPreset">ダークプリセットを適用</Control>
 			<Control ID="lblThemeRenameTo">新しい名前</Control>
 			<Control ID="btnThemeRename">名前変更</Control>
 			<Control ID="lblThemeDuplicateAs">複製名</Control>
@@ -1933,6 +1935,9 @@ supported by the watch window can be used.</Message>
 		<Message ID="ThemeProfileExportNoSelection">テーマプロファイルが選択されていません。</Message>
 		<Message ID="ThemeProfileResetDefaultsComplete">テーマプロファイルを既定値に戻しました。</Message>
 		<Message ID="ThemeProfileResetDefaultsFailed">テーマプロファイルを既定値に戻せませんでした。</Message>
+		<Message ID="ThemeProfilePresetLightApplied">ライトプリセットをテーマプロファイルに適用しました。</Message>
+		<Message ID="ThemeProfilePresetDarkApplied">ダークプリセットをテーマプロファイルに適用しました。</Message>
+		<Message ID="ThemeProfilePresetApplyFailed">テーマプロファイルにプリセットを適用できませんでした。</Message>
 	</Messages>
 	<Enums>
 		<Enum ID="EmulatorShortcut">

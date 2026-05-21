@@ -806,6 +806,8 @@
 			<Control ID="btnThemeImportProfile">Import Profile</Control>
 			<Control ID="btnThemeExportProfile">Export Profile</Control>
 			<Control ID="btnThemeResetDefaults">Reset Defaults</Control>
+			<Control ID="btnThemeApplyLightPreset">Apply Light Preset</Control>
+			<Control ID="btnThemeApplyDarkPreset">Apply Dark Preset</Control>
 			<Control ID="lblThemeRenameTo">Rename To</Control>
 			<Control ID="btnThemeRename">Rename</Control>
 			<Control ID="lblThemeDuplicateAs">Duplicate As</Control>
@@ -2040,6 +2042,9 @@ E
 		<Message ID="ThemeProfileExportNoSelection">No theme profile selected.</Message>
 		<Message ID="ThemeProfileResetDefaultsComplete">Theme profile reset to defaults.</Message>
 		<Message ID="ThemeProfileResetDefaultsFailed">Unable to reset theme profile to defaults.</Message>
+		<Message ID="ThemeProfilePresetLightApplied">Light preset applied to theme profile.</Message>
+		<Message ID="ThemeProfilePresetDarkApplied">Dark preset applied to theme profile.</Message>
+		<Message ID="ThemeProfilePresetApplyFailed">Unable to apply preset to theme profile.</Message>
 
 		<Message ID="ResetWorkspaceConfirmation">Warning: This operation will empty the watch window, remove all breakpoints and reset labels to their default state.&#xA;&#xA;This resets the workspace of all CPUs for the current ROM.&#xA;&#xA;Are you sure?</Message>
 		<Message ID="ImportLabels">Import completed: {0} labels imported.</Message>

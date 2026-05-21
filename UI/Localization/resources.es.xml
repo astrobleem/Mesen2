@@ -682,6 +682,8 @@
 			<Control ID="btnThemeImportProfile">Importar perfil</Control>
 			<Control ID="btnThemeExportProfile">Exportar perfil</Control>
 			<Control ID="btnThemeResetDefaults">Restablecer predeterminados</Control>
+			<Control ID="btnThemeApplyLightPreset">Aplicar preajuste claro</Control>
+			<Control ID="btnThemeApplyDarkPreset">Aplicar preajuste oscuro</Control>
 			<Control ID="lblThemeRenameTo">Renombrar a</Control>
 			<Control ID="btnThemeRename">Renombrar</Control>
 			<Control ID="lblThemeDuplicateAs">Duplicar como</Control>
@@ -1934,6 +1936,9 @@ supported by the watch window can be used.</Message>
 		<Message ID="ThemeProfileExportNoSelection">No hay perfil de tema seleccionado.</Message>
 		<Message ID="ThemeProfileResetDefaultsComplete">El perfil de tema se restablecio a los valores predeterminados.</Message>
 		<Message ID="ThemeProfileResetDefaultsFailed">No se pudo restablecer el perfil de tema a los valores predeterminados.</Message>
+		<Message ID="ThemeProfilePresetLightApplied">Se aplico el preajuste claro al perfil de tema.</Message>
+		<Message ID="ThemeProfilePresetDarkApplied">Se aplico el preajuste oscuro al perfil de tema.</Message>
+		<Message ID="ThemeProfilePresetApplyFailed">No se pudo aplicar el preajuste al perfil de tema.</Message>
 	</Messages>
 	<Enums>
 		<Enum ID="EmulatorShortcut">

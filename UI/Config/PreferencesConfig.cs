@@ -319,6 +319,40 @@ public sealed partial class PreferencesConfig : BaseConfig<PreferencesConfig> {
 		return true;
 	}
 
+	public bool ApplyThemePresetToProfile(string? profileName, NexenTheme theme) {
+		ThemeProfile? profile = GetThemeProfileByName(profileName);
+		if (profile is null) {
+			return false;
+		}
+
+		ThemeProfile preset = ThemeProfile.CreateDefault(profile.Name, theme);
+		profile.Theme = preset.Theme;
+		profile.UiFontFamily = preset.UiFontFamily;
+		profile.UiFontSize = preset.UiFontSize;
+		profile.MenuFontFamily = preset.MenuFontFamily;
+		profile.MenuFontSize = preset.MenuFontSize;
+		profile.StartupWindowBackgroundColor = preset.StartupWindowBackgroundColor;
+		profile.StartupSurfaceBackgroundColor = preset.StartupSurfaceBackgroundColor;
+		profile.StartupBorderColor = preset.StartupBorderColor;
+		profile.StartupCardBackgroundColor = preset.StartupCardBackgroundColor;
+		profile.StartupCardCheckedBackgroundColor = preset.StartupCardCheckedBackgroundColor;
+		profile.StartupTextColor = preset.StartupTextColor;
+		profile.StartupMutedTextColor = preset.StartupMutedTextColor;
+		profile.StartupActionBorderColor = preset.StartupActionBorderColor;
+		profile.StartupPrimaryActionColor = preset.StartupPrimaryActionColor;
+		profile.StartupDividerColor = preset.StartupDividerColor;
+		profile.SetupSubtitleColor = preset.SetupSubtitleColor;
+		profile.SetupTitleFontSize = preset.SetupTitleFontSize;
+		profile.SetupSubtitleFontSize = preset.SetupSubtitleFontSize;
+		profile.SetupPrimaryActionFontSize = preset.SetupPrimaryActionFontSize;
+
+		if (ActiveThemeProfileName == profile.Name) {
+			ApplyThemeProfile(profile);
+		}
+
+		return true;
+	}
+
 	private void AddShortcut(ShortcutKeyInfo shortcut) {
 		if (!ShortcutKeys.Exists(a => a.Shortcut == shortcut.Shortcut)) {
 			ShortcutKeys.Add(shortcut);
