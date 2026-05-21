@@ -73,6 +73,12 @@
 							<Border Width="22" Height="22" BorderBrush="#666666" BorderThickness="1" CornerRadius="3" Background="{Binding SelectedProfileStartupTextBrush}" ToolTip.Tip="{l:Translate lblThemeStartupText}" />
 							<Border Width="22" Height="22" BorderBrush="#666666" BorderThickness="1" CornerRadius="3" Background="{Binding SelectedProfileStartupPrimaryActionBrush}" ToolTip.Tip="{l:Translate lblThemePrimaryAction}" />
 						</StackPanel>
+						<StackPanel Orientation="Horizontal" Spacing="6" Margin="0 6 0 0" VerticalAlignment="Center">
+							<TextBlock Text="{l:Translate lblThemePresetStatus}" VerticalAlignment="Center" />
+							<TextBlock IsVisible="{Binding SelectedThemeProfileMatchesDefaults}" Text="{l:Translate lblThemeMatchesDefaults}" VerticalAlignment="Center" />
+							<TextBlock IsVisible="{Binding SelectedThemeProfileIsCustomized}" Text="{Binding SelectedThemeProfileDivergenceCount}" VerticalAlignment="Center" />
+							<TextBlock IsVisible="{Binding SelectedThemeProfileIsCustomized}" Text="{l:Translate lblThemeTokensCustomized}" VerticalAlignment="Center" />
+						</StackPanel>
 					</c:OptionSection>
 
 					<StackPanel Orientation="Horizontal">

@@ -353,6 +353,37 @@ public sealed partial class PreferencesConfig : BaseConfig<PreferencesConfig> {
 		return true;
 	}
 
+	public int GetThemeProfileDivergenceCount(string? profileName) {
+		ThemeProfile? profile = GetThemeProfileByName(profileName);
+		if (profile is null) {
+			return 0;
+		}
+
+		ThemeProfile defaults = ThemeProfile.CreateDefault(profile.Name, profile.Theme);
+		int divergenceCount = 0;
+
+		if (profile.UiFontFamily != defaults.UiFontFamily) divergenceCount++;
+		if (profile.UiFontSize != defaults.UiFontSize) divergenceCount++;
+		if (profile.MenuFontFamily != defaults.MenuFontFamily) divergenceCount++;
+		if (profile.MenuFontSize != defaults.MenuFontSize) divergenceCount++;
+		if (profile.StartupWindowBackgroundColor != defaults.StartupWindowBackgroundColor) divergenceCount++;
+		if (profile.StartupSurfaceBackgroundColor != defaults.StartupSurfaceBackgroundColor) divergenceCount++;
+		if (profile.StartupBorderColor != defaults.StartupBorderColor) divergenceCount++;
+		if (profile.StartupCardBackgroundColor != defaults.StartupCardBackgroundColor) divergenceCount++;
+		if (profile.StartupCardCheckedBackgroundColor != defaults.StartupCardCheckedBackgroundColor) divergenceCount++;
+		if (profile.StartupTextColor != defaults.StartupTextColor) divergenceCount++;
+		if (profile.StartupMutedTextColor != defaults.StartupMutedTextColor) divergenceCount++;
+		if (profile.StartupActionBorderColor != defaults.StartupActionBorderColor) divergenceCount++;
+		if (profile.StartupPrimaryActionColor != defaults.StartupPrimaryActionColor) divergenceCount++;
+		if (profile.StartupDividerColor != defaults.StartupDividerColor) divergenceCount++;
+		if (profile.SetupSubtitleColor != defaults.SetupSubtitleColor) divergenceCount++;
+		if (profile.SetupTitleFontSize != defaults.SetupTitleFontSize) divergenceCount++;
+		if (profile.SetupSubtitleFontSize != defaults.SetupSubtitleFontSize) divergenceCount++;
+		if (profile.SetupPrimaryActionFontSize != defaults.SetupPrimaryActionFontSize) divergenceCount++;
+
+		return divergenceCount;
+	}
+
 	private void AddShortcut(ShortcutKeyInfo shortcut) {
 		if (!ShortcutKeys.Exists(a => a.Shortcut == shortcut.Shortcut)) {
 			ShortcutKeys.Add(shortcut);

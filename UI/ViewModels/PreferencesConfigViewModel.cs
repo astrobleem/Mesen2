@@ -58,6 +58,15 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 	/// <summary>Gets or sets selected profile startup primary action preview brush.</summary>
 	[Reactive] public partial IBrush SelectedProfileStartupPrimaryActionBrush { get; set; }
 
+	/// <summary>Gets or sets the number of tokens that differ from canonical defaults.</summary>
+	[Reactive] public partial int SelectedThemeProfileDivergenceCount { get; set; }
+
+	/// <summary>Gets or sets whether selected profile matches canonical defaults.</summary>
+	[Reactive] public partial bool SelectedThemeProfileMatchesDefaults { get; set; }
+
+	/// <summary>Gets or sets whether selected profile has customized tokens.</summary>
+	[Reactive] public partial bool SelectedThemeProfileIsCustomized { get; set; }
+
 	/// <summary>Gets or sets target name for profile rename.</summary>
 	[Reactive] public partial string RenameThemeProfileName { get; set; }
 
@@ -78,6 +87,9 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 		SelectedProfileStartupBackgroundBrush = Brushes.Transparent;
 		SelectedProfileStartupTextBrush = Brushes.Transparent;
 		SelectedProfileStartupPrimaryActionBrush = Brushes.Transparent;
+		SelectedThemeProfileDivergenceCount = 0;
+		SelectedThemeProfileMatchesDefaults = true;
+		SelectedThemeProfileIsCustomized = false;
 		RenameThemeProfileName = "";
 		DuplicateThemeProfileName = "";
 		RefreshThemeProfiles();
@@ -286,6 +298,9 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 			SelectedProfileStartupBackgroundBrush = Brushes.Transparent;
 			SelectedProfileStartupTextBrush = Brushes.Transparent;
 			SelectedProfileStartupPrimaryActionBrush = Brushes.Transparent;
+			SelectedThemeProfileDivergenceCount = 0;
+			SelectedThemeProfileMatchesDefaults = true;
+			SelectedThemeProfileIsCustomized = false;
 			return;
 		}
 
@@ -295,6 +310,9 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 		SelectedProfileStartupBackgroundBrush = CreatePreviewBrush(selectedProfile.StartupWindowBackgroundColor);
 		SelectedProfileStartupTextBrush = CreatePreviewBrush(selectedProfile.StartupTextColor);
 		SelectedProfileStartupPrimaryActionBrush = CreatePreviewBrush(selectedProfile.StartupPrimaryActionColor);
+		SelectedThemeProfileDivergenceCount = Config.GetThemeProfileDivergenceCount(selectedProfile.Name);
+		SelectedThemeProfileMatchesDefaults = SelectedThemeProfileDivergenceCount == 0;
+		SelectedThemeProfileIsCustomized = SelectedThemeProfileDivergenceCount > 0;
 		RenameThemeProfileName = selectedProfile.Name;
 	}
 

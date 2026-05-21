@@ -154,4 +154,26 @@ public sealed class ThemeProfileTests {
 		Assert.Equal("#ff1d130d", profile.StartupWindowBackgroundColor);
 		Assert.Equal("#ffd47a22", profile.StartupPrimaryActionColor);
 	}
+
+	[Fact]
+	public void PreferencesConfig_GetThemeProfileDivergenceCount_DefaultProfileHasNoDivergence() {
+		PreferencesConfig config = new PreferencesConfig();
+
+		int count = config.GetThemeProfileDivergenceCount("Default Dark");
+
+		Assert.Equal(0, count);
+	}
+
+	[Fact]
+	public void PreferencesConfig_GetThemeProfileDivergenceCount_CustomizedProfileHasDivergence() {
+		PreferencesConfig config = new PreferencesConfig();
+		ThemeProfile? profile = config.GetThemeProfileByName("Default Dark");
+		Assert.NotNull(profile);
+		profile!.StartupTextColor = "#ff000000";
+		profile.UiFontSize = 13;
+
+		int count = config.GetThemeProfileDivergenceCount("Default Dark");
+
+		Assert.Equal(2, count);
+	}
 }

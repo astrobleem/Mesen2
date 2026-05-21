@@ -817,6 +817,9 @@
 			<Control ID="lblThemePrimaryAction">Primary Action</Control>
 			<Control ID="btnThemePickColor">Pick</Control>
 			<Control ID="lblThemeLivePreview">Live Preview</Control>
+			<Control ID="lblThemePresetStatus">Preset Status:</Control>
+			<Control ID="lblThemeMatchesDefaults">Matches defaults</Control>
+			<Control ID="lblThemeTokensCustomized">tokens customized</Control>
 			<Control ID="lblRequiresRestart">(requires restart)</Control>
 
 			<Control ID="lblDisplayLanguage">Display Language:</Control>
