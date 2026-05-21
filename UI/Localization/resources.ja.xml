@@ -681,6 +681,7 @@
 			<Control ID="btnThemeDelete">削除</Control>
 			<Control ID="btnThemeImportProfile">プロファイルをインポート</Control>
 			<Control ID="btnThemeExportProfile">プロファイルをエクスポート</Control>
+			<Control ID="btnThemeResetDefaults">既定値に戻す</Control>
 			<Control ID="lblThemeRenameTo">新しい名前</Control>
 			<Control ID="btnThemeRename">名前変更</Control>
 			<Control ID="lblThemeDuplicateAs">複製名</Control>
@@ -1930,6 +1931,8 @@ supported by the watch window can be used.</Message>
 		<Message ID="ThemeProfileImportFailed">プロファイルのインポートに失敗しました: {0}</Message>
 		<Message ID="ThemeProfileImportConflict">'{0}' という名前のプロファイルが既に存在します。&#xA;&#xA;OKで上書き、キャンセルでコピーとしてインポートします。</Message>
 		<Message ID="ThemeProfileExportNoSelection">テーマプロファイルが選択されていません。</Message>
+		<Message ID="ThemeProfileResetDefaultsComplete">テーマプロファイルを既定値に戻しました。</Message>
+		<Message ID="ThemeProfileResetDefaultsFailed">テーマプロファイルを既定値に戻せませんでした。</Message>
 	</Messages>
 	<Enums>
 		<Enum ID="EmulatorShortcut">

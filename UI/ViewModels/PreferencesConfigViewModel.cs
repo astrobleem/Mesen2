@@ -241,6 +241,12 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 		return duplicated;
 	}
 
+	public bool ResetSelectedThemeProfileToDefaults() {
+		bool reset = Config.ResetThemeProfileToDefaults(SelectedThemeProfileName);
+		RefreshThemeProfiles();
+		return reset;
+	}
+
 	public void UpsertImportedThemeProfile(ThemeProfile profile, bool activateProfile) {
 		Config.UpsertThemeProfile(profile, activateProfile);
 		RefreshThemeProfiles();

@@ -2809,6 +2809,7 @@ continue;
 continue;
 continue;
 
+[Nexen] (UI) Implement a `Theme` system in the UI (colors, fonts, sizes, light/dark, etc) and build the default theme, so our components and UI use a common set of colors and styles; We are using the brown(dark/light)/orange(dark/light)/yellow/white/cream colors we use on initial setup, the logo, startup, etc.; create plans, epics, issues, docs, session-logs, etc. and then implement the issues;We want consistancy in the darker look with rown and orange and we don't want these colors replicated everywhere, centralize theme into a theme; continue; [Nexen] (UI) Make sure the Themes we are implementing in the UI are customizable and have import/export functionality and a selection UI in settings; Surely there are packages that implement this? don't build it from scratch or anything; continue;
 
 
 

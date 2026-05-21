@@ -106,4 +106,23 @@ public sealed class ThemeProfileTests {
 
 		Assert.Equal("Default Dark (Copy 3)", unique);
 	}
+
+	[Fact]
+	public void PreferencesConfig_ResetThemeProfileToDefaults_RestoresCanonicalValues() {
+		PreferencesConfig config = new PreferencesConfig();
+		ThemeProfile dark = ThemeProfile.CreateDefault("Default Dark", NexenTheme.Dark);
+		dark.StartupWindowBackgroundColor = "#ff000000";
+		dark.StartupPrimaryActionColor = "#ff101010";
+		dark.UiFontSize = 99;
+		config.UpsertThemeProfile(dark, false);
+
+		bool reset = config.ResetThemeProfileToDefaults("Default Dark");
+		ThemeProfile? resetProfile = config.GetThemeProfileByName("Default Dark");
+
+		Assert.True(reset);
+		Assert.NotNull(resetProfile);
+		Assert.Equal("#ff1d130d", resetProfile!.StartupWindowBackgroundColor);
+		Assert.Equal("#ffd47a22", resetProfile.StartupPrimaryActionColor);
+		Assert.Equal(11, resetProfile.UiFontSize);
+	}
 }

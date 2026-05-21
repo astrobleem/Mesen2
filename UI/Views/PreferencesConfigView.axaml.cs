@@ -148,6 +148,19 @@ public partial class PreferencesConfigView : UserControl {
 		}
 	}
 
+	private async void btnResetThemeProfileDefaults_OnClick(object sender, RoutedEventArgs e) {
+		PreferencesConfigViewModel? model = GetViewModel();
+		if (model is null) {
+			return;
+		}
+
+		if (model.ResetSelectedThemeProfileToDefaults()) {
+			await NexenMsgBox.Show(TopLevel.GetTopLevel(this) as Window, "ThemeProfileResetDefaultsComplete", MessageBoxButtons.OK, MessageBoxIcon.Info);
+		} else {
+			await NexenMsgBox.Show(TopLevel.GetTopLevel(this) as Window, "ThemeProfileResetDefaultsFailed", MessageBoxButtons.OK, MessageBoxIcon.Info);
+		}
+	}
+
 	private async void btnImportThemeProfile_OnClick(object sender, RoutedEventArgs e) {
 		PreferencesConfigViewModel? model = GetViewModel();
 		if (model is null) {

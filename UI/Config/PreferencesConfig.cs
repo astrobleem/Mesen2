@@ -286,6 +286,39 @@ public sealed partial class PreferencesConfig : BaseConfig<PreferencesConfig> {
 		return true;
 	}
 
+	public bool ResetThemeProfileToDefaults(string? profileName) {
+		ThemeProfile? profile = GetThemeProfileByName(profileName);
+		if (profile is null) {
+			return false;
+		}
+
+		ThemeProfile defaults = ThemeProfile.CreateDefault(profile.Name, profile.Theme);
+		profile.UiFontFamily = defaults.UiFontFamily;
+		profile.UiFontSize = defaults.UiFontSize;
+		profile.MenuFontFamily = defaults.MenuFontFamily;
+		profile.MenuFontSize = defaults.MenuFontSize;
+		profile.StartupWindowBackgroundColor = defaults.StartupWindowBackgroundColor;
+		profile.StartupSurfaceBackgroundColor = defaults.StartupSurfaceBackgroundColor;
+		profile.StartupBorderColor = defaults.StartupBorderColor;
+		profile.StartupCardBackgroundColor = defaults.StartupCardBackgroundColor;
+		profile.StartupCardCheckedBackgroundColor = defaults.StartupCardCheckedBackgroundColor;
+		profile.StartupTextColor = defaults.StartupTextColor;
+		profile.StartupMutedTextColor = defaults.StartupMutedTextColor;
+		profile.StartupActionBorderColor = defaults.StartupActionBorderColor;
+		profile.StartupPrimaryActionColor = defaults.StartupPrimaryActionColor;
+		profile.StartupDividerColor = defaults.StartupDividerColor;
+		profile.SetupSubtitleColor = defaults.SetupSubtitleColor;
+		profile.SetupTitleFontSize = defaults.SetupTitleFontSize;
+		profile.SetupSubtitleFontSize = defaults.SetupSubtitleFontSize;
+		profile.SetupPrimaryActionFontSize = defaults.SetupPrimaryActionFontSize;
+
+		if (ActiveThemeProfileName == profile.Name) {
+			ApplyThemeProfile(profile);
+		}
+
+		return true;
+	}
+
 	private void AddShortcut(ShortcutKeyInfo shortcut) {
 		if (!ShortcutKeys.Exists(a => a.Shortcut == shortcut.Shortcut)) {
 			ShortcutKeys.Add(shortcut);

@@ -805,6 +805,7 @@
 			<Control ID="btnThemeDelete">Delete</Control>
 			<Control ID="btnThemeImportProfile">Import Profile</Control>
 			<Control ID="btnThemeExportProfile">Export Profile</Control>
+			<Control ID="btnThemeResetDefaults">Reset Defaults</Control>
 			<Control ID="lblThemeRenameTo">Rename To</Control>
 			<Control ID="btnThemeRename">Rename</Control>
 			<Control ID="lblThemeDuplicateAs">Duplicate As</Control>
@@ -2037,6 +2038,8 @@ E
 		<Message ID="ThemeProfileImportFailed">Failed to import profile: {0}</Message>
 		<Message ID="ThemeProfileImportConflict">A profile named '{0}' already exists.&#xA;&#xA;Press OK to overwrite it, or Cancel to import as a copy.</Message>
 		<Message ID="ThemeProfileExportNoSelection">No theme profile selected.</Message>
+		<Message ID="ThemeProfileResetDefaultsComplete">Theme profile reset to defaults.</Message>
+		<Message ID="ThemeProfileResetDefaultsFailed">Unable to reset theme profile to defaults.</Message>
 
 		<Message ID="ResetWorkspaceConfirmation">Warning: This operation will empty the watch window, remove all breakpoints and reset labels to their default state.&#xA;&#xA;This resets the workspace of all CPUs for the current ROM.&#xA;&#xA;Are you sure?</Message>
 		<Message ID="ImportLabels">Import completed: {0} labels imported.</Message>

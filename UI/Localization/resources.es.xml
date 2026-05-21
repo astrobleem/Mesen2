@@ -681,6 +681,7 @@
 			<Control ID="btnThemeDelete">Eliminar</Control>
 			<Control ID="btnThemeImportProfile">Importar perfil</Control>
 			<Control ID="btnThemeExportProfile">Exportar perfil</Control>
+			<Control ID="btnThemeResetDefaults">Restablecer predeterminados</Control>
 			<Control ID="lblThemeRenameTo">Renombrar a</Control>
 			<Control ID="btnThemeRename">Renombrar</Control>
 			<Control ID="lblThemeDuplicateAs">Duplicar como</Control>
@@ -1931,6 +1932,8 @@ supported by the watch window can be used.</Message>
 		<Message ID="ThemeProfileImportFailed">No se pudo importar el perfil: {0}</Message>
 		<Message ID="ThemeProfileImportConflict">Ya existe un perfil llamado '{0}'.&#xA;&#xA;Pulse Aceptar para sobrescribirlo o Cancelar para importarlo como copia.</Message>
 		<Message ID="ThemeProfileExportNoSelection">No hay perfil de tema seleccionado.</Message>
+		<Message ID="ThemeProfileResetDefaultsComplete">El perfil de tema se restablecio a los valores predeterminados.</Message>
+		<Message ID="ThemeProfileResetDefaultsFailed">No se pudo restablecer el perfil de tema a los valores predeterminados.</Message>
 	</Messages>
 	<Enums>
 		<Enum ID="EmulatorShortcut">
