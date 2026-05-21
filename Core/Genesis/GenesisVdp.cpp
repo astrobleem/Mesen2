@@ -1179,6 +1179,14 @@ void GenesisVdp::Composite(uint16_t* lineBuffer, const uint8_t* planeB, const ui
 	uint16_t winnerDigest = 0;
 
 	for (uint16_t x = 0; x < pixels; x++) {
+		// Reference VDP behavior treats the first column phase as prefetch/border,
+		// so the left-most 8 pixels are backdrop rather than composed layer output.
+		if (x < 8u) {
+			uint8_t borderIdx = (uint8_t)(bgIdx & 0x3Fu);
+			lineBuffer[x] = _palette[borderIdx];
+			continue;
+		}
+
 		uint8_t pB = planeB[x];
 		uint8_t pA = planeA[x];
 		uint8_t pS = spr[x];
