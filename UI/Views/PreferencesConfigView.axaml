@@ -39,6 +39,16 @@
 							<Button Content="Import Profile" Click="btnImportThemeProfile_OnClick" />
 							<Button Content="Export Profile" Click="btnExportThemeProfile_OnClick" />
 						</StackPanel>
+						<StackPanel Orientation="Horizontal" Spacing="8" Margin="0 6 0 0">
+							<TextBlock Text="Rename To" VerticalAlignment="Center" />
+							<TextBox Width="190" Text="{Binding RenameThemeProfileName}" />
+							<Button Content="Rename" Click="btnRenameThemeProfile_OnClick" />
+						</StackPanel>
+						<StackPanel Orientation="Horizontal" Spacing="8" Margin="0 6 0 0">
+							<TextBlock Text="Duplicate As" VerticalAlignment="Center" />
+							<TextBox Width="190" Text="{Binding DuplicateThemeProfileName}" />
+							<Button Content="Duplicate" Click="btnDuplicateThemeProfile_OnClick" />
+						</StackPanel>
 						<Grid ColumnDefinitions="Auto,Auto,*" RowDefinitions="Auto,Auto,Auto" Margin="0 8 0 0">
 							<TextBlock Grid.Row="0" Text="Startup Background" VerticalAlignment="Center" />
 							<Button Grid.Row="0" Grid.Column="1" Margin="8 0 8 0" Content="Pick" Click="btnPickThemeBackgroundColor_OnClick" />

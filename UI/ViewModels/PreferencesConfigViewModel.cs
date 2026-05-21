@@ -48,6 +48,12 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 	/// <summary>Gets or sets selected profile primary action color as ARGB hex.</summary>
 	[Reactive] public partial string SelectedProfileStartupPrimaryActionColor { get; set; }
 
+	/// <summary>Gets or sets target name for profile rename.</summary>
+	[Reactive] public partial string RenameThemeProfileName { get; set; }
+
+	/// <summary>Gets or sets target name for profile duplication.</summary>
+	[Reactive] public partial string DuplicateThemeProfileName { get; set; }
+
 	/// <summary>
 	/// Initializes a new instance of the <see cref="PreferencesConfigViewModel"/> class.
 	/// </summary>
@@ -59,6 +65,8 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 		SelectedProfileStartupBackgroundColor = "";
 		SelectedProfileStartupTextColor = "";
 		SelectedProfileStartupPrimaryActionColor = "";
+		RenameThemeProfileName = "";
+		DuplicateThemeProfileName = "";
 		RefreshThemeProfiles();
 
 		IsOsx = OperatingSystem.IsMacOS();
@@ -204,6 +212,22 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 		return removed;
 	}
 
+	public bool RenameSelectedThemeProfile() {
+		bool renamed = Config.RenameThemeProfile(SelectedThemeProfileName, RenameThemeProfileName);
+		if (renamed) {
+			SelectedThemeProfileName = RenameThemeProfileName.Trim();
+		}
+
+		RefreshThemeProfiles();
+		return renamed;
+	}
+
+	public bool DuplicateSelectedThemeProfile() {
+		bool duplicated = Config.DuplicateThemeProfile(SelectedThemeProfileName, DuplicateThemeProfileName);
+		RefreshThemeProfiles();
+		return duplicated;
+	}
+
 	public void UpsertImportedThemeProfile(ThemeProfile profile, bool activateProfile) {
 		Config.UpsertThemeProfile(profile, activateProfile);
 		RefreshThemeProfiles();
@@ -234,5 +258,6 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 		SelectedProfileStartupBackgroundColor = selectedProfile.StartupWindowBackgroundColor;
 		SelectedProfileStartupTextColor = selectedProfile.StartupTextColor;
 		SelectedProfileStartupPrimaryActionColor = selectedProfile.StartupPrimaryActionColor;
+		RenameThemeProfileName = selectedProfile.Name;
 	}
 }

@@ -32,10 +32,19 @@ public static class NexenThemeManager {
 		ApplyTheme(app, profile.Theme);
 
 		ApplyBrushOverride(app, "NexenStartupWindowBackgroundBrush", profile.StartupWindowBackgroundColor);
+		ApplyBrushOverride(app, "NexenStartupSurfaceBackgroundBrush", profile.StartupSurfaceBackgroundColor);
+		ApplyBrushOverride(app, "NexenStartupBorderBrush", profile.StartupBorderColor);
+		ApplyBrushOverride(app, "NexenStartupCardBackgroundBrush", profile.StartupCardBackgroundColor);
+		ApplyBrushOverride(app, "NexenStartupCardCheckedBackgroundBrush", profile.StartupCardCheckedBackgroundColor);
 		ApplyBrushOverride(app, "NexenStartupTextBrush", profile.StartupTextColor);
+		ApplyBrushOverride(app, "NexenStartupMutedTextBrush", profile.StartupMutedTextColor);
+		ApplyBrushOverride(app, "NexenStartupActionBorderBrush", profile.StartupActionBorderColor);
 		ApplyBrushOverride(app, "NexenStartupPrimaryActionBackgroundBrush", profile.StartupPrimaryActionColor);
+		ApplyBrushOverride(app, "NexenStartupDividerBrush", profile.StartupDividerColor);
+		ApplyBrushOverride(app, "NexenSetupSubtitleBrush", profile.SetupSubtitleColor);
 
 		app.Resources["NexenSetupTitleFontSize"] = profile.SetupTitleFontSize;
+		app.Resources["NexenSetupSubtitleFontSize"] = profile.SetupSubtitleFontSize;
 		app.Resources["NexenSetupPrimaryActionFontSize"] = profile.SetupPrimaryActionFontSize;
 	}
 

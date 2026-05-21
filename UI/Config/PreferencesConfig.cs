@@ -180,9 +180,18 @@ public sealed partial class PreferencesConfig : BaseConfig<PreferencesConfig> {
 			existing.MenuFontFamily = profile.MenuFontFamily;
 			existing.MenuFontSize = profile.MenuFontSize;
 			existing.StartupWindowBackgroundColor = profile.StartupWindowBackgroundColor;
+			existing.StartupSurfaceBackgroundColor = profile.StartupSurfaceBackgroundColor;
+			existing.StartupBorderColor = profile.StartupBorderColor;
+			existing.StartupCardBackgroundColor = profile.StartupCardBackgroundColor;
+			existing.StartupCardCheckedBackgroundColor = profile.StartupCardCheckedBackgroundColor;
 			existing.StartupTextColor = profile.StartupTextColor;
+			existing.StartupMutedTextColor = profile.StartupMutedTextColor;
+			existing.StartupActionBorderColor = profile.StartupActionBorderColor;
 			existing.StartupPrimaryActionColor = profile.StartupPrimaryActionColor;
+			existing.StartupDividerColor = profile.StartupDividerColor;
+			existing.SetupSubtitleColor = profile.SetupSubtitleColor;
 			existing.SetupTitleFontSize = profile.SetupTitleFontSize;
+			existing.SetupSubtitleFontSize = profile.SetupSubtitleFontSize;
 			existing.SetupPrimaryActionFontSize = profile.SetupPrimaryActionFontSize;
 		} else {
 			ThemeProfiles.Add(profile);
@@ -201,6 +210,63 @@ public sealed partial class PreferencesConfig : BaseConfig<PreferencesConfig> {
 		NexenMenuFont.FontSize = profile.MenuFontSize;
 		UpdateFonts();
 		UpdateTheme();
+	}
+
+	public bool RenameThemeProfile(string? oldName, string? newName) {
+		ThemeProfile? profile = GetThemeProfileByName(oldName);
+		if (profile is null || string.IsNullOrWhiteSpace(newName)) {
+			return false;
+		}
+
+		string trimmed = newName.Trim();
+		if (ThemeProfiles.Any(p => p.Name == trimmed)) {
+			return false;
+		}
+
+		profile.Name = trimmed;
+		if (ActiveThemeProfileName == oldName) {
+			ActiveThemeProfileName = trimmed;
+		}
+
+		return true;
+	}
+
+	public bool DuplicateThemeProfile(string? sourceName, string? newName) {
+		ThemeProfile? source = GetThemeProfileByName(sourceName);
+		if (source is null || string.IsNullOrWhiteSpace(newName)) {
+			return false;
+		}
+
+		string trimmed = newName.Trim();
+		if (ThemeProfiles.Any(p => p.Name == trimmed)) {
+			return false;
+		}
+
+		ThemeProfile duplicate = new ThemeProfile {
+			Name = trimmed,
+			Theme = source.Theme,
+			UiFontFamily = source.UiFontFamily,
+			UiFontSize = source.UiFontSize,
+			MenuFontFamily = source.MenuFontFamily,
+			MenuFontSize = source.MenuFontSize,
+			StartupWindowBackgroundColor = source.StartupWindowBackgroundColor,
+			StartupSurfaceBackgroundColor = source.StartupSurfaceBackgroundColor,
+			StartupBorderColor = source.StartupBorderColor,
+			StartupCardBackgroundColor = source.StartupCardBackgroundColor,
+			StartupCardCheckedBackgroundColor = source.StartupCardCheckedBackgroundColor,
+			StartupTextColor = source.StartupTextColor,
+			StartupMutedTextColor = source.StartupMutedTextColor,
+			StartupActionBorderColor = source.StartupActionBorderColor,
+			StartupPrimaryActionColor = source.StartupPrimaryActionColor,
+			StartupDividerColor = source.StartupDividerColor,
+			SetupSubtitleColor = source.SetupSubtitleColor,
+			SetupTitleFontSize = source.SetupTitleFontSize,
+			SetupSubtitleFontSize = source.SetupSubtitleFontSize,
+			SetupPrimaryActionFontSize = source.SetupPrimaryActionFontSize
+		};
+
+		ThemeProfiles.Add(duplicate);
+		return true;
 	}
 
 	private void AddShortcut(ShortcutKeyInfo shortcut) {

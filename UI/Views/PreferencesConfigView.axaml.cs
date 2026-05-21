@@ -126,6 +126,28 @@ public partial class PreferencesConfigView : UserControl {
 		}
 	}
 
+	private async void btnRenameThemeProfile_OnClick(object sender, RoutedEventArgs e) {
+		PreferencesConfigViewModel? model = GetViewModel();
+		if (model is null) {
+			return;
+		}
+
+		if (!model.RenameSelectedThemeProfile()) {
+			await NexenMsgBox.Show(TopLevel.GetTopLevel(this) as Window, "Unable to rename profile.", MessageBoxButtons.OK, MessageBoxIcon.Info);
+		}
+	}
+
+	private async void btnDuplicateThemeProfile_OnClick(object sender, RoutedEventArgs e) {
+		PreferencesConfigViewModel? model = GetViewModel();
+		if (model is null) {
+			return;
+		}
+
+		if (!model.DuplicateSelectedThemeProfile()) {
+			await NexenMsgBox.Show(TopLevel.GetTopLevel(this) as Window, "Unable to duplicate profile.", MessageBoxButtons.OK, MessageBoxIcon.Info);
+		}
+	}
+
 	private async void btnImportThemeProfile_OnClick(object sender, RoutedEventArgs e) {
 		PreferencesConfigViewModel? model = GetViewModel();
 		if (model is null) {
@@ -140,7 +162,7 @@ public partial class PreferencesConfigView : UserControl {
 		try {
 			string json = File.ReadAllText(path);
 			ThemeProfileFile? profileFile = (ThemeProfileFile?)JsonSerializer.Deserialize(json, typeof(ThemeProfileFile), NexenSerializerContext.Default);
-			if (profileFile?.Profile is null) {
+			if (profileFile?.Profile is null || !profileFile.IsValid()) {
 				await NexenMsgBox.Show(TopLevel.GetTopLevel(this) as Window, "Invalid theme profile file.", MessageBoxButtons.OK, MessageBoxIcon.Error);
 				return;
 			}

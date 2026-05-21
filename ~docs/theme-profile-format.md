@@ -1,4 +1,4 @@
-# Theme Profile Format
+﻿# Theme Profile Format
 
 This document describes the Nexen theme profile import and export JSON schema used by the Preferences UI.
 
@@ -21,9 +21,18 @@ This document describes the Nexen theme profile import and export JSON schema us
 		"menuFontFamily": "Segoe UI",
 		"menuFontSize": 12,
 		"startupWindowBackgroundColor": "#ff1d130d",
+		"startupSurfaceBackgroundColor": "#ff2a1a10",
+		"startupBorderColor": "#ff6b3f24",
+		"startupCardBackgroundColor": "#ff2a1a10",
+		"startupCardCheckedBackgroundColor": "#ffb65e18",
 		"startupTextColor": "#ffffffff",
+		"startupMutedTextColor": "#ffefcfb6",
+		"startupActionBorderColor": "#ffffce87",
 		"startupPrimaryActionColor": "#ffd47a22",
+		"startupDividerColor": "#553f2b1f",
+		"setupSubtitleColor": "#ffefcfb6",
 		"setupTitleFontSize": 34,
+		"setupSubtitleFontSize": 16,
 		"setupPrimaryActionFontSize": 34
 	}
 }
@@ -36,6 +45,21 @@ This document describes the Nexen theme profile import and export JSON schema us
 - Color values use ARGB hex format: `#aarrggbb`.
 - `theme` supports `Light` or `Dark`.
 - Imported profiles are upserted by `profile.name`.
+- Import rejects files when:
+	- `format` is not `nexen-theme-profile`
+	- `version` is not `1`
+	- `profile.name` is empty
+	- Any color field is invalid
+
+## Profile Management UX
+
+- Preferences now supports:
+	- Select and apply profile
+	- Save current settings into selected profile
+	- Rename profile
+	- Duplicate profile
+	- Delete profile
+	- Import/export profile JSON
 
 ## Runtime Application
 
@@ -46,8 +70,17 @@ When a profile is activated, Nexen applies:
 - Menu font family and size.
 - Startup semantic brush overrides for:
 	- `NexenStartupWindowBackgroundBrush`
+	- `NexenStartupSurfaceBackgroundBrush`
+	- `NexenStartupBorderBrush`
+	- `NexenStartupCardBackgroundBrush`
+	- `NexenStartupCardCheckedBackgroundBrush`
 	- `NexenStartupTextBrush`
+	- `NexenStartupMutedTextBrush`
+	- `NexenStartupActionBorderBrush`
 	- `NexenStartupPrimaryActionBackgroundBrush`
+	- `NexenStartupDividerBrush`
+	- `NexenSetupSubtitleBrush`
 - Setup typography overrides for:
 	- `NexenSetupTitleFontSize`
+	- `NexenSetupSubtitleFontSize`
 	- `NexenSetupPrimaryActionFontSize`
