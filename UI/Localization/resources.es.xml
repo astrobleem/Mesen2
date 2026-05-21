@@ -689,6 +689,7 @@
 			<Control ID="lblThemeStartupText">Texto de inicio</Control>
 			<Control ID="lblThemePrimaryAction">Accion principal</Control>
 			<Control ID="btnThemePickColor">Elegir</Control>
+			<Control ID="lblThemeLivePreview">Vista previa en vivo</Control>
 			<Control ID="lblRequiresRestart">(requiere reinicio)</Control>
 			<Control ID="lblDisplayLanguage">Idioma de la interfaz:</Control>
 			<Control ID="lblAvailableLanguages">Idiomas disponibles:</Control>

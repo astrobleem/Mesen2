@@ -689,6 +689,7 @@
 			<Control ID="lblThemeStartupText">起動画面テキスト</Control>
 			<Control ID="lblThemePrimaryAction">主要アクション</Control>
 			<Control ID="btnThemePickColor">選択</Control>
+			<Control ID="lblThemeLivePreview">ライブプレビュー</Control>
 			<Control ID="lblRequiresRestart">(再起動が必要)</Control>
 			<Control ID="lblDisplayLanguage">表示言語:</Control>
 			<Control ID="lblAvailableLanguages">利用可能な言語:</Control>

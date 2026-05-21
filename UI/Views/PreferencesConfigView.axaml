@@ -62,6 +62,12 @@
 							<Button Grid.Row="2" Grid.Column="1" Margin="8 0 8 0" Content="{l:Translate btnThemePickColor}" Click="btnPickThemePrimaryActionColor_OnClick" />
 							<TextBox Grid.Row="2" Grid.Column="2" IsReadOnly="True" Text="{Binding SelectedProfileStartupPrimaryActionColor}" />
 						</Grid>
+						<StackPanel Orientation="Horizontal" Spacing="8" Margin="0 8 0 0" VerticalAlignment="Center">
+							<TextBlock Text="{l:Translate lblThemeLivePreview}" VerticalAlignment="Center" />
+							<Border Width="22" Height="22" BorderBrush="#666666" BorderThickness="1" CornerRadius="3" Background="{Binding SelectedProfileStartupBackgroundBrush}" ToolTip.Tip="{l:Translate lblThemeStartupBackground}" />
+							<Border Width="22" Height="22" BorderBrush="#666666" BorderThickness="1" CornerRadius="3" Background="{Binding SelectedProfileStartupTextBrush}" ToolTip.Tip="{l:Translate lblThemeStartupText}" />
+							<Border Width="22" Height="22" BorderBrush="#666666" BorderThickness="1" CornerRadius="3" Background="{Binding SelectedProfileStartupPrimaryActionBrush}" ToolTip.Tip="{l:Translate lblThemePrimaryAction}" />
+						</StackPanel>
 					</c:OptionSection>
 
 					<StackPanel Orientation="Horizontal">

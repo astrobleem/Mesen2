@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Media;
 using Avalonia.Styling;
 using Nexen.Config;
 using Nexen.Config.Shortcuts;
@@ -48,6 +49,15 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 	/// <summary>Gets or sets selected profile primary action color as ARGB hex.</summary>
 	[Reactive] public partial string SelectedProfileStartupPrimaryActionColor { get; set; }
 
+	/// <summary>Gets or sets selected profile startup background preview brush.</summary>
+	[Reactive] public partial IBrush SelectedProfileStartupBackgroundBrush { get; set; }
+
+	/// <summary>Gets or sets selected profile startup text preview brush.</summary>
+	[Reactive] public partial IBrush SelectedProfileStartupTextBrush { get; set; }
+
+	/// <summary>Gets or sets selected profile startup primary action preview brush.</summary>
+	[Reactive] public partial IBrush SelectedProfileStartupPrimaryActionBrush { get; set; }
+
 	/// <summary>Gets or sets target name for profile rename.</summary>
 	[Reactive] public partial string RenameThemeProfileName { get; set; }
 
@@ -65,6 +75,9 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 		SelectedProfileStartupBackgroundColor = "";
 		SelectedProfileStartupTextColor = "";
 		SelectedProfileStartupPrimaryActionColor = "";
+		SelectedProfileStartupBackgroundBrush = Brushes.Transparent;
+		SelectedProfileStartupTextBrush = Brushes.Transparent;
+		SelectedProfileStartupPrimaryActionBrush = Brushes.Transparent;
 		RenameThemeProfileName = "";
 		DuplicateThemeProfileName = "";
 		RefreshThemeProfiles();
@@ -252,12 +265,27 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 			SelectedProfileStartupBackgroundColor = "";
 			SelectedProfileStartupTextColor = "";
 			SelectedProfileStartupPrimaryActionColor = "";
+			SelectedProfileStartupBackgroundBrush = Brushes.Transparent;
+			SelectedProfileStartupTextBrush = Brushes.Transparent;
+			SelectedProfileStartupPrimaryActionBrush = Brushes.Transparent;
 			return;
 		}
 
 		SelectedProfileStartupBackgroundColor = selectedProfile.StartupWindowBackgroundColor;
 		SelectedProfileStartupTextColor = selectedProfile.StartupTextColor;
 		SelectedProfileStartupPrimaryActionColor = selectedProfile.StartupPrimaryActionColor;
+		SelectedProfileStartupBackgroundBrush = CreatePreviewBrush(selectedProfile.StartupWindowBackgroundColor);
+		SelectedProfileStartupTextBrush = CreatePreviewBrush(selectedProfile.StartupTextColor);
+		SelectedProfileStartupPrimaryActionBrush = CreatePreviewBrush(selectedProfile.StartupPrimaryActionColor);
 		RenameThemeProfileName = selectedProfile.Name;
+	}
+
+	private static IBrush CreatePreviewBrush(string colorValue) {
+		try {
+			Color color = Color.Parse(colorValue);
+			return new SolidColorBrush(color);
+		} catch {
+			return Brushes.Transparent;
+		}
 	}
 }

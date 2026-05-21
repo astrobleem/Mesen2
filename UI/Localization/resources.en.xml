@@ -813,6 +813,7 @@
 			<Control ID="lblThemeStartupText">Startup Text</Control>
 			<Control ID="lblThemePrimaryAction">Primary Action</Control>
 			<Control ID="btnThemePickColor">Pick</Control>
+			<Control ID="lblThemeLivePreview">Live Preview</Control>
 			<Control ID="lblRequiresRestart">(requires restart)</Control>
 
 			<Control ID="lblDisplayLanguage">Display Language:</Control>
