@@ -653,18 +653,24 @@ void GenesisVdp::Run(uint64_t targetCycle) {
 			}
 		}
 
-		if (_scanline < _screenHeight && _hCounter == hblankStartCycle) {
-			if (_state.HIntCounter == 0) {
-				_state.HIntCounter = _state.Registers[10];
-				_hintPending = true;
-				if (IsHBlankInterruptEnabled() && _cpu) {
-					_hintNew = true;
-					_cpu->SetInterrupt(4);
+		if (_hCounter == hblankStartCycle) {
+			if (_scanline < _screenHeight) {
+				if (_state.HIntCounter == 0) {
+					_state.HIntCounter = _state.Registers[10];
+					_hintPending = true;
+					if (IsHBlankInterruptEnabled() && _cpu) {
+						_hintNew = true;
+						_cpu->SetInterrupt(4);
+					} else {
+						_hintNew = false;
+					}
 				} else {
-					_hintNew = false;
+					_state.HIntCounter--;
 				}
 			} else {
-				_state.HIntCounter--;
+				// Match hardware/reference behavior: during VBlank lines,
+				// reload HINT counter cadence without raising HINT interrupts.
+				_state.HIntCounter = _state.Registers[10];
 			}
 		}
 
