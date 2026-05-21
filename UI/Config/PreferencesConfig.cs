@@ -22,6 +22,8 @@ public sealed partial class PreferencesConfig : BaseConfig<PreferencesConfig> {
 	[Reactive] public partial PrimaryUsageProfile PrimaryUsageProfile { get; set; } = PrimaryUsageProfile.Playing;
 	[Reactive] public partial bool PreferUserProfileStorage { get; set; } = true;
 	[Reactive] public partial NexenTheme Theme { get; set; } = NexenTheme.Light;
+	[Reactive] public partial List<ThemeProfile> ThemeProfiles { get; set; } = [];
+	[Reactive] public partial string ActiveThemeProfileName { get; set; } = "";
 	[Reactive] public partial UiLanguage UiLanguage { get; set; } = UiLanguage.English;
 	[Reactive] public partial bool AutomaticallyCheckForUpdates { get; set; } = true;
 	[Reactive] public partial bool SingleInstance { get; set; } = true;
@@ -97,6 +99,108 @@ public sealed partial class PreferencesConfig : BaseConfig<PreferencesConfig> {
 	[Reactive] public partial string WaveFolder { get; set; } = "";
 
 	public PreferencesConfig() {
+		EnsureThemeProfiles();
+	}
+
+	public void EnsureThemeProfiles() {
+		if (ThemeProfiles.Count == 0) {
+			ThemeProfiles.Add(ThemeProfile.CreateDefault("Default Light", NexenTheme.Light));
+			ThemeProfiles.Add(ThemeProfile.CreateDefault("Default Dark", NexenTheme.Dark));
+		}
+
+		if (string.IsNullOrWhiteSpace(ActiveThemeProfileName) || !ThemeProfiles.Any(profile => profile.Name == ActiveThemeProfileName)) {
+			ActiveThemeProfileName = Theme == NexenTheme.Dark ? "Default Dark" : "Default Light";
+		}
+	}
+
+	public ThemeProfile? GetActiveThemeProfile() {
+		EnsureThemeProfiles();
+		return ThemeProfiles.FirstOrDefault(profile => profile.Name == ActiveThemeProfileName);
+	}
+
+	public ThemeProfile? GetThemeProfileByName(string? profileName) {
+		if (string.IsNullOrWhiteSpace(profileName)) {
+			return null;
+		}
+
+		EnsureThemeProfiles();
+		return ThemeProfiles.FirstOrDefault(profile => profile.Name == profileName);
+	}
+
+	public void SetActiveThemeProfile(string? profileName) {
+		ThemeProfile? profile = GetThemeProfileByName(profileName);
+		if (profile is null) {
+			return;
+		}
+
+		ActiveThemeProfileName = profile.Name;
+		ApplyThemeProfile(profile);
+	}
+
+	public void SaveCurrentToProfile(string? profileName) {
+		ThemeProfile? profile = GetThemeProfileByName(profileName);
+		if (profile is null) {
+			return;
+		}
+
+		profile.Theme = Theme;
+		profile.UiFontFamily = NexenFont.FontFamily;
+		profile.UiFontSize = NexenFont.FontSize;
+		profile.MenuFontFamily = NexenMenuFont.FontFamily;
+		profile.MenuFontSize = NexenMenuFont.FontSize;
+	}
+
+	public bool DeleteThemeProfile(string? profileName) {
+		ThemeProfile? profile = GetThemeProfileByName(profileName);
+		if (profile is null) {
+			return false;
+		}
+
+		if (ThemeProfiles.Count <= 1) {
+			return false;
+		}
+
+		ThemeProfiles.Remove(profile);
+		if (ActiveThemeProfileName == profile.Name) {
+			ThemeProfile fallback = ThemeProfiles[0];
+			ActiveThemeProfileName = fallback.Name;
+			ApplyThemeProfile(fallback);
+		}
+
+		return true;
+	}
+
+	public void UpsertThemeProfile(ThemeProfile profile, bool activateProfile) {
+		EnsureThemeProfiles();
+		ThemeProfile? existing = ThemeProfiles.FirstOrDefault(p => p.Name == profile.Name);
+		if (existing is not null) {
+			existing.Theme = profile.Theme;
+			existing.UiFontFamily = profile.UiFontFamily;
+			existing.UiFontSize = profile.UiFontSize;
+			existing.MenuFontFamily = profile.MenuFontFamily;
+			existing.MenuFontSize = profile.MenuFontSize;
+			existing.StartupWindowBackgroundColor = profile.StartupWindowBackgroundColor;
+			existing.StartupTextColor = profile.StartupTextColor;
+			existing.StartupPrimaryActionColor = profile.StartupPrimaryActionColor;
+			existing.SetupTitleFontSize = profile.SetupTitleFontSize;
+			existing.SetupPrimaryActionFontSize = profile.SetupPrimaryActionFontSize;
+		} else {
+			ThemeProfiles.Add(profile);
+		}
+
+		if (activateProfile) {
+			SetActiveThemeProfile(profile.Name);
+		}
+	}
+
+	public void ApplyThemeProfile(ThemeProfile profile) {
+		Theme = profile.Theme;
+		NexenFont.FontFamily = profile.UiFontFamily;
+		NexenFont.FontSize = profile.UiFontSize;
+		NexenMenuFont.FontFamily = profile.MenuFontFamily;
+		NexenMenuFont.FontSize = profile.MenuFontSize;
+		UpdateFonts();
+		UpdateTheme();
 	}
 
 	private void AddShortcut(ShortcutKeyInfo shortcut) {
@@ -205,7 +309,8 @@ public sealed partial class PreferencesConfig : BaseConfig<PreferencesConfig> {
 
 	public static void UpdateTheme() {
 		if (Application.Current is not null) {
-			NexenThemeManager.ApplyTheme(Application.Current, ConfigManager.Config.Preferences.Theme);
+			ConfigManager.Config.Preferences.EnsureThemeProfiles();
+			NexenThemeManager.ApplyTheme(Application.Current, ConfigManager.Config.Preferences);
 		}
 	}
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Styling;
@@ -32,12 +33,33 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 	/// <summary>Gets or sets the list of shortcut key bindings.</summary>
 	public List<ShortcutKeyInfo> ShortcutKeys { get; set; }
 
+	/// <summary>Gets or sets available theme profile names.</summary>
+	[Reactive] public partial List<string> ThemeProfileNames { get; set; }
+
+	/// <summary>Gets or sets the selected theme profile name.</summary>
+	[Reactive] public partial string SelectedThemeProfileName { get; set; }
+
+	/// <summary>Gets or sets selected profile startup background color as ARGB hex.</summary>
+	[Reactive] public partial string SelectedProfileStartupBackgroundColor { get; set; }
+
+	/// <summary>Gets or sets selected profile startup text color as ARGB hex.</summary>
+	[Reactive] public partial string SelectedProfileStartupTextColor { get; set; }
+
+	/// <summary>Gets or sets selected profile primary action color as ARGB hex.</summary>
+	[Reactive] public partial string SelectedProfileStartupPrimaryActionColor { get; set; }
+
 	/// <summary>
 	/// Initializes a new instance of the <see cref="PreferencesConfigViewModel"/> class.
 	/// </summary>
 	public PreferencesConfigViewModel() {
 		Config = ConfigManager.Config.Preferences;
 		OriginalConfig = Config.Clone();
+		ThemeProfileNames = [];
+		SelectedThemeProfileName = "";
+		SelectedProfileStartupBackgroundColor = "";
+		SelectedProfileStartupTextColor = "";
+		SelectedProfileStartupPrimaryActionColor = "";
+		RefreshThemeProfiles();
 
 		IsOsx = OperatingSystem.IsMacOS();
 		DataStorageLocation = ConfigManager.HomeFolder;
@@ -148,6 +170,69 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 		AddDisposable(ReactiveHelper.RegisterRecursiveObserver(Config, (s, e) => {
 			Config.ApplyConfig();
 			PreferencesConfig.UpdateTheme();
+			RefreshSelectedThemeProfileDetails();
 		}));
+	}
+
+	public void RefreshThemeProfiles() {
+		Config.EnsureThemeProfiles();
+		ThemeProfileNames = Config.ThemeProfiles.Select(profile => profile.Name).ToList();
+		if (string.IsNullOrWhiteSpace(SelectedThemeProfileName) || !ThemeProfileNames.Contains(SelectedThemeProfileName)) {
+			SelectedThemeProfileName = Config.ActiveThemeProfileName;
+		}
+
+		RefreshSelectedThemeProfileDetails();
+	}
+
+	public ThemeProfile? GetSelectedThemeProfile() {
+		return Config.GetThemeProfileByName(SelectedThemeProfileName);
+	}
+
+	public void ActivateSelectedThemeProfile() {
+		Config.SetActiveThemeProfile(SelectedThemeProfileName);
+		RefreshThemeProfiles();
+	}
+
+	public void SaveCurrentToSelectedThemeProfile() {
+		Config.SaveCurrentToProfile(SelectedThemeProfileName);
+		RefreshThemeProfiles();
+	}
+
+	public bool DeleteSelectedThemeProfile() {
+		bool removed = Config.DeleteThemeProfile(SelectedThemeProfileName);
+		RefreshThemeProfiles();
+		return removed;
+	}
+
+	public void UpsertImportedThemeProfile(ThemeProfile profile, bool activateProfile) {
+		Config.UpsertThemeProfile(profile, activateProfile);
+		RefreshThemeProfiles();
+	}
+
+	public void SetSelectedProfileColors(string background, string text, string primaryAction) {
+		ThemeProfile? selectedProfile = GetSelectedThemeProfile();
+		if (selectedProfile is null) {
+			return;
+		}
+
+		selectedProfile.StartupWindowBackgroundColor = background;
+		selectedProfile.StartupTextColor = text;
+		selectedProfile.StartupPrimaryActionColor = primaryAction;
+		Config.SetActiveThemeProfile(selectedProfile.Name);
+		RefreshThemeProfiles();
+	}
+
+	private void RefreshSelectedThemeProfileDetails() {
+		ThemeProfile? selectedProfile = GetSelectedThemeProfile();
+		if (selectedProfile is null) {
+			SelectedProfileStartupBackgroundColor = "";
+			SelectedProfileStartupTextColor = "";
+			SelectedProfileStartupPrimaryActionColor = "";
+			return;
+		}
+
+		SelectedProfileStartupBackgroundColor = selectedProfile.StartupWindowBackgroundColor;
+		SelectedProfileStartupTextColor = selectedProfile.StartupTextColor;
+		SelectedProfileStartupPrimaryActionColor = selectedProfile.StartupPrimaryActionColor;
 	}
 }

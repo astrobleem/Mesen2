@@ -14,6 +14,7 @@ This directory contains internal development documentation for Nexen contributor
 | [Profiling Guide](PROFILING-GUIDE.md) | Performance profiling techniques |
 | [ASan Guide](ASAN-GUIDE.md) | AddressSanitizer for memory debugging |
 | [UI Theme System Guide](ui-theme-system.md) | Centralized brown/orange brand theme tokens and migration guidance for UI contributors |
+| [Theme Profile Format](theme-profile-format.md) | Import/export JSON schema and runtime application rules for customizable UI theme profiles |
 
 ## 🎮 Emulation Core Documentation
 

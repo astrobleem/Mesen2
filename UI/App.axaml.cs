@@ -47,6 +47,13 @@ public partial class App : Application {
 
 		AvaloniaXamlLoader.Load(this);
 		ResourceHelper.LoadResources(languageCode);
+		if (!Design.IsDesignMode && !ShowConfigWindow) {
+			try {
+				NexenThemeManager.ApplyTheme(this, ConfigManager.Config.Preferences);
+			} catch (Exception ex) {
+				Log.Error(ex, "[App] Failed to apply active theme profile overrides");
+			}
+		}
 		Log.Info($"[App] Loaded UI language '{languageCode}'. Available languages: {string.Join(", ", ResourceHelper.GetAvailableLanguageCodes())}");
 	}
 

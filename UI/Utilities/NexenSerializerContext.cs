@@ -36,6 +36,8 @@ using Nexen.ViewModels;
 [JsonSerializable(typeof(UpdateInfo))]
 [JsonSerializable(typeof(GitHubRelease))]
 [JsonSerializable(typeof(GitHubAsset))]
+[JsonSerializable(typeof(ThemeProfile))]
+[JsonSerializable(typeof(ThemeProfileFile))]
 [JsonSourceGenerationOptions(
 	WriteIndented = true,
 	IgnoreReadOnlyProperties = true,
