@@ -383,11 +383,12 @@ void GenesisVdp::Reset(bool hardReset) {
 	_hvCounterLatch = 0;
 
 	_screenWidth = IsH40Mode() ? 320 : 256;
-	_screenHeight = 224;
+	_screenHeight = IsV30Mode() ? 240 : 224;
 	_totalLines = 262; // NTSC
 	_lineDisplayEnabled = IsDisplayEnabled();
 	_lineH40Mode = IsH40Mode();
 	_lineScreenWidth = _screenWidth;
+	_lineScreenHeight = _screenHeight;
 	_vblankEnteredThisFrame = false;
 	_vintFiredThisFrame = false;
 	_vintPending = false;
@@ -412,7 +413,8 @@ void GenesisVdp::Reset(bool hardReset) {
 
 void GenesisVdp::SetRegion(bool pal) {
 	_totalLines = pal ? 313 : 262;
-	_screenHeight = pal ? 240 : 224;
+	_screenHeight = IsV30Mode() ? 240 : 224;
+	_lineScreenHeight = _screenHeight;
 	if (pal) {
 		_state.StatusRegister |= VdpStatus::PalMode;
 	} else {
@@ -688,7 +690,9 @@ void GenesisVdp::Run(uint64_t targetCycle) {
 			_lineDisplayEnabled = IsDisplayEnabled();
 			_lineH40Mode = IsH40Mode();
 			_lineScreenWidth = _lineH40Mode ? 320 : 256;
+			_lineScreenHeight = IsV30Mode() ? 240 : 224;
 			_screenWidth = _lineScreenWidth;
+			_screenHeight = _lineScreenHeight;
 
 			// One line is 3420 MCLK = 488 + 4/7 68k cycles.
 			// Carry the 4/7 remainder forward to avoid fixed-phase drift.
@@ -1707,6 +1711,8 @@ void GenesisVdp::WriteControlPort(uint16_t value) {
 			bool displayEnabledAfter = IsDisplayEnabled();
 			if (atLineBoundary) {
 				_lineDisplayEnabled = displayEnabledAfter;
+				_lineScreenHeight = IsV30Mode() ? 240 : 224;
+				_screenHeight = _lineScreenHeight;
 			}
 
 			bool vintEnableRise = ((oldData & 0x20u) == 0u) && ((data & 0x20u) != 0u);
@@ -2033,6 +2039,7 @@ void GenesisVdp::Serialize(Serializer& s) {
 	SV(_lineDisplayEnabled);
 	SV(_lineH40Mode);
 	SV(_lineScreenWidth);
+	SV(_lineScreenHeight);
 	SV(_vblankEnteredThisFrame);
 	SV(_vintFiredThisFrame);
 	SV(_vintPending);

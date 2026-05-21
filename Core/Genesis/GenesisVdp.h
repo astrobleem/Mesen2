@@ -44,6 +44,7 @@ private:
 	bool _lineDisplayEnabled = false;
 	bool _lineH40Mode = true;
 	uint16_t _lineScreenWidth = 320;
+	uint16_t _lineScreenHeight = 224;
 	bool _vblankEnteredThisFrame = false;
 	bool _vintFiredThisFrame = false;
 	bool _vintPending = false;
@@ -135,6 +136,7 @@ private:
 
 	// Register helpers
 	bool IsDisplayEnabled() const { return (_state.Registers[1] & 0x40) != 0; }
+	bool IsV30Mode() const { return (_state.Registers[1] & 0x08) != 0; }
 	bool IsH40Mode() const { return (_state.Registers[12] & 0x01) != 0; } // H40 = 320px, H32 = 256px
 	bool IsPalMode() const { return _totalLines == 313; }
 	bool IsInterlaceMode() const { return (_state.Registers[12] & 0x02) != 0; }

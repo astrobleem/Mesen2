@@ -76,7 +76,7 @@ namespace {
 		vdp.Init(nullptr, nullptr, nullptr, nullptr);
 		vdp.SetRegion(true);
 
-		WriteReg(vdp, 1, 0x64); // display + VINT enable
+		WriteReg(vdp, 1, 0x6C); // display + VINT enable + V30 (240-line active)
 
 		uint64_t vblankLineStartPal = LineStartCycle(240);
 		vdp.Run(vblankLineStartPal);
