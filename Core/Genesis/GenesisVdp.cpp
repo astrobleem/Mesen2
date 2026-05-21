@@ -1908,6 +1908,7 @@ void GenesisVdp::ProcessDma() {
 		// 68K → VRAM/CRAM/VSRAM copy
 		uint8_t dmaDestCode = _dmaLatchedDestCode;
 		uint32_t dmaDst = _addressReg;
+		bool queueViaFifo = activeDisplay;
 		for (uint32_t i = 0; i < wordsThisStep; i++) {
 			// Expanded-compatible source progression: wrap within current 128KB source window.
 			uint32_t srcBase = _dmaSourceAddress & ~0x1FFFFu;
@@ -1918,23 +1919,17 @@ void GenesisVdp::ProcessDma() {
 			uint16_t word = ((uint16_t)hi << 8) | lo;
 
 			switch (dmaDestCode) {
-				case 0x01: {
-					uint32_t addr = dmaDst & 0xFFFFu;
-					_vram[addr] = (uint8_t)(word >> 8);
-					_vram[(addr + 1u) & 0xFFFFu] = (uint8_t)word;
+				case 0x01:
+				case 0x03:
+				case 0x05:
+					if (queueViaFifo) {
+						// During active display, bus DMA shares the same FIFO/external-slot ordering
+						// path as data-port writes.
+						EnqueueWriteFifo(dmaDestCode, (uint16_t)dmaDst, word);
+					} else {
+						ApplyPortWrite(dmaDestCode, (uint16_t)dmaDst, word);
+					}
 					break;
-				}
-				case 0x03: {
-					uint8_t idx = (uint8_t)((dmaDst >> 1) & 0x3Fu);
-					_cram[idx] = word;
-					UpdatePaletteEntry(idx);
-					break;
-				}
-				case 0x05: {
-					uint8_t idx = (uint8_t)((dmaDst >> 1) & 0x27u);
-					_vsram[idx] = word;
-					break;
-				}
 				default:
 					break;
 			}
