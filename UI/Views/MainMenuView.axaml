@@ -1,4 +1,4 @@
-<UserControl
+﻿<UserControl
 	xmlns="https://github.com/avaloniaui"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -18,11 +18,7 @@
 
 	<DockPanel Background="{DynamicResource NexenMenuBackground}">
 		<c:NexenMenu Name="LanguageMenu" DockPanel.Dock="Right">
-			<MenuItem Header="🌐" ToolTip.Tip="{l:Translate mnuLanguageSelector}">
-				<MenuItem Name="mnuLanguageEnglish" Header="{l:Translate mnuLanguageEnglish}" ToggleType="CheckBox" Click="mnuLanguageEnglish_Click" />
-				<MenuItem Name="mnuLanguageSpanish" Header="{l:Translate mnuLanguageSpanish}" ToggleType="CheckBox" Click="mnuLanguageSpanish_Click" />
-				<MenuItem Name="mnuLanguageJapanese" Header="{l:Translate mnuLanguageJapanese}" ToggleType="CheckBox" Click="mnuLanguageJapanese_Click" />
-			</MenuItem>
+			<MenuItem Name="mnuLanguageRoot" Header="🌐" ToolTip.Tip="{l:Translate mnuLanguageSelector}" />
 		</c:NexenMenu>
 
 		<c:NexenMenu Name="ActionMenu" DockPanel.Dock="Left">

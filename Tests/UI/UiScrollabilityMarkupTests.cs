@@ -214,10 +214,11 @@ public sealed class UiScrollabilityMarkupTests {
 		string markup = File.ReadAllText(fullPath);
 		Assert.Contains("Name=\"LanguageMenu\"", markup);
 		Assert.Contains("DockPanel.Dock=\"Right\"", markup);
+		Assert.Contains("Name=\"mnuLanguageRoot\"", markup);
 		Assert.Contains("Header=\"🌐\"", markup);
-		Assert.Contains("mnuLanguageEnglish", markup);
-		Assert.Contains("mnuLanguageSpanish", markup);
-		Assert.Contains("mnuLanguageJapanese", markup);
+		Assert.DoesNotContain("mnuLanguageEnglish", markup);
+		Assert.DoesNotContain("mnuLanguageSpanish", markup);
+		Assert.DoesNotContain("mnuLanguageJapanese", markup);
 	}
 
 	[Fact]

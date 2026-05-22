@@ -1,4 +1,4 @@
-# Main Menu Globe Language and Theme Manual Test
+﻿# Main Menu Globe Language and Theme Manual Test
 
 ## Purpose
 
@@ -14,17 +14,18 @@ Validate the right-aligned globe language selector and brown/orange default menu
 
 1. Launch Nexen and confirm a globe icon appears on the right side of the top menu bar.
 2. Open the globe menu with mouse.
-3. Confirm language entries exist for English, Spanish, and Japanese.
-4. Select Spanish.
-5. Verify top-level menu labels update immediately without restart.
-6. Open Settings and verify labels are translated there too.
-7. Select Japanese from the globe menu.
-8. Verify menu and settings labels update immediately.
-9. Select English and verify labels return to English.
-10. Close Nexen.
-11. Reopen Nexen and verify the last selected language persisted.
-12. In both light and dark theme profiles, visually verify menu/background/highlight accents are brown/orange-forward and readable.
-13. Hover menu and button surfaces to confirm pointer-over accents use orange highlight tones.
+3. Confirm language entries are populated from bundled localization resources.
+4. Confirm current bundle entries include English, Spanish, and Japanese.
+5. Select Spanish.
+6. Verify top-level menu labels update immediately without restart.
+7. Open Settings and verify labels are translated there too.
+8. Select Japanese from the globe menu.
+9. Verify menu and settings labels update immediately.
+10. Select English and verify labels return to English.
+11. Close Nexen.
+12. Reopen Nexen and verify the last selected language persisted.
+13. In both light and dark theme profiles, visually verify menu/background/highlight accents are brown/orange-forward and readable.
+14. Hover menu and button surfaces to confirm pointer-over accents use orange highlight tones.
 
 ## Pass Criteria
 

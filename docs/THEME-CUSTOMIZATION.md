@@ -121,7 +121,7 @@ Language changes in settings now apply immediately without restarting the proces
 
 Main menu language switching is also available directly from the globe menu at the right side of the top menu bar (UI/Views/MainMenuView.axaml).
 
-The globe menu updates Preferences UiLanguage, reloads localization resources, and persists config immediately.
+The globe menu generates language entries from bundled localization resources, updates Preferences UiLanguage, reloads localization resources, and persists config immediately.
 
 ## Validation Checklist
 

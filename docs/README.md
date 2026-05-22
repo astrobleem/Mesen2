@@ -65,6 +65,7 @@ This directory contains user-facing documentation for Nexen.
 | [TAS UI Comprehensive Plan](../~docs/plans/tas-ui-comprehensive-plan.md) | TAS editor and workflow modernization roadmap |
 | [UI Modernization Plan](../~docs/plans/ui-modernization-plan.md) | Broader UI modernization and consistency tasks |
 | [Epic 23 Plan: Main Menu Language and Theme Refinement](../~docs/plans/2026-05-22-epic-23-main-menu-language-theme-refinement.md) | Globe language menu implementation and brown/orange default theme refinement plan |
+| [Issue 2286 Plan: Dynamic Globe Language Menu](../~docs/plans/2026-05-22-issue-2286-dynamic-globe-language-menu.md) | Dynamic language list generation for the globe menu from bundled localization resources |
 | [Documentation Restructure Plan](../~docs/plans/documentation-restructure-plan.md) | Documentation hierarchy and feature-first navigation roadmap |
 | [Q2 2026 Future Work Program](../~docs/plans/future-work-program-2026-q2.md) | Milestones and acceptance criteria for platform-parity planning and execution |
 | [Q3 2026 Platform Parity Research Program](../~docs/plans/platform-parity-research-program-2026-q3.md) | Multi-session research and execution cadence for issues #704-#707 |

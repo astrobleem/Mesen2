@@ -2837,6 +2837,8 @@ continue;
 Language should be easily changable, add a globe icon to the right of the main menu bar, with Language selection; update theme values and UI for the default theme to use more of our brown and orange color picks; make plans, epics, issues, docs, session-logs, etc, and implement the issues; continue;
 
 
+Language should be easily changable, add a globe icon to the right of the main menu bar, with Language selection menu; update theme values and UI for the default theme to use more of our brown and orange color picks; make plans, epics, issues, docs, session-logs, etc, and implement the issues; continue;
+
 
 
 
@@ -2914,7 +2916,7 @@ We've got partial pansy and cdl files for FFMQ (SNES) and so rerun peony and pop
 
 
 
-[Nexen] git commit everything; stablize and fix as many warnings as possible, and create a working build and release version 1.4.40 and run the github actions that build the artifacts for the release, and make a big description for the release with all of the changes (using emojis and avoiding mojibake) and make a good title for the release; make sure the build works and artifacts are added to the release; continue;
+[Nexen] git commit everything; stablize and fix as many warnings as possible, and create a working build and release version 1.4.40 and run the github actions that build the artifacts for the release, and make a big description for the release with all of the changes (using emojis and avoiding mojibake) and make a good title for the release; make sure the build works and artifacts are added to the release because ; continue;
 
 
 
@@ -2927,6 +2929,7 @@ We've got partial pansy and cdl files for FFMQ (SNES) and so rerun peony and pop
 
 
 prepare for a release, and clean up and update documentation and fix as many warnings as you can; create
+
 
 
 

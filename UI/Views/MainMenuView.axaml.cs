@@ -1,5 +1,8 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 using Avalonia;
-using System.Collections;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
@@ -9,19 +12,16 @@ using Nexen.Localization;
 using Nexen.Utilities;
 using Nexen.ViewModels;
 
-namespace Nexen.Views; 
+namespace Nexen.Views;
 public partial class MainMenuView : UserControl {
 	public Menu MainMenu { get; }
-	private readonly MenuItem _mnuLanguageEnglish;
-	private readonly MenuItem _mnuLanguageSpanish;
-	private readonly MenuItem _mnuLanguageJapanese;
+	private readonly MenuItem _mnuLanguageRoot;
+	private readonly Dictionary<UiLanguage, MenuItem> _languageItems = [];
 
 	public MainMenuView() {
 		InitializeComponent();
 		MainMenu = this.GetControl<Menu>("ActionMenu");
-		_mnuLanguageEnglish = this.GetControl<MenuItem>("mnuLanguageEnglish");
-		_mnuLanguageSpanish = this.GetControl<MenuItem>("mnuLanguageSpanish");
-		_mnuLanguageJapanese = this.GetControl<MenuItem>("mnuLanguageJapanese");
+		_mnuLanguageRoot = this.GetControl<MenuItem>("mnuLanguageRoot");
 
 		MainMenu.Closed += (s, e) =>                //When an option is selected in the menu (e.g with enter or mouse click)
 													//steal focus away from the menu to ensure pressing e.g left/right goes to the
@@ -38,6 +38,7 @@ public partial class MainMenuView : UserControl {
 		};
 
 		ResourceHelper.LanguageChanged += ResourceHelper_LanguageChanged;
+		RebuildLanguageMenuItems();
 		RefreshLanguageCheckStates();
 	}
 
@@ -51,14 +52,59 @@ public partial class MainMenuView : UserControl {
 	}
 
 	private void ResourceHelper_LanguageChanged(object? sender, System.EventArgs e) {
+		RebuildLanguageMenuItems();
 		RefreshLanguageCheckStates();
+	}
+
+	private static UiLanguage GetUiLanguageFromCode(string languageCode) {
+		return languageCode switch {
+			"en" => UiLanguage.English,
+			"es" => UiLanguage.Spanish,
+			"ja" => UiLanguage.Japanese,
+			_ => UiLanguage.English,
+		};
+	}
+
+	private static string GetLanguageMenuText(string languageCode) {
+		try {
+			CultureInfo culture = CultureInfo.GetCultureInfo(languageCode);
+			return culture.NativeName + " (" + culture.EnglishName + ")";
+		} catch (CultureNotFoundException) {
+			return languageCode;
+		}
+	}
+
+	private void RebuildLanguageMenuItems() {
+		_languageItems.Clear();
+		IList items = (IList)_mnuLanguageRoot.Items;
+		items.Clear();
+
+		string[] languageCodes = ResourceHelper.GetAvailableLanguageCodes();
+		foreach (string languageCode in languageCodes.OrderBy(code => code, System.StringComparer.OrdinalIgnoreCase)) {
+			UiLanguage uiLanguage = GetUiLanguageFromCode(languageCode);
+			if (_languageItems.ContainsKey(uiLanguage)) {
+				continue;
+			}
+
+			MenuItem item = new MenuItem {
+				Header = GetLanguageMenuText(languageCode),
+				ToggleType = MenuItemToggleType.CheckBox,
+			};
+			item.Click += (_, _) => {
+				ApplyUiLanguage(uiLanguage);
+				RefreshLanguageCheckStates();
+			};
+
+			_languageItems[uiLanguage] = item;
+			items.Add(item);
+		}
 	}
 
 	private void RefreshLanguageCheckStates() {
 		UiLanguage language = ConfigManager.Config.Preferences.UiLanguage;
-		_mnuLanguageEnglish.IsChecked = language == UiLanguage.English;
-		_mnuLanguageSpanish.IsChecked = language == UiLanguage.Spanish;
-		_mnuLanguageJapanese.IsChecked = language == UiLanguage.Japanese;
+		foreach ((UiLanguage itemLanguage, MenuItem item) in _languageItems) {
+			item.IsChecked = itemLanguage == language;
+		}
 	}
 
 	private static void ApplyUiLanguage(UiLanguage language) {
@@ -69,21 +115,6 @@ public partial class MainMenuView : UserControl {
 		ConfigManager.Config.Preferences.UiLanguage = language;
 		ResourceHelper.LoadResources(PreferencesConfig.GetLanguageCode(language));
 		ConfigManager.Config.Save();
-	}
-
-	private void mnuLanguageEnglish_Click(object sender, RoutedEventArgs e) {
-		ApplyUiLanguage(UiLanguage.English);
-		RefreshLanguageCheckStates();
-	}
-
-	private void mnuLanguageSpanish_Click(object sender, RoutedEventArgs e) {
-		ApplyUiLanguage(UiLanguage.Spanish);
-		RefreshLanguageCheckStates();
-	}
-
-	private void mnuLanguageJapanese_Click(object sender, RoutedEventArgs e) {
-		ApplyUiLanguage(UiLanguage.Japanese);
-		RefreshLanguageCheckStates();
 	}
 
 	private void mnuTools_Opened(object sender, RoutedEventArgs e) {

@@ -1,4 +1,4 @@
-# Epic 23 Plan: Main Menu Language Switcher and Brown/Orange Theme Refinement
+﻿# Epic 23 Plan: Main Menu Language Switcher and Brown/Orange Theme Refinement
 
 ## Linked Issues
 
