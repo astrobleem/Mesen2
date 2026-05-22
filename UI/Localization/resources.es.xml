@@ -696,6 +696,7 @@
 			<Control ID="lblThemePresetStatus">Estado del preajuste:</Control>
 			<Control ID="lblThemeMatchesDefaults">Coincide con los valores predeterminados</Control>
 			<Control ID="lblThemeTokensCustomized">tokens personalizados</Control>
+			<Control ID="lblThemeCustomizedTokens">Tokens personalizados:</Control>
 			<Control ID="lblRequiresRestart">(requiere reinicio)</Control>
 			<Control ID="lblDisplayLanguage">Idioma de la interfaz:</Control>
 			<Control ID="lblAvailableLanguages">Idiomas disponibles:</Control>

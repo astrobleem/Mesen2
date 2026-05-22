@@ -696,6 +696,7 @@
 			<Control ID="lblThemePresetStatus">プリセット状態:</Control>
 			<Control ID="lblThemeMatchesDefaults">既定値と一致</Control>
 			<Control ID="lblThemeTokensCustomized">トークンがカスタマイズ済み</Control>
+			<Control ID="lblThemeCustomizedTokens">カスタマイズ済みトークン:</Control>
 			<Control ID="lblRequiresRestart">(再起動が必要)</Control>
 			<Control ID="lblDisplayLanguage">表示言語:</Control>
 			<Control ID="lblAvailableLanguages">利用可能な言語:</Control>

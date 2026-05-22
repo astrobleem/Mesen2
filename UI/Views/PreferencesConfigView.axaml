@@ -79,6 +79,10 @@
 							<TextBlock IsVisible="{Binding SelectedThemeProfileIsCustomized}" Text="{Binding SelectedThemeProfileDivergenceCount}" VerticalAlignment="Center" />
 							<TextBlock IsVisible="{Binding SelectedThemeProfileIsCustomized}" Text="{l:Translate lblThemeTokensCustomized}" VerticalAlignment="Center" />
 						</StackPanel>
+						<StackPanel IsVisible="{Binding SelectedThemeProfileIsCustomized}" Orientation="Horizontal" Spacing="6" Margin="0 2 0 0" VerticalAlignment="Center">
+							<TextBlock Text="{l:Translate lblThemeCustomizedTokens}" VerticalAlignment="Center" />
+							<TextBlock Text="{Binding SelectedThemeProfileCustomizedTokensSummary}" TextWrapping="Wrap" MaxWidth="520" VerticalAlignment="Center" />
+						</StackPanel>
 					</c:OptionSection>
 
 					<StackPanel Orientation="Horizontal">

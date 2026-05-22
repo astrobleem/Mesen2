@@ -67,6 +67,9 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 	/// <summary>Gets or sets whether selected profile has customized tokens.</summary>
 	[Reactive] public partial bool SelectedThemeProfileIsCustomized { get; set; }
 
+	/// <summary>Gets or sets comma-separated customized token names.</summary>
+	[Reactive] public partial string SelectedThemeProfileCustomizedTokensSummary { get; set; }
+
 	/// <summary>Gets or sets target name for profile rename.</summary>
 	[Reactive] public partial string RenameThemeProfileName { get; set; }
 
@@ -90,6 +93,7 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 		SelectedThemeProfileDivergenceCount = 0;
 		SelectedThemeProfileMatchesDefaults = true;
 		SelectedThemeProfileIsCustomized = false;
+		SelectedThemeProfileCustomizedTokensSummary = "";
 		RenameThemeProfileName = "";
 		DuplicateThemeProfileName = "";
 		RefreshThemeProfiles();
@@ -301,6 +305,7 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 			SelectedThemeProfileDivergenceCount = 0;
 			SelectedThemeProfileMatchesDefaults = true;
 			SelectedThemeProfileIsCustomized = false;
+			SelectedThemeProfileCustomizedTokensSummary = "";
 			return;
 		}
 
@@ -313,6 +318,7 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 		SelectedThemeProfileDivergenceCount = Config.GetThemeProfileDivergenceCount(selectedProfile.Name);
 		SelectedThemeProfileMatchesDefaults = SelectedThemeProfileDivergenceCount == 0;
 		SelectedThemeProfileIsCustomized = SelectedThemeProfileDivergenceCount > 0;
+		SelectedThemeProfileCustomizedTokensSummary = string.Join(", ", Config.GetThemeProfileCustomizedTokenNames(selectedProfile.Name));
 		RenameThemeProfileName = selectedProfile.Name;
 	}
 

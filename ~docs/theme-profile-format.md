@@ -65,6 +65,7 @@ This document describes the Nexen theme profile import and export JSON schema us
 	- Reset selected profile to centralized defaults for its light/dark variant
 	- Apply canonical light/dark preset defaults to selected profile in one click
 	- Show whether selected profile matches canonical defaults or has customized token count
+	- Show a per-token customized summary list for the selected profile
 
 ## Runtime Application
 

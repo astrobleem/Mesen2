@@ -176,4 +176,19 @@ public sealed class ThemeProfileTests {
 
 		Assert.Equal(2, count);
 	}
+
+	[Fact]
+	public void PreferencesConfig_GetThemeProfileCustomizedTokenNames_ReturnsExpectedTokenNames() {
+		PreferencesConfig config = new PreferencesConfig();
+		ThemeProfile? profile = config.GetThemeProfileByName("Default Dark");
+		Assert.NotNull(profile);
+		profile!.StartupTextColor = "#ff000000";
+		profile.UiFontSize = 13;
+
+		List<string> tokens = config.GetThemeProfileCustomizedTokenNames("Default Dark");
+
+		Assert.Contains("StartupTextColor", tokens);
+		Assert.Contains("UiFontSize", tokens);
+		Assert.Equal(2, tokens.Count);
+	}
 }

@@ -384,6 +384,37 @@ public sealed partial class PreferencesConfig : BaseConfig<PreferencesConfig> {
 		return divergenceCount;
 	}
 
+	public List<string> GetThemeProfileCustomizedTokenNames(string? profileName) {
+		ThemeProfile? profile = GetThemeProfileByName(profileName);
+		if (profile is null) {
+			return [];
+		}
+
+		ThemeProfile defaults = ThemeProfile.CreateDefault(profile.Name, profile.Theme);
+		List<string> customized = [];
+
+		if (profile.UiFontFamily != defaults.UiFontFamily) customized.Add(nameof(ThemeProfile.UiFontFamily));
+		if (profile.UiFontSize != defaults.UiFontSize) customized.Add(nameof(ThemeProfile.UiFontSize));
+		if (profile.MenuFontFamily != defaults.MenuFontFamily) customized.Add(nameof(ThemeProfile.MenuFontFamily));
+		if (profile.MenuFontSize != defaults.MenuFontSize) customized.Add(nameof(ThemeProfile.MenuFontSize));
+		if (profile.StartupWindowBackgroundColor != defaults.StartupWindowBackgroundColor) customized.Add(nameof(ThemeProfile.StartupWindowBackgroundColor));
+		if (profile.StartupSurfaceBackgroundColor != defaults.StartupSurfaceBackgroundColor) customized.Add(nameof(ThemeProfile.StartupSurfaceBackgroundColor));
+		if (profile.StartupBorderColor != defaults.StartupBorderColor) customized.Add(nameof(ThemeProfile.StartupBorderColor));
+		if (profile.StartupCardBackgroundColor != defaults.StartupCardBackgroundColor) customized.Add(nameof(ThemeProfile.StartupCardBackgroundColor));
+		if (profile.StartupCardCheckedBackgroundColor != defaults.StartupCardCheckedBackgroundColor) customized.Add(nameof(ThemeProfile.StartupCardCheckedBackgroundColor));
+		if (profile.StartupTextColor != defaults.StartupTextColor) customized.Add(nameof(ThemeProfile.StartupTextColor));
+		if (profile.StartupMutedTextColor != defaults.StartupMutedTextColor) customized.Add(nameof(ThemeProfile.StartupMutedTextColor));
+		if (profile.StartupActionBorderColor != defaults.StartupActionBorderColor) customized.Add(nameof(ThemeProfile.StartupActionBorderColor));
+		if (profile.StartupPrimaryActionColor != defaults.StartupPrimaryActionColor) customized.Add(nameof(ThemeProfile.StartupPrimaryActionColor));
+		if (profile.StartupDividerColor != defaults.StartupDividerColor) customized.Add(nameof(ThemeProfile.StartupDividerColor));
+		if (profile.SetupSubtitleColor != defaults.SetupSubtitleColor) customized.Add(nameof(ThemeProfile.SetupSubtitleColor));
+		if (profile.SetupTitleFontSize != defaults.SetupTitleFontSize) customized.Add(nameof(ThemeProfile.SetupTitleFontSize));
+		if (profile.SetupSubtitleFontSize != defaults.SetupSubtitleFontSize) customized.Add(nameof(ThemeProfile.SetupSubtitleFontSize));
+		if (profile.SetupPrimaryActionFontSize != defaults.SetupPrimaryActionFontSize) customized.Add(nameof(ThemeProfile.SetupPrimaryActionFontSize));
+
+		return customized;
+	}
+
 	private void AddShortcut(ShortcutKeyInfo shortcut) {
 		if (!ShortcutKeys.Exists(a => a.Shortcut == shortcut.Shortcut)) {
 			ShortcutKeys.Add(shortcut);
