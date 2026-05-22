@@ -1,8 +1,8 @@
-using System;
+﻿using System;
 using Avalonia;
 using ReactiveUI.SourceGenerators;
 
-namespace Nexen.Config; 
+namespace Nexen.Config;
 public sealed partial class MainWindowConfig : BaseWindowConfig<MainWindowConfig> {
 	public MainWindowConfig() {
 		WindowSize = new PixelSize(1280, 820);

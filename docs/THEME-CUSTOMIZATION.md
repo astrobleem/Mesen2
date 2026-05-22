@@ -1,4 +1,4 @@
-# Theme Customization Guide
+﻿# Theme Customization Guide
 
 This guide explains where Nexen theme values are defined, how they are applied at runtime, and how to update them safely.
 
