@@ -314,6 +314,7 @@ public sealed partial class DebuggerWindowViewModel : DisposableViewModel {
 		}
 
 		AddDisposable(ReactiveHelper.RegisterRecursiveObserver(Config, Config_PropertyChanged));
+		ResourceHelper.LanguageChanged += ResourceHelper_LanguageChanged;
 
 		if (CpuType.SupportsMemoryMappings()) {
 			MemoryMappings = new MemoryMappingViewModel(CpuType);
@@ -324,6 +325,35 @@ public sealed partial class DebuggerWindowViewModel : DisposableViewModel {
 		LabelManager.OnLabelUpdated += LabelManager_OnLabelUpdated;
 		BreakpointManager.BreakpointsChanged += BreakpointManager_BreakpointsChanged;
 		Log.Debug("[DebuggerVM] Constructor checkpoint: final subscriptions complete");
+	}
+
+	private void ResourceHelper_LanguageChanged(object? sender, EventArgs e) {
+		Dispatcher.UIThread.Post(() => {
+			if (Disposed) {
+				return;
+			}
+
+			if (!IsMainCpuDebugger) {
+				Title = ResourceHelper.GetEnumText(CpuType) + " Debugger";
+			}
+
+			RefreshMenuActions(ToolbarItems);
+			RefreshMenuActions(FileMenuItems);
+			RefreshMenuActions(DebugMenuItems);
+			RefreshMenuActions(SearchMenuItems);
+			RefreshMenuActions(OptionMenuItems);
+		});
+	}
+
+	private static void RefreshMenuActions(IEnumerable<object> actions) {
+		foreach (object action in actions) {
+			if (action is BaseMenuAction menuAction) {
+				menuAction.Update();
+				if (menuAction.SubActions is not null) {
+					RefreshMenuActions(menuAction.SubActions);
+				}
+			}
+		}
 	}
 
 	public void ActivateDebuggerSessionAsync(Action? onActivated = null) {
@@ -448,6 +478,7 @@ public sealed partial class DebuggerWindowViewModel : DisposableViewModel {
 		}
 
 		DebugWorkspaceManager.SymbolProviderChanged -= DebugWorkspaceManager_SymbolProviderChanged;
+		ResourceHelper.LanguageChanged -= ResourceHelper_LanguageChanged;
 		LabelManager.OnLabelUpdated -= LabelManager_OnLabelUpdated;
 		BreakpointManager.BreakpointsChanged -= BreakpointManager_BreakpointsChanged;
 		if (_breakpointCpuTypeRegistered) {

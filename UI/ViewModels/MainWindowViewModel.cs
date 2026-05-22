@@ -70,6 +70,11 @@ public sealed partial class MainWindowViewModel : ViewModelBase {
 		RecentGames = new RecentGamesViewModel();
 
 		IsMenuVisible = !Config.Preferences.AutoHideMenu;
+		ResourceHelper.LanguageChanged += ResourceHelper_LanguageChanged;
+	}
+
+	private void ResourceHelper_LanguageChanged(object? sender, EventArgs e) {
+		UpdateWindowTitle();
 	}
 
 	/// <summary>

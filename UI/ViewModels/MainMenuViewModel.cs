@@ -107,6 +107,16 @@ public sealed partial class MainMenuViewModel : ViewModelBase {
 	/// <param name="windowModel">The parent main window ViewModel.</param>
 	public MainMenuViewModel(MainWindowViewModel windowModel) {
 		MainWindow = windowModel;
+		ResourceHelper.LanguageChanged += ResourceHelper_LanguageChanged;
+	}
+
+	private void ResourceHelper_LanguageChanged(object? sender, EventArgs e) {
+		UpdateAllMenuItems(FileMenuItems);
+		UpdateAllMenuItems(GameMenuItems);
+		UpdateAllMenuItems(OptionsMenuItems);
+		UpdateAllMenuItems(ToolsMenuItems);
+		UpdateAllMenuItems(DebugMenuItems);
+		UpdateAllMenuItems(HelpMenuItems);
 	}
 
 	/// <summary>
