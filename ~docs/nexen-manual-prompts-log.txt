@@ -2825,8 +2825,13 @@ yes, do all those three things; continue;
 yes, do all those three things; continue;
 yes, do all those three things; continue;
 
+commit them! always just commit! they're usually just formatting changes, stop fucking asking me, commit!; continue
 
+The Nexen logo on startup has a white background, it should be dark brown, and I don't see the progress bar on the startup splash screen; the Nexen window should be larger on startup (maximize?), the menu and menu text is supposed to be larger, Language should be easily changable; make a document explaining how Theme values are used in code and theme files and how to update them; update theme values and UI for the default theme to use more of our brown and orange color picks; Make menus and buttons and text bigger throughout the UI so it's easier to click and easier on touch screens and moves towards our simplified UI that's easier to use; make plans, epics, issues, docs, session-logs, etc, and implement the issues; continue;
 
+run Nexen
+
+continue;
 
 
 

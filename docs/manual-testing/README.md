@@ -15,6 +15,7 @@ This section is the starting point for manual release validation in Nexen.
 |---|---|
 | [Manual Step Priority Ranking](manual-step-priority-ranking.md) | Rank each manual test by release impact and failure severity |
 | [Live Language Switch Manual Test](live-language-switch-manual-test.md) | Validate no-restart language switching across menus, debugger, and tool windows |
+| [Startup UX, Theme, and Accessibility Manual Test](startup-ux-accessibility-theme-manual-test.md) | Validate splash branding/progress visibility, larger startup defaults, and touch-friendly sizing |
 | [Atari 2600 Debug and TAS Manual Test](atari2600-debug-and-tas-manual-test.md) | Atari 2600 end-to-end debugger UI, TAS UI, and movie workflows |
 | [Atari Lynx Debug and TAS Manual Test](lynx-debug-and-tas-manual-test.md) | Atari Lynx end-to-end ROM loading, debugger, TAS, save states, and audio |
 | [Channel F Debug and TAS Manual Test](channelf-debug-and-tas-manual-test.md) | Fairchild Channel F end-to-end debugger, TAS, movie, and persistence workflows |

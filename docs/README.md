@@ -32,6 +32,7 @@ This directory contains user-facing documentation for Nexen.
 |---|---|
 | [Manual Testing Hub](manual-testing/README.md) | Starting manual instructions and execution order |
 | [Live Language Switch Manual Test](manual-testing/live-language-switch-manual-test.md) | Validate runtime no-restart language propagation across key windows and menus |
+| [Startup UX, Theme, and Accessibility Manual Test](manual-testing/startup-ux-accessibility-theme-manual-test.md) | Validate splash branding/progress visibility, larger startup defaults, and touch-friendly menu/control sizing |
 | [Atari 2600 Debug and TAS Manual Test](manual-testing/atari2600-debug-and-tas-manual-test.md) | End-to-end debugger, TAS, and movie validation workflow |
 | [Channel F Debug and TAS Manual Test](manual-testing/channelf-debug-and-tas-manual-test.md) | End-to-end Channel F debugger, TAS, movie, and persistence validation workflow |
 | [Manual Step Priority Ranking](manual-testing/manual-step-priority-ranking.md) | Release impact ranking for manual validation steps |
