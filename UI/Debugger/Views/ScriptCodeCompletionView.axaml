@@ -39,14 +39,14 @@
 				<ItemsControl ItemsSource="{Binding Parameters}" Grid.Column="0">
 					<ItemsControl.ItemTemplate>
 						<DataTemplate>
-							<TextBlock Text="{Binding Name}" FontWeight="Bold" Padding="2 0" />
+							<TextBlock Text="{Binding Name}" FontWeight="Bold" Padding="6 2" />
 						</DataTemplate>
 					</ItemsControl.ItemTemplate>
 				</ItemsControl>
 				<ItemsControl ItemsSource="{Binding Parameters}" Grid.Column="1">
 					<ItemsControl.ItemTemplate>
 						<DataTemplate>
-							<TextBlock Text="{Binding CalculatedType}" FontStyle="Italic" Margin="5 0" Padding="5 0" />
+							<TextBlock Text="{Binding CalculatedType}" FontStyle="Italic" Margin="5 0" Padding="8 2" />
 						</DataTemplate>
 					</ItemsControl.ItemTemplate>
 				</ItemsControl>
@@ -79,14 +79,14 @@
 				<ItemsControl ItemsSource="{Binding Column1Values}" Grid.Column="0">
 					<ItemsControl.ItemTemplate>
 						<DataTemplate>
-							<TextBlock Text="{Binding Name}" FontWeight="Bold" Padding="2 0" />
+							<TextBlock Text="{Binding Name}" FontWeight="Bold" Padding="6 2" />
 						</DataTemplate>
 					</ItemsControl.ItemTemplate>
 				</ItemsControl>
 				<ItemsControl ItemsSource="{Binding Column1Values}" Grid.Column="1">
 					<ItemsControl.ItemTemplate>
 						<DataTemplate>
-							<TextBlock Text="{Binding Description}" Padding="5 0" />
+							<TextBlock Text="{Binding Description}" Padding="8 2" />
 						</DataTemplate>
 					</ItemsControl.ItemTemplate>
 				</ItemsControl>
@@ -94,14 +94,14 @@
 				<ItemsControl ItemsSource="{Binding Column2Values}" Grid.Column="3">
 					<ItemsControl.ItemTemplate>
 						<DataTemplate>
-							<TextBlock Text="{Binding Name}" FontWeight="Bold" Padding="2 0" />
+							<TextBlock Text="{Binding Name}" FontWeight="Bold" Padding="6 2" />
 						</DataTemplate>
 					</ItemsControl.ItemTemplate>
 				</ItemsControl>
 				<ItemsControl ItemsSource="{Binding Column2Values}" Grid.Column="4">
 					<ItemsControl.ItemTemplate>
 						<DataTemplate>
-							<TextBlock Text="{Binding Description}" Padding="5 0" />
+							<TextBlock Text="{Binding Description}" Padding="8 2" />
 						</DataTemplate>
 					</ItemsControl.ItemTemplate>
 				</ItemsControl>

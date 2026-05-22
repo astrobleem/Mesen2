@@ -159,7 +159,7 @@
 					<v:DebuggerOptionsView DataContext="{Binding Options}" />
 				</ScrollViewer>
 			</Panel>
-			<Grid DockPanel.Dock="Bottom" MinHeight="18" RowDefinitions="1*" ColumnDefinitions="1*,1*,1*">
+			<Grid DockPanel.Dock="Bottom" MinHeight="30" RowDefinitions="1*" ColumnDefinitions="1*,1*,1*">
 				<StackPanel Orientation="Horizontal" Grid.Column="0">
 					<Image
 						Source="/Assets/Breakpoint.png"

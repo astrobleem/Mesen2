@@ -133,6 +133,28 @@ public sealed class UiScrollabilityMarkupTests {
 	}
 
 	[Fact]
+	public void DebuggerAuxiliaryWindows_UseLargerTouchTargets() {
+		string repoRoot = GetRepositoryRoot();
+		string memoryFindPath = Path.Combine(repoRoot, "UI", "Debugger", "Windows", "MemoryViewerFindWindow.axaml");
+		string pansyProgressPath = Path.Combine(repoRoot, "UI", "Debugger", "Windows", "PansyExportProgressWindow.axaml");
+		string debuggerWindowPath = Path.Combine(repoRoot, "UI", "Debugger", "Windows", "DebuggerWindow.axaml");
+
+		Assert.True(File.Exists(memoryFindPath), $"Expected markup file to exist: {memoryFindPath}");
+		Assert.True(File.Exists(pansyProgressPath), $"Expected markup file to exist: {pansyProgressPath}");
+		Assert.True(File.Exists(debuggerWindowPath), $"Expected markup file to exist: {debuggerWindowPath}");
+
+		string memoryFindMarkup = File.ReadAllText(memoryFindPath);
+		string pansyProgressMarkup = File.ReadAllText(pansyProgressPath);
+		string debuggerWindowMarkup = File.ReadAllText(debuggerWindowPath);
+
+		Assert.Contains("Height=\"36\"", memoryFindMarkup);
+		Assert.Contains("MinHeight=\"36\"", memoryFindMarkup);
+		Assert.Contains("Height=\"24\"", pansyProgressMarkup);
+		Assert.Contains("Height=\"12\"", pansyProgressMarkup);
+		Assert.Contains("MinHeight=\"30\"", debuggerWindowMarkup);
+	}
+
+	[Fact]
 	public void ConfigWindow_DataTemplatesUseExplicitScrollViewers() {
 		string repoRoot = GetRepositoryRoot();
 		string fullPath = Path.Combine(repoRoot, "UI", "Windows", "ConfigWindow.axaml");

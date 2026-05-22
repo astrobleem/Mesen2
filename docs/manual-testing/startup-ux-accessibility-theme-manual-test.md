@@ -1,4 +1,4 @@
-# Startup UX, Theme, and Accessibility Manual Test
+﻿# Startup UX, Theme, and Accessibility Manual Test
 
 Use this checklist to validate the default startup UX refresh for splash branding, progress visibility, larger startup defaults, and touch-friendly UI sizing.
 

@@ -32,8 +32,8 @@
 			AcceptsReturn="True"
 			ScrollViewer.HorizontalScrollBarVisibility="Auto"
 			Height="NaN"
-			MinHeight="21"
-			MaxHeight="200"
+			MinHeight="36"
+			MaxHeight="260"
 			VerticalContentAlignment="Top"
 			Text="{Binding Label.Comment, Converter={StaticResource NullTextConverter}}"
 		/>

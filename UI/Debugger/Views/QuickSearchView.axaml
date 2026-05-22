@@ -29,13 +29,13 @@
 		BorderBrush="{DynamicResource NexenGrayBorderColor}"
 		BorderThickness="1"
 		Background="{DynamicResource ThemeBackgroundBrush}"
-		Padding="2 1"
+		Padding="6 4"
 	>
 		<DockPanel>
 			<TextBlock Text="{l:Translate lblSearch}" VerticalAlignment="Center" />
 			<TextBox
 				Name="txtSearch"
-				Width="120"
+				Width="160"
 				Text="{Binding SearchString, Converter={StaticResource NullTextConverter}}"
 				Classes.highlight="{Binding IsErrorVisible}"
 		  />
