@@ -9,6 +9,16 @@
 			<Control ID="mnuDebug">_デバッグ</Control>
 			<Control ID="mnuHelp">_ヘルプ</Control>
 		</Form>
+		<Form ID="SpeedSliderPrototypeWindow">
+			<Control ID="wndTitle">速度スライダープロトタイプ</Control>
+			<Control ID="lblPrototype">プロトタイプ: 設定 -&gt; 速度メニュー向けの速度スライダー。</Control>
+			<Control ID="lblSemantics">動作: 一時停止、プリセット (25/50/100/200/300)、最大。</Control>
+			<Control ID="lblCurrentSelection">現在の選択:</Control>
+			<Control ID="lblRiskHint">誤操作による速度変更を減らすため、適用は手動です。</Control>
+			<Control ID="btnApply">適用</Control>
+			<Control ID="btnApplyAndClose">適用して閉じる</Control>
+			<Control ID="btnClose">閉じる</Control>
+		</Form>
 		<Form ID="AudioConfigView">
 			<Control ID="tpgGeneral">一般的な</Control>
 			<Control ID="chkMuteSoundInBackground">バックグラウンド時は音をミュートします</Control>
@@ -1893,6 +1903,10 @@ Web サイトにアクセスし、最新リリースを手動でダウンロー�
 		<Message ID="ConfirmReloadRom">ディスクからROMを再読み込みしてもよろしいですか？</Message>
 		<Message ID="ConfirmPowerOff">電源を切ってもよろしいですか？</Message>
 		<Message ID="ConfirmExit">終了してもよろしいですか？</Message>
+		<Message ID="MenuFdsDiskSide">ディスク {0} 面 {1}</Message>
+		<Message ID="MenuSpeedSliderPrototype">速度スライダープロトタイプ...</Message>
+		<Message ID="MenuCreateNewMovie">新しいムービーを作成</Message>
+		<Message ID="TasEditorInitFailed">TASエディターの初期化に失敗しました。</Message>
 		<Message ID="ConfirmDeleteSaveState">このセーブステートを削除してもよろしいですか？
 
 {0}</Message>

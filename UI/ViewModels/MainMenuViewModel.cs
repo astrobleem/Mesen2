@@ -307,7 +307,7 @@ public sealed partial class MainMenuViewModel : ViewModelBase {
 				SubActions = [
 					new SimpleMenuAction {
 						ActionType = ActionType.Custom,
-						DynamicText = () => "(empty)",
+						DynamicText = () => ResourceHelper.GetMessage("EmptyState"),
 						IsVisible = () => ConfigManager.Config.RecentFiles.Items.Count == 0,
 						IsEnabled = () => false,
 					},
@@ -465,7 +465,7 @@ public sealed partial class MainMenuViewModel : ViewModelBase {
 	private ShortcutMenuAction CreateFdsInsertDiskItem(int diskSide) {
 		return new ShortcutMenuAction(EmulatorShortcut.FdsInsertDiskNumber) {
 			ActionType = ActionType.Custom,
-			CustomText = "Disk " + ((diskSide / 2) + 1) + " Side " + ((diskSide % 2 == 0) ? "A" : "B"),
+			CustomText = ResourceHelper.GetMessage("MenuFdsDiskSide", ((diskSide / 2) + 1).ToString(), (diskSide % 2 == 0) ? "A" : "B"),
 			ShortcutParam = (uint)diskSide,
 			IsVisible = () => EmuApi.IsShortcutAllowed(EmulatorShortcut.FdsInsertDiskNumber, (uint)diskSide)
 		};
@@ -478,7 +478,7 @@ public sealed partial class MainMenuViewModel : ViewModelBase {
 				SubActions = [
 					GetSpeedMenuItem(ActionType.NormalSpeed, 100),
 					new SimpleMenuAction(ActionType.Custom) {
-						CustomText = "Speed Slider Prototype...",
+						CustomText = ResourceHelper.GetMessage("MenuSpeedSliderPrototype"),
 						OnClick = () => OpenSpeedSliderPrototype(wnd)
 					},
 					new MenuSeparator(),
@@ -954,7 +954,7 @@ public sealed partial class MainMenuViewModel : ViewModelBase {
 		if (tasWindow.DataContext is TasEditorViewModel vm) {
 			vm.CreateNewMovieFromMenu();
 		} else {
-			DisplayMessageHelper.DisplayMessage("TAS Editor", "Failed to initialize TAS Editor.");
+			DisplayMessageHelper.DisplayMessage(ResourceHelper.GetEnumText(ActionType.TasEditor), ResourceHelper.GetMessage("TasEditorInitFailed"));
 		}
 	}
 
@@ -963,7 +963,7 @@ public sealed partial class MainMenuViewModel : ViewModelBase {
 		if (tasWindow.DataContext is TasEditorViewModel vm) {
 			vm.StartRecording();
 		} else {
-			DisplayMessageHelper.DisplayMessage("TAS Editor", "Failed to initialize TAS Editor.");
+			DisplayMessageHelper.DisplayMessage(ResourceHelper.GetEnumText(ActionType.TasEditor), ResourceHelper.GetMessage("TasEditorInitFailed"));
 		}
 	}
 
@@ -994,7 +994,7 @@ public sealed partial class MainMenuViewModel : ViewModelBase {
 					},
 					new SimpleMenuAction() {
 						ActionType = ActionType.Custom,
-						CustomText = "Create New Movie",
+						CustomText = ResourceHelper.GetMessage("MenuCreateNewMovie"),
 						IsEnabled = () => SupportsTasEditor(),
 						OnClick = () => CreateNewTasMovie(wnd)
 					},

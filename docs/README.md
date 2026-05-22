@@ -31,6 +31,7 @@ This directory contains user-facing documentation for Nexen.
 | Document | Description |
 |---|---|
 | [Manual Testing Hub](manual-testing/README.md) | Starting manual instructions and execution order |
+| [Live Language Switch Manual Test](manual-testing/live-language-switch-manual-test.md) | Validate runtime no-restart language propagation across key windows and menus |
 | [Atari 2600 Debug and TAS Manual Test](manual-testing/atari2600-debug-and-tas-manual-test.md) | End-to-end debugger, TAS, and movie validation workflow |
 | [Channel F Debug and TAS Manual Test](manual-testing/channelf-debug-and-tas-manual-test.md) | End-to-end Channel F debugger, TAS, movie, and persistence validation workflow |
 | [Manual Step Priority Ranking](manual-testing/manual-step-priority-ranking.md) | Release impact ranking for manual validation steps |

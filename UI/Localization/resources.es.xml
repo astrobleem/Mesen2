@@ -9,6 +9,16 @@
 			<Control ID="mnuDebug">_Depuracion</Control>
 			<Control ID="mnuHelp">_Ayuda</Control>
 		</Form>
+		<Form ID="SpeedSliderPrototypeWindow">
+			<Control ID="wndTitle">Prototipo de control de velocidad</Control>
+			<Control ID="lblPrototype">Prototipo: control deslizante de velocidad para el menu Configuracion -&gt; Velocidad.</Control>
+			<Control ID="lblSemantics">Semantica: Pausa, preajustes (25/50/100/200/300) y Maxima.</Control>
+			<Control ID="lblCurrentSelection">Seleccion actual:</Control>
+			<Control ID="lblRiskHint">Aplicar es manual para reducir cambios accidentales de velocidad.</Control>
+			<Control ID="btnApply">Aplicar</Control>
+			<Control ID="btnApplyAndClose">Aplicar y cerrar</Control>
+			<Control ID="btnClose">Cerrar</Control>
+		</Form>
 		<Form ID="AudioConfigView">
 			<Control ID="tpgGeneral">generales</Control>
 			<Control ID="chkMuteSoundInBackground">Silenciar el sonido cuando está en segundo plano.</Control>
@@ -1894,6 +1904,10 @@ Detalles del error:
 		<Message ID="ConfirmReloadRom">Seguro que desea recargar la ROM desde el disco?</Message>
 		<Message ID="ConfirmPowerOff">Seguro que desea apagar?</Message>
 		<Message ID="ConfirmExit">Seguro que desea salir?</Message>
+		<Message ID="MenuFdsDiskSide">Disco {0} Lado {1}</Message>
+		<Message ID="MenuSpeedSliderPrototype">Prototipo de control de velocidad...</Message>
+		<Message ID="MenuCreateNewMovie">Crear nueva pelicula</Message>
+		<Message ID="TasEditorInitFailed">No se pudo inicializar el editor TAS.</Message>
 		<Message ID="ConfirmDeleteSaveState">Seguro que desea eliminar este estado guardado?
 
 {0}</Message>
