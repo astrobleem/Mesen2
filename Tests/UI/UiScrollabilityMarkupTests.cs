@@ -205,6 +205,42 @@ public sealed class UiScrollabilityMarkupTests {
 	}
 
 	[Fact]
+	public void MainMenuView_ContainsRightAlignedGlobeLanguageMenu() {
+		string repoRoot = GetRepositoryRoot();
+		string fullPath = Path.Combine(repoRoot, "UI", "Views", "MainMenuView.axaml");
+
+		Assert.True(File.Exists(fullPath), $"Expected markup file to exist: {fullPath}");
+
+		string markup = File.ReadAllText(fullPath);
+		Assert.Contains("Name=\"LanguageMenu\"", markup);
+		Assert.Contains("DockPanel.Dock=\"Right\"", markup);
+		Assert.Contains("Header=\"🌐\"", markup);
+		Assert.Contains("mnuLanguageEnglish", markup);
+		Assert.Contains("mnuLanguageSpanish", markup);
+		Assert.Contains("mnuLanguageJapanese", markup);
+	}
+
+	[Fact]
+	public void MenuThemeTokens_DefaultToBrownOrangePalette() {
+		string repoRoot = GetRepositoryRoot();
+		string lightPath = Path.Combine(repoRoot, "UI", "Styles", "NexenStyles.Light.xaml");
+		string darkPath = Path.Combine(repoRoot, "UI", "Styles", "NexenStyles.Dark.xaml");
+
+		Assert.True(File.Exists(lightPath), $"Expected style file to exist: {lightPath}");
+		Assert.True(File.Exists(darkPath), $"Expected style file to exist: {darkPath}");
+
+		string lightMarkup = File.ReadAllText(lightPath);
+		string darkMarkup = File.ReadAllText(darkPath);
+
+		Assert.Contains("<Color x:Key=\"NexenMenuBackground\">#f3e5d7</Color>", lightMarkup);
+		Assert.Contains("<Color x:Key=\"NexenMenuBorderHighlight\">#9f5c22</Color>", lightMarkup);
+		Assert.Contains("<Color x:Key=\"ButtonBorderBrushPointerOver\">#9f5c22</Color>", lightMarkup);
+		Assert.Contains("<Color x:Key=\"NexenMenuBackground\">#55281a10</Color>", darkMarkup);
+		Assert.Contains("<Color x:Key=\"ThemeAccentColor\">#ccc87423</Color>", darkMarkup);
+		Assert.Contains("<Color x:Key=\"HighlightColor\">#ffc87423</Color>", darkMarkup);
+	}
+
+	[Fact]
 	public void DialogUtilities_UseResolvedParentWindowAndDoNotThrowInvalidParent() {
 		string repoRoot = GetRepositoryRoot();
 		string msgBoxPath = Path.Combine(repoRoot, "UI", "Utilities", "NexenMsgBox.cs");

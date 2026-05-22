@@ -31,6 +31,7 @@ This directory contains user-facing documentation for Nexen.
 | Document | Description |
 |---|---|
 | [Manual Testing Hub](manual-testing/README.md) | Starting manual instructions and execution order |
+| [Main Menu Globe Language and Theme Manual Test](manual-testing/main-menu-language-globe-theme-manual-test.md) | Validate right-side globe language switching and brown/orange menu-theme defaults |
 | [Live Language Switch Manual Test](manual-testing/live-language-switch-manual-test.md) | Validate runtime no-restart language propagation across key windows and menus |
 | [Startup UX, Theme, and Accessibility Manual Test](manual-testing/startup-ux-accessibility-theme-manual-test.md) | Validate splash branding/progress visibility, larger startup defaults, and touch-friendly menu/control sizing |
 | [Atari 2600 Debug and TAS Manual Test](manual-testing/atari2600-debug-and-tas-manual-test.md) | End-to-end debugger, TAS, and movie validation workflow |
@@ -63,6 +64,7 @@ This directory contains user-facing documentation for Nexen.
 | [Save State System Overhaul](../~docs/plans/save-state-system-overhaul.md) | Save-state architecture and reliability improvement planning |
 | [TAS UI Comprehensive Plan](../~docs/plans/tas-ui-comprehensive-plan.md) | TAS editor and workflow modernization roadmap |
 | [UI Modernization Plan](../~docs/plans/ui-modernization-plan.md) | Broader UI modernization and consistency tasks |
+| [Epic 23 Plan: Main Menu Language and Theme Refinement](../~docs/plans/2026-05-22-epic-23-main-menu-language-theme-refinement.md) | Globe language menu implementation and brown/orange default theme refinement plan |
 | [Documentation Restructure Plan](../~docs/plans/documentation-restructure-plan.md) | Documentation hierarchy and feature-first navigation roadmap |
 | [Q2 2026 Future Work Program](../~docs/plans/future-work-program-2026-q2.md) | Milestones and acceptance criteria for platform-parity planning and execution |
 | [Q3 2026 Platform Parity Research Program](../~docs/plans/platform-parity-research-program-2026-q3.md) | Multi-session research and execution cadence for issues #704-#707 |

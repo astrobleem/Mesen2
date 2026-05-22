@@ -8,6 +8,10 @@
 			<Control ID="mnuTools">_ツール</Control>
 			<Control ID="mnuDebug">_デバッグ</Control>
 			<Control ID="mnuHelp">_ヘルプ</Control>
+			<Control ID="mnuLanguageSelector">言語</Control>
+			<Control ID="mnuLanguageEnglish">英語</Control>
+			<Control ID="mnuLanguageSpanish">スペイン語</Control>
+			<Control ID="mnuLanguageJapanese">日本語</Control>
 		</Form>
 		<Form ID="SpeedSliderPrototypeWindow">
 			<Control ID="wndTitle">速度スライダープロトタイプ</Control>

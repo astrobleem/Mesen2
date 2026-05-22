@@ -1,4 +1,4 @@
-<UserControl
+﻿<UserControl
 	xmlns="https://github.com/avaloniaui"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -24,7 +24,7 @@
 		</Style>
 	</UserControl.Styles>
 
-	<Border 
+	<Border
 		IsVisible="{Binding IsSearchBoxVisible}"
 		BorderBrush="{DynamicResource NexenGrayBorderColor}"
 		BorderThickness="1"

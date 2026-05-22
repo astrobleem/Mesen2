@@ -14,6 +14,7 @@ This section is the starting point for manual release validation in Nexen.
 | Document | Purpose |
 |---|---|
 | [Manual Step Priority Ranking](manual-step-priority-ranking.md) | Rank each manual test by release impact and failure severity |
+| [Main Menu Globe Language and Theme Manual Test](main-menu-language-globe-theme-manual-test.md) | Validate right-side globe language switching and brown/orange menu-theme defaults |
 | [Live Language Switch Manual Test](live-language-switch-manual-test.md) | Validate no-restart language switching across menus, debugger, and tool windows |
 | [Startup UX, Theme, and Accessibility Manual Test](startup-ux-accessibility-theme-manual-test.md) | Validate splash branding/progress visibility, larger startup defaults, and touch-friendly sizing |
 | [Atari 2600 Debug and TAS Manual Test](atari2600-debug-and-tas-manual-test.md) | Atari 2600 end-to-end debugger UI, TAS UI, and movie workflows |

@@ -17,6 +17,14 @@
 	</Design.DataContext>
 
 	<DockPanel Background="{DynamicResource NexenMenuBackground}">
+		<c:NexenMenu Name="LanguageMenu" DockPanel.Dock="Right">
+			<MenuItem Header="🌐" ToolTip.Tip="{l:Translate mnuLanguageSelector}">
+				<MenuItem Name="mnuLanguageEnglish" Header="{l:Translate mnuLanguageEnglish}" ToggleType="CheckBox" Click="mnuLanguageEnglish_Click" />
+				<MenuItem Name="mnuLanguageSpanish" Header="{l:Translate mnuLanguageSpanish}" ToggleType="CheckBox" Click="mnuLanguageSpanish_Click" />
+				<MenuItem Name="mnuLanguageJapanese" Header="{l:Translate mnuLanguageJapanese}" ToggleType="CheckBox" Click="mnuLanguageJapanese_Click" />
+			</MenuItem>
+		</c:NexenMenu>
+
 		<c:NexenMenu Name="ActionMenu" DockPanel.Dock="Left">
 			<MenuItem Header="{l:Translate mnuFile}" ItemsSource="{Binding FileMenuItems}" />
 			<MenuItem Header="{l:Translate mnuGame}" ItemsSource="{Binding GameMenuItems}" />

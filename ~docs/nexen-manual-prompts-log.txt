@@ -2834,6 +2834,29 @@ run Nexen
 continue;
 continue;
 
+Language should be easily changable, add a globe icon to the right of the main menu bar, with Language selection; update theme values and UI for the default theme to use more of our brown and orange color picks; make plans, epics, issues, docs, session-logs, etc, and implement the issues; continue;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -2864,36 +2887,7 @@ continue;
 continue;
 -------------------------------------------------------
 
-
-
-
-
-
-
-
-
-
 continue;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 , but do even more and bigger; Mesen-Expanded runs Sonic, Nexen doesn't, fix that; continue;
@@ -2901,99 +2895,16 @@ continue;
 stop and continue, don't get hng again; continue;
 
 
-
-
-
-
-
-
-
-
-
-
 [Nexen] I still see nothing but a black screen in graphics/video for Genesis, focus on starting a rom, and getting it to display some graphics on screen; Also, the debugger windows for graphics are either just causing errors(check the logs) or showing nothing, so fix Tile Viewer, TileMap Viewer, Palette Viewer, etc.; continue;
-
-
-
-
-
-
-
 
 
 continue; keep going! as long as you can, complete several slices, like 10; continue;
 
 
-
-
-
-
 work several issues in a row; make new issues if we find work; don't pause or stop, just keep going working until several are done; continue;
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 We've got partial pansy and cdl files for FFMQ (SNES) and so rerun peony and poppy and the pipeline, including asset extraction, using these files, and make check all this code and 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 *********************************************************************************************************************************

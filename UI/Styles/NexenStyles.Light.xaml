@@ -85,16 +85,16 @@
 
 					<!-- Custom colors -->
 					<Color x:Key="NexenGridBackground">#FFF</Color>
-					<Color x:Key="NexenMenuBackground">#F1F1F1</Color>
-					<Color x:Key="NexenMenuBackgroundHighlight">#B5D7F3</Color>
-					<Color x:Key="NexenMenuBorderHighlight">#0078D7</Color>
-					<Color x:Key="NexenMenuSeparatorBackground">#BDBDBD</Color>
-					<Color x:Key="SettingsTabStripBackgroundColor">#f0f4f8</Color>
+					<Color x:Key="NexenMenuBackground">#f3e5d7</Color>
+					<Color x:Key="NexenMenuBackgroundHighlight">#efb57b</Color>
+					<Color x:Key="NexenMenuBorderHighlight">#9f5c22</Color>
+					<Color x:Key="NexenMenuSeparatorBackground">#c9a788</Color>
+					<Color x:Key="SettingsTabStripBackgroundColor">#f5e8dc</Color>
 					<Color x:Key="MenuFlyoutSubItemChevron">#000000</Color>
 					<SolidColorBrush x:Key="SettingsTabStripBackgroundBrush" Color="{DynamicResource SettingsTabStripBackgroundColor}" />
 
-					<Color x:Key="NexenMenuMarginStartColor">#fcfcfc</Color>
-					<Color x:Key="NexenMenuMarginEndColor">#f1f1f1</Color>
+					<Color x:Key="NexenMenuMarginStartColor">#fbf2ea</Color>
+					<Color x:Key="NexenMenuMarginEndColor">#ecd9c7</Color>
 
 					<!-- DataGrid colors -->
 					<Color x:Key="DataGridColumnHeaderBackgroundColor">#FFEDEDED</Color>
@@ -104,8 +104,8 @@
 					<SolidColorBrush x:Key="DataGridRowSelectedForegroundBrush" Color="White" />
 
 					<!-- Fluent color overrides -->
-					<Color x:Key="MenuFlyoutPresenterBackground">#FDFDFD</Color>
-					<Color x:Key="MenuFlyoutPresenterBorderBrush">#808080</Color>
+					<Color x:Key="MenuFlyoutPresenterBackground">#fff6ee</Color>
+					<Color x:Key="MenuFlyoutPresenterBorderBrush">#a87343</Color>
 
 					<Color x:Key="ComboBoxDropDownBackground">#FFFFFF</Color>
 					<Color x:Key="ComboBoxDropDownBorderBrush">#909090</Color>
@@ -123,26 +123,26 @@
 					<Color x:Key="ButtonBackgroundDisabled">#BBB</Color>
 					<Color x:Key="RepeatButtonBackgroundDisabled">#BBB</Color>
 					<Color x:Key="ButtonBorderBrush">#ADADAD</Color>
-					<Color x:Key="ButtonBackgroundPointerOver">#E5F1FB</Color>
-					<Color x:Key="ButtonBorderBrushPointerOver">#0078D7</Color>
-					<Color x:Key="ButtonBackgroundPressed">#CCE4F7</Color>
-					<Color x:Key="ButtonBorderBrushPressed">#005499</Color>
+					<Color x:Key="ButtonBackgroundPointerOver">#f8d9b8</Color>
+					<Color x:Key="ButtonBorderBrushPointerOver">#9f5c22</Color>
+					<Color x:Key="ButtonBackgroundPressed">#e9c098</Color>
+					<Color x:Key="ButtonBorderBrushPressed">#7b4517</Color>
 
 					<Color x:Key="ComboBoxBackground">#E1E1E1</Color>
 					<Color x:Key="ComboBoxBorderBrush">#ADADAD</Color>
-					<Color x:Key="ComboBoxBackgroundPointerOver">#E5F1FB</Color>
-					<Color x:Key="ComboBoxBorderBrushPointerOver">#0078D7</Color>
+					<Color x:Key="ComboBoxBackgroundPointerOver">#f8d9b8</Color>
+					<Color x:Key="ComboBoxBorderBrushPointerOver">#9f5c22</Color>
 
 					<Color x:Key="RepeatButtonBackground">#E1E1E1</Color>
 					<Color x:Key="RepeatButtonBorderBrush">#ADADAD</Color>
-					<Color x:Key="RepeatButtonBackgroundPointerOver">#E5F1FB</Color>
-					<Color x:Key="RepeatButtonBorderBrushPointerOver">#0078D7</Color>
-					<Color x:Key="RepeatButtonBackgroundPressed">#CCE4F7</Color>
-					<Color x:Key="RepeatButtonBorderBrushPressed">#005499</Color>
+					<Color x:Key="RepeatButtonBackgroundPointerOver">#f8d9b8</Color>
+					<Color x:Key="RepeatButtonBorderBrushPointerOver">#9f5c22</Color>
+					<Color x:Key="RepeatButtonBackgroundPressed">#e9c098</Color>
+					<Color x:Key="RepeatButtonBorderBrushPressed">#7b4517</Color>
 
-					<Color x:Key="CheckBoxCheckBackgroundStrokeUncheckedPointerOver">#0078D7</Color>
-					<Color x:Key="CheckBoxCheckBackgroundStrokeCheckedPointerOver">#0078D7</Color>
-					<Color x:Key="CheckBoxBorderBrushCheckedPointerOver">#0078D7</Color>
+					<Color x:Key="CheckBoxCheckBackgroundStrokeUncheckedPointerOver">#9f5c22</Color>
+					<Color x:Key="CheckBoxCheckBackgroundStrokeCheckedPointerOver">#9f5c22</Color>
+					<Color x:Key="CheckBoxBorderBrushCheckedPointerOver">#9f5c22</Color>
 
 					<Color x:Key="CheckBoxCheckBackgroundFillChecked">Transparent</Color>
 					<Color x:Key="CheckBoxCheckGlyphForegroundChecked">Black</Color>
@@ -151,8 +151,8 @@
 					<Color x:Key="CheckBoxCheckGlyphForegroundCheckedPointerOver">Black</Color>
 					<Color x:Key="CheckBoxBackgroundCheckedPressed">Transparent</Color>
 
-					<Color x:Key="CheckBoxCheckBackgroundFillCheckedPressed">#CCE4F7</Color>
-					<Color x:Key="CheckBoxCheckBackgroundFillUncheckedPressed">#CCE4F7</Color>
+					<Color x:Key="CheckBoxCheckBackgroundFillCheckedPressed">#e9c098</Color>
+					<Color x:Key="CheckBoxCheckBackgroundFillUncheckedPressed">#e9c098</Color>
 					<Color x:Key="CheckBoxCheckGlyphForegroundCheckedPressed">Black</Color>
 
 					<!-- light yellow tooltips -->

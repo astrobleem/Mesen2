@@ -42,6 +42,15 @@ Global typography defaults are in UI/App.axaml:
 
 Touch sizing defaults are in UI/Styles/NexenStyles.xaml through control styles for Button, TextBox, ComboBox, and CheckBox.
 
+Main menu chrome tokens are in UI/Styles/NexenStyles.Light.xaml and UI/Styles/NexenStyles.Dark.xaml:
+
+- NexenMenuBackground
+- NexenMenuBackgroundHighlight
+- NexenMenuBorderHighlight
+- NexenMenuSeparatorBackground
+- NexenMenuMarginStartColor
+- NexenMenuMarginEndColor
+
 ## Theme Value Map (Where Values Are Used)
 
 Use this quick map when changing the default look:
@@ -52,6 +61,7 @@ Use this quick map when changing the default look:
 | Splash loading indicator | UI/Styles/NexenBrandTheme.xaml + UI/Windows/SplashWindow.axaml | NexenStartupProgressForegroundBrush, NexenStartupProgressBackgroundBrush |
 | Global app text | UI/App.axaml | NexenFont, NexenFontSize |
 | Global menu typography | UI/App.axaml | NexenMenuFont, NexenMenuFontSize |
+| Main menu chrome colors | UI/Styles/NexenStyles.Light.xaml + UI/Styles/NexenStyles.Dark.xaml | NexenMenuBackground, NexenMenuBackgroundHighlight, NexenMenuBorderHighlight, NexenMenuMarginStartColor, NexenMenuMarginEndColor |
 | Menu geometry and hit targets | UI/Styles/NexenStyles.xaml | Menu, MenuItem, ContextMenu style selectors |
 | Button and input hit targets | UI/Styles/NexenStyles.xaml | Button/TextBox/ComboBox style selectors and MinHeight/Padding setters |
 | Runtime profile overrides | UI/Utilities/NexenThemeManager.cs + UI/Config/ThemeProfile.cs | profile color and font tokens |
@@ -108,6 +118,10 @@ Display language resources are loaded from:
 - UI/Localization/resources.ja.xml
 
 Language changes in settings now apply immediately without restarting the process.
+
+Main menu language switching is also available directly from the globe menu at the right side of the top menu bar (UI/Views/MainMenuView.axaml).
+
+The globe menu updates Preferences UiLanguage, reloads localization resources, and persists config immediately.
 
 ## Validation Checklist
 
