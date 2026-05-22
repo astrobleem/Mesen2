@@ -14,6 +14,8 @@ class ResourceHelper {
 	private static XmlDocument _resources = new XmlDocument();
 	private const string DefaultLanguageCode = "en";
 
+	public static event EventHandler? LanguageChanged;
+
 	private static Dictionary<Enum, string> _enumLabelCache = new();
 	private static Dictionary<string, string> _viewLabelCache = new();
 	private static Dictionary<string, string> _messageCache = new();
@@ -79,6 +81,9 @@ class ResourceHelper {
 					}
 				}
 			}
+
+			LocalizationBindingSource.Instance.NotifyLanguageChanged();
+			LanguageChanged?.Invoke(null, EventArgs.Empty);
 		} catch (Exception ex) {
 			Debug.WriteLine($"ResourceHelper: Failed to load localization resources: {ex.Message}");
 		}

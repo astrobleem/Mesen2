@@ -18,8 +18,6 @@ namespace Nexen.ViewModels;
 public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 	private UiLanguage _lastUiLanguage;
 
-	public event EventHandler? LanguageRestartRequested;
-
 	/// <summary>Gets or sets the current preferences configuration.</summary>
 	[Reactive] public partial PreferencesConfig Config { get; set; }
 
@@ -237,7 +235,6 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 			if (_lastUiLanguage != Config.UiLanguage) {
 				_lastUiLanguage = Config.UiLanguage;
 				ResourceHelper.LoadResources(PreferencesConfig.GetLanguageCode(Config.UiLanguage));
-				LanguageRestartRequested?.Invoke(this, EventArgs.Empty);
 			}
 
 			Config.ApplyConfig();

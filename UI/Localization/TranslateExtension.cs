@@ -1,11 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
+using Avalonia.Data;
 using Avalonia.Markup.Xaml;
 
-namespace Nexen.Localization; 
+namespace Nexen.Localization;
 public sealed class TranslateExtension : MarkupExtension {
 	public TranslateExtension(string key) {
 		this.Key = key;
@@ -19,6 +16,13 @@ public sealed class TranslateExtension : MarkupExtension {
 			contextType = serviceProvider.GetType().GenericTypeArguments[0];
 		}
 
-		return ResourceHelper.GetViewLabel(contextType?.Name ?? "unknown", this.Key);
+		string bindingKey = $"{contextType?.Name ?? "unknown"}|{this.Key}";
+
+#pragma warning disable IL3050
+		return new Binding($"[{bindingKey}]") {
+			Mode = BindingMode.OneWay,
+			Source = LocalizationBindingSource.Instance
+		};
+#pragma warning restore IL3050
 	}
 }

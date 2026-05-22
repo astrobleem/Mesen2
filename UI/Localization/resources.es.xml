@@ -702,6 +702,7 @@
 			<Control ID="lblThemeCustomizedSetup">Configuracion inicial:</Control>
 			<Control ID="lblRequiresRestart">(requiere reinicio)</Control>
 			<Control ID="lblDisplayLanguage">Idioma de la interfaz:</Control>
+			<Control ID="lblAppliesImmediately">(se aplica inmediatamente)</Control>
 			<Control ID="btnApplyLanguageNow">Aplicar ahora</Control>
 			<Control ID="lblAvailableLanguages">Idiomas disponibles:</Control>
 			<Control ID="chkSingleInstance">Permitir solo una instancia de Nexen a la vez</Control>

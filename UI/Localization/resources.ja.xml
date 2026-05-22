@@ -702,6 +702,7 @@
 			<Control ID="lblThemeCustomizedSetup">セットアップ:</Control>
 			<Control ID="lblRequiresRestart">(再起動が必要)</Control>
 			<Control ID="lblDisplayLanguage">表示言語:</Control>
+			<Control ID="lblAppliesImmediately">(すぐに適用されます)</Control>
 			<Control ID="btnApplyLanguageNow">今すぐ適用</Control>
 			<Control ID="lblAvailableLanguages">利用可能な言語:</Control>
 			<Control ID="chkSingleInstance">Nexenの同時起動を1つに制限する</Control>

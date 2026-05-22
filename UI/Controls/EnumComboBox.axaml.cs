@@ -70,7 +70,18 @@ public partial class EnumComboBox : UserControl {
 
 	protected override void OnLoaded(RoutedEventArgs e) {
 		base.OnLoaded(e);
+		ResourceHelper.LanguageChanged -= ResourceHelper_LanguageChanged;
+		ResourceHelper.LanguageChanged += ResourceHelper_LanguageChanged;
 		InitComboBox(true);
+	}
+
+	protected override void OnUnloaded(RoutedEventArgs e) {
+		ResourceHelper.LanguageChanged -= ResourceHelper_LanguageChanged;
+		base.OnUnloaded(e);
+	}
+
+	private void ResourceHelper_LanguageChanged(object? sender, EventArgs e) {
+		Dispatcher.UIThread.Post(() => InitComboBox(true));
 	}
 
 	private void InitComboBox(bool updateAvailableValues) {

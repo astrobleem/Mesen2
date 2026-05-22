@@ -75,7 +75,7 @@ Display language resources are loaded from:
 - UI/Localization/resources.es.xml
 - UI/Localization/resources.ja.xml
 
-Language changes in settings now provide an immediate restart path so updated localized labels are visible right away.
+Language changes in settings now apply immediately without restarting the process.
 
 ## Validation Checklist
 

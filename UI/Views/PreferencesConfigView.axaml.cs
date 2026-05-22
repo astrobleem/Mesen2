@@ -24,42 +24,7 @@ namespace Nexen.Views;
 public partial class PreferencesConfigView : UserControl {
 	public PreferencesConfigView() {
 		InitializeComponent();
-		DataContextChanged += PreferencesConfigView_DataContextChanged;
-		AttachLanguageChangeHandler(DataContext as PreferencesConfigViewModel);
 		UpdateMigrationStatus();
-	}
-
-	private void PreferencesConfigView_DataContextChanged(object? sender, EventArgs e) {
-		AttachLanguageChangeHandler(DataContext as PreferencesConfigViewModel);
-	}
-
-	private void AttachLanguageChangeHandler(PreferencesConfigViewModel? viewModel) {
-		if (viewModel is null) {
-			return;
-		}
-
-		viewModel.LanguageRestartRequested -= ViewModel_LanguageRestartRequested;
-		viewModel.LanguageRestartRequested += ViewModel_LanguageRestartRequested;
-	}
-
-	private async void ViewModel_LanguageRestartRequested(object? sender, EventArgs e) {
-		Window? topLevel = TopLevel.GetTopLevel(this) as Window;
-		DialogResult result = await NexenMsgBox.Show(topLevel, "LanguageChangeRestartPrompt", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-		if (result == DialogResult.Yes) {
-			(topLevel ?? ApplicationHelper.GetMainWindow())?.Close();
-			ApplicationHelper.GetMainWindow()?.Close();
-			ConfigManager.RestartNexen();
-		}
-	}
-
-	private async void btnApplyLanguageNow_OnClick(object sender, RoutedEventArgs e) {
-		Window? topLevel = TopLevel.GetTopLevel(this) as Window;
-		DialogResult result = await NexenMsgBox.Show(topLevel, "LanguageApplyNowPrompt", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-		if (result == DialogResult.Yes) {
-			(topLevel ?? ApplicationHelper.GetMainWindow())?.Close();
-			ApplicationHelper.GetMainWindow()?.Close();
-			ConfigManager.RestartNexen();
-		}
 	}
 
 	private void btnResetLagCounter_OnClick(object sender, RoutedEventArgs e) {
