@@ -31,10 +31,10 @@ public sealed class UiScrollabilityMarkupTests {
 
 		string markup = File.ReadAllText(fullPath);
 		Assert.Contains("CanResize=\"True\"", markup);
-		Assert.Contains("MinWidth=\"460\"", markup);
-		Assert.Contains("MinHeight=\"560\"", markup);
-		int minHeightTouchTargetCount = Regex.Matches(markup, "MinHeight=\"36\"").Count;
-		Assert.True(minHeightTouchTargetCount >= 3, $"Expected at least 3 touch-target controls with MinHeight=36, found {minHeightTouchTargetCount}.");
+		Assert.Contains("MinWidth=\"900\"", markup);
+		Assert.Contains("MinHeight=\"900\"", markup);
+		int minHeightTouchTargetCount = Regex.Matches(markup, "MinHeight=\"(42|54|66)\"").Count;
+		Assert.True(minHeightTouchTargetCount >= 3, $"Expected at least 3 touch-target controls with MinHeight >= 42, found {minHeightTouchTargetCount}.");
 	}
 
 	[Fact]

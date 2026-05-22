@@ -116,12 +116,12 @@
 
 	<Style>
 		<Style.Resources>
-			<x:Double x:Key="ControlContentThemeFontSize">14</x:Double>
-			<x:Double x:Key="ContentControlFontSize">14</x:Double>
-			<x:Double x:Key="TextControlThemeMinHeight">24</x:Double>
-			<Thickness x:Key="TextControlThemePadding">2,2,6,1</Thickness>
-			<x:Double x:Key="ListViewItemMinHeight">32</x:Double>
-			<x:Double x:Key="TreeViewItemMinHeight">24</x:Double>
+			<x:Double x:Key="ControlContentThemeFontSize">16</x:Double>
+			<x:Double x:Key="ContentControlFontSize">16</x:Double>
+			<x:Double x:Key="TextControlThemeMinHeight">30</x:Double>
+			<Thickness x:Key="TextControlThemePadding">4,4,8,3</Thickness>
+			<x:Double x:Key="ListViewItemMinHeight">38</x:Double>
+			<x:Double x:Key="TreeViewItemMinHeight">30</x:Double>
 			<Thickness x:Key="TimePickerHostPadding">0,1,0,2</Thickness>
 			<Thickness x:Key="DatePickerHostPadding">0,1,0,2</Thickness>
 			<Thickness x:Key="DatePickerHostMonthPadding">9,0,0,1</Thickness>
@@ -187,14 +187,14 @@
 	</Style>
 
 	<Style Selector="Menu">
-		<Setter Property="Height" Value="25" />
+		<Setter Property="Height" Value="34" />
 		<Setter Property="Background" Value="{DynamicResource NexenMenuBackground}" />
 	</Style>
 
 	<Style Selector="MenuItem">
-		<Setter Property="Height" Value="22" />
+		<Setter Property="Height" Value="30" />
 		<Setter Property="Margin" Value="1" />
-		<Setter Property="Padding" Value="8 2" />
+		<Setter Property="Padding" Value="12 4" />
 		<Setter Property="BorderBrush" Value="Transparent" />
 		<Setter Property="BorderThickness" Value="1" />
 	</Style>
@@ -208,8 +208,8 @@
 	</Style>
 
 	<Style Selector="MenuItem > MenuItem">
-		<Setter Property="Height" Value="20" />
-		<Setter Property="Padding" Value="2 0" />
+		<Setter Property="Height" Value="28" />
+		<Setter Property="Padding" Value="8 2" />
 	</Style>
 
 	<Style Selector="Menu > MenuItem:selected > Border">
@@ -229,8 +229,8 @@
 	</Style>
 
 	<Style Selector="ContextMenu > MenuItem">
-		<Setter Property="Height" Value="20" />
-		<Setter Property="Padding" Value="2 0" />
+		<Setter Property="Height" Value="28" />
+		<Setter Property="Padding" Value="8 2" />
 	</Style>
 
 	<Style Selector="ContextMenu > MenuItem:selected > Panel > Border">
@@ -241,10 +241,10 @@
 
 	<Style Selector="Button, NumericUpDown RepeatButton">
 		<Setter Property="Height" Value="NaN" />
-		<Setter Property="Padding" Value="8 6" />
+		<Setter Property="Padding" Value="12 8" />
 		<Setter Property="Margin" Value="2" />
-		<Setter Property="MinWidth" Value="88" />
-		<Setter Property="MinHeight" Value="32" />
+		<Setter Property="MinWidth" Value="108" />
+		<Setter Property="MinHeight" Value="40" />
 		<Setter Property="HorizontalContentAlignment" Value="Center" />
 		<Setter Property="VerticalContentAlignment" Value="Center" />
 	</Style>
@@ -278,9 +278,9 @@
 		<Setter Property="VerticalContentAlignment" Value="Center" />
 
 		<Setter Property="Margin" Value="2" />
-		<Setter Property="Padding" Value="6 2" />
-		<Setter Property="MinHeight" Value="30" />
-		<Setter Property="Height" Value="30" />
+		<Setter Property="Padding" Value="8 4" />
+		<Setter Property="MinHeight" Value="36" />
+		<Setter Property="Height" Value="36" />
 		<Setter Property="SelectionBrush" Value="{DynamicResource TextBoxSelectionBrush}" />
 
 		<Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Hidden" />
@@ -315,8 +315,8 @@
 
 	<Style Selector="ComboBox">
 		<Setter Property="Margin" Value="2" />
-		<Setter Property="Padding" Value="6 4" />
-		<Setter Property="MinHeight" Value="30" />
+		<Setter Property="Padding" Value="8 5" />
+		<Setter Property="MinHeight" Value="36" />
 	</Style>
 
 	<Style Selector="CheckBox">

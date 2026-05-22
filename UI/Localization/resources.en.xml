@@ -837,7 +837,7 @@
 			<Control ID="lblRequiresRestart">(requires restart)</Control>
 
 			<Control ID="lblDisplayLanguage">Display Language:</Control>
-			<Control ID="lblAppliesImmediately">(applies immediately)</Control>
+			<Control ID="lblAppliesImmediately">(applies immediately, no restart)</Control>
 			<Control ID="btnApplyLanguageNow">Apply Now</Control>
 			<Control ID="lblAvailableLanguages">Available languages:</Control>
 			<Control ID="chkSingleInstance">Only allow one instance of Nexen at a time</Control>

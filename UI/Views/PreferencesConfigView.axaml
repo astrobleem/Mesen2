@@ -97,8 +97,8 @@
 
 					<Grid ColumnDefinitions="Auto,Auto,*" RowDefinitions="Auto" Margin="0 0 0 2">
 						<TextBlock Grid.Column="0" Text="{l:Translate lblDisplayLanguage}" Margin="3 0 8 0" VerticalAlignment="Center" />
-						<c:EnumComboBox Grid.Column="1" Name="cmbDisplayLanguage" SelectedItem="{Binding Config.UiLanguage}" MinWidth="165" />
-						<TextBlock Grid.Column="2" Margin="8 0 0 0" Text="{l:Translate lblAppliesImmediately}" VerticalAlignment="Center" TextWrapping="Wrap" />
+						<c:EnumComboBox Grid.Column="1" Name="cmbDisplayLanguage" SelectedItem="{Binding Config.UiLanguage}" MinWidth="230" />
+						<TextBlock Grid.Column="2" Margin="10 0 0 0" Text="{l:Translate lblAppliesImmediately}" VerticalAlignment="Center" TextWrapping="Wrap" FontWeight="SemiBold" />
 					</Grid>
 					<StackPanel Orientation="Horizontal">
 						<TextBlock Text="{l:Translate lblAvailableLanguages}" Margin="3 0 5 0" />

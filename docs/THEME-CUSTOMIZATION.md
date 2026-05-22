@@ -42,6 +42,38 @@ Global typography defaults are in UI/App.axaml:
 
 Touch sizing defaults are in UI/Styles/NexenStyles.xaml through control styles for Button, TextBox, ComboBox, and CheckBox.
 
+## Theme Value Map (Where Values Are Used)
+
+Use this quick map when changing the default look:
+
+| Surface | Primary file | Key tokens |
+|---|---|---|
+| Splash startup card/background | UI/Styles/NexenBrandTheme.xaml | NexenStartupWindowBackgroundBrush, NexenStartupSplashBackgroundBrush, NexenStartupSplashBorderBrush |
+| Splash loading indicator | UI/Styles/NexenBrandTheme.xaml + UI/Windows/SplashWindow.axaml | NexenStartupProgressForegroundBrush, NexenStartupProgressBackgroundBrush |
+| Global app text | UI/App.axaml | NexenFont, NexenFontSize |
+| Global menu typography | UI/App.axaml | NexenMenuFont, NexenMenuFontSize |
+| Menu geometry and hit targets | UI/Styles/NexenStyles.xaml | Menu, MenuItem, ContextMenu style selectors |
+| Button and input hit targets | UI/Styles/NexenStyles.xaml | Button/TextBox/ComboBox style selectors and MinHeight/Padding setters |
+| Runtime profile overrides | UI/Utilities/NexenThemeManager.cs + UI/Config/ThemeProfile.cs | profile color and font tokens |
+
+## How To Update Theme Values
+
+1. Update base defaults in UI/Styles/NexenBrandTheme.xaml.
+2. Keep both `Dark` and `Light` dictionaries updated for parity.
+3. If changing fonts or menu readability, update UI/App.axaml tokens first.
+4. If changing control touch targets, update sizes in UI/Styles/NexenStyles.xaml.
+5. Launch Nexen and confirm splash, menus, and settings readability in both themes.
+
+## How To Update Startup Splash Look
+
+Startup visuals are split between token values and layout:
+
+- Colors and brushes: UI/Styles/NexenBrandTheme.xaml
+- Layout and control sizing: UI/Windows/SplashWindow.axaml
+- Runtime status/progress behavior: UI/Windows/SplashWindow.axaml.cs
+
+For visibility issues, always check all three files together.
+
 ## Theme Profile Import and Export
 
 Theme profile import/export uses JSON-backed profile models:
