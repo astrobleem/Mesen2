@@ -190,5 +190,7 @@ public sealed class ThemeProfileTests {
 		Assert.Contains("StartupTextColor", tokens);
 		Assert.Contains("UiFontSize", tokens);
 		Assert.Equal(2, tokens.Count);
+		Assert.Equal("UiFontSize", tokens[0]);
+		Assert.Equal("StartupTextColor", tokens[1]);
 	}
 }

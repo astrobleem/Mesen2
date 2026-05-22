@@ -821,6 +821,9 @@
 			<Control ID="lblThemeMatchesDefaults">Matches defaults</Control>
 			<Control ID="lblThemeTokensCustomized">tokens customized</Control>
 			<Control ID="lblThemeCustomizedTokens">Customized Tokens:</Control>
+			<Control ID="lblThemeCustomizedFonts">Fonts:</Control>
+			<Control ID="lblThemeCustomizedStartup">Startup:</Control>
+			<Control ID="lblThemeCustomizedSetup">Setup:</Control>
 			<Control ID="lblRequiresRestart">(requires restart)</Control>
 
 			<Control ID="lblDisplayLanguage">Display Language:</Control>

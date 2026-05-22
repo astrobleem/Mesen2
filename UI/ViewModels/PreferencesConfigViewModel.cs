@@ -70,6 +70,24 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 	/// <summary>Gets or sets comma-separated customized token names.</summary>
 	[Reactive] public partial string SelectedThemeProfileCustomizedTokensSummary { get; set; }
 
+	/// <summary>Gets or sets customized font token summary.</summary>
+	[Reactive] public partial string SelectedThemeProfileCustomizedFontTokensSummary { get; set; }
+
+	/// <summary>Gets or sets customized startup token summary.</summary>
+	[Reactive] public partial string SelectedThemeProfileCustomizedStartupTokensSummary { get; set; }
+
+	/// <summary>Gets or sets customized setup token summary.</summary>
+	[Reactive] public partial string SelectedThemeProfileCustomizedSetupTokensSummary { get; set; }
+
+	/// <summary>Gets or sets whether customized font tokens are present.</summary>
+	[Reactive] public partial bool HasCustomizedFontTokens { get; set; }
+
+	/// <summary>Gets or sets whether customized startup tokens are present.</summary>
+	[Reactive] public partial bool HasCustomizedStartupTokens { get; set; }
+
+	/// <summary>Gets or sets whether customized setup tokens are present.</summary>
+	[Reactive] public partial bool HasCustomizedSetupTokens { get; set; }
+
 	/// <summary>Gets or sets target name for profile rename.</summary>
 	[Reactive] public partial string RenameThemeProfileName { get; set; }
 
@@ -94,6 +112,12 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 		SelectedThemeProfileMatchesDefaults = true;
 		SelectedThemeProfileIsCustomized = false;
 		SelectedThemeProfileCustomizedTokensSummary = "";
+		SelectedThemeProfileCustomizedFontTokensSummary = "";
+		SelectedThemeProfileCustomizedStartupTokensSummary = "";
+		SelectedThemeProfileCustomizedSetupTokensSummary = "";
+		HasCustomizedFontTokens = false;
+		HasCustomizedStartupTokens = false;
+		HasCustomizedSetupTokens = false;
 		RenameThemeProfileName = "";
 		DuplicateThemeProfileName = "";
 		RefreshThemeProfiles();
@@ -306,6 +330,12 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 			SelectedThemeProfileMatchesDefaults = true;
 			SelectedThemeProfileIsCustomized = false;
 			SelectedThemeProfileCustomizedTokensSummary = "";
+			SelectedThemeProfileCustomizedFontTokensSummary = "";
+			SelectedThemeProfileCustomizedStartupTokensSummary = "";
+			SelectedThemeProfileCustomizedSetupTokensSummary = "";
+			HasCustomizedFontTokens = false;
+			HasCustomizedStartupTokens = false;
+			HasCustomizedSetupTokens = false;
 			return;
 		}
 
@@ -318,7 +348,17 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 		SelectedThemeProfileDivergenceCount = Config.GetThemeProfileDivergenceCount(selectedProfile.Name);
 		SelectedThemeProfileMatchesDefaults = SelectedThemeProfileDivergenceCount == 0;
 		SelectedThemeProfileIsCustomized = SelectedThemeProfileDivergenceCount > 0;
-		SelectedThemeProfileCustomizedTokensSummary = string.Join(", ", Config.GetThemeProfileCustomizedTokenNames(selectedProfile.Name));
+		List<string> customizedTokens = Config.GetThemeProfileCustomizedTokenNames(selectedProfile.Name);
+		SelectedThemeProfileCustomizedTokensSummary = string.Join(", ", customizedTokens);
+		List<string> fontTokens = customizedTokens.Where(token => token.Contains("Font")).ToList();
+		List<string> startupTokens = customizedTokens.Where(token => token.StartsWith("Startup", StringComparison.Ordinal)).ToList();
+		List<string> setupTokens = customizedTokens.Where(token => token.StartsWith("Setup", StringComparison.Ordinal)).ToList();
+		SelectedThemeProfileCustomizedFontTokensSummary = string.Join(", ", fontTokens);
+		SelectedThemeProfileCustomizedStartupTokensSummary = string.Join(", ", startupTokens);
+		SelectedThemeProfileCustomizedSetupTokensSummary = string.Join(", ", setupTokens);
+		HasCustomizedFontTokens = fontTokens.Count > 0;
+		HasCustomizedStartupTokens = startupTokens.Count > 0;
+		HasCustomizedSetupTokens = setupTokens.Count > 0;
 		RenameThemeProfileName = selectedProfile.Name;
 	}
 
