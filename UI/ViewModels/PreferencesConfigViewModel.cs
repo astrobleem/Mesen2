@@ -60,6 +60,24 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 	/// <summary>Gets or sets selected profile startup primary action preview brush.</summary>
 	[Reactive] public partial IBrush SelectedProfileStartupPrimaryActionBrush { get; set; }
 
+	/// <summary>Gets or sets selected profile menu background color as ARGB hex.</summary>
+	[Reactive] public partial string SelectedProfileMenuBackgroundColor { get; set; }
+
+	/// <summary>Gets or sets selected profile menu highlight color as ARGB hex.</summary>
+	[Reactive] public partial string SelectedProfileMenuHighlightColor { get; set; }
+
+	/// <summary>Gets or sets selected profile accent color as ARGB hex.</summary>
+	[Reactive] public partial string SelectedProfileAccentColor { get; set; }
+
+	/// <summary>Gets or sets selected profile menu background preview brush.</summary>
+	[Reactive] public partial IBrush SelectedProfileMenuBackgroundBrush { get; set; }
+
+	/// <summary>Gets or sets selected profile menu highlight preview brush.</summary>
+	[Reactive] public partial IBrush SelectedProfileMenuHighlightBrush { get; set; }
+
+	/// <summary>Gets or sets selected profile accent preview brush.</summary>
+	[Reactive] public partial IBrush SelectedProfileAccentBrush { get; set; }
+
 	/// <summary>Gets or sets the number of tokens that differ from canonical defaults.</summary>
 	[Reactive] public partial int SelectedThemeProfileDivergenceCount { get; set; }
 
@@ -111,6 +129,12 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 		SelectedProfileStartupBackgroundBrush = Brushes.Transparent;
 		SelectedProfileStartupTextBrush = Brushes.Transparent;
 		SelectedProfileStartupPrimaryActionBrush = Brushes.Transparent;
+		SelectedProfileMenuBackgroundColor = "";
+		SelectedProfileMenuHighlightColor = "";
+		SelectedProfileAccentColor = "";
+		SelectedProfileMenuBackgroundBrush = Brushes.Transparent;
+		SelectedProfileMenuHighlightBrush = Brushes.Transparent;
+		SelectedProfileAccentBrush = Brushes.Transparent;
 		SelectedThemeProfileDivergenceCount = 0;
 		SelectedThemeProfileMatchesDefaults = true;
 		SelectedThemeProfileIsCustomized = false;
@@ -325,6 +349,20 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 		RefreshThemeProfiles();
 	}
 
+	public void SetSelectedProfileUiChromeColors(string menuBackground, string menuHighlight, string accent) {
+		ThemeProfile? selectedProfile = GetSelectedThemeProfile();
+		if (selectedProfile is null) {
+			return;
+		}
+
+		selectedProfile.MenuBackgroundColor = menuBackground;
+		selectedProfile.MenuBackgroundHighlightColor = menuHighlight;
+		selectedProfile.ThemeAccentColor = accent;
+		selectedProfile.HighlightColor = accent;
+		Config.SetActiveThemeProfile(selectedProfile.Name);
+		RefreshThemeProfiles();
+	}
+
 	private void RefreshSelectedThemeProfileDetails() {
 		ThemeProfile? selectedProfile = GetSelectedThemeProfile();
 		if (selectedProfile is null) {
@@ -334,6 +372,12 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 			SelectedProfileStartupBackgroundBrush = Brushes.Transparent;
 			SelectedProfileStartupTextBrush = Brushes.Transparent;
 			SelectedProfileStartupPrimaryActionBrush = Brushes.Transparent;
+			SelectedProfileMenuBackgroundColor = "";
+			SelectedProfileMenuHighlightColor = "";
+			SelectedProfileAccentColor = "";
+			SelectedProfileMenuBackgroundBrush = Brushes.Transparent;
+			SelectedProfileMenuHighlightBrush = Brushes.Transparent;
+			SelectedProfileAccentBrush = Brushes.Transparent;
 			SelectedThemeProfileDivergenceCount = 0;
 			SelectedThemeProfileMatchesDefaults = true;
 			SelectedThemeProfileIsCustomized = false;
@@ -353,6 +397,12 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 		SelectedProfileStartupBackgroundBrush = CreatePreviewBrush(selectedProfile.StartupWindowBackgroundColor);
 		SelectedProfileStartupTextBrush = CreatePreviewBrush(selectedProfile.StartupTextColor);
 		SelectedProfileStartupPrimaryActionBrush = CreatePreviewBrush(selectedProfile.StartupPrimaryActionColor);
+		SelectedProfileMenuBackgroundColor = selectedProfile.MenuBackgroundColor;
+		SelectedProfileMenuHighlightColor = selectedProfile.MenuBackgroundHighlightColor;
+		SelectedProfileAccentColor = selectedProfile.ThemeAccentColor;
+		SelectedProfileMenuBackgroundBrush = CreatePreviewBrush(selectedProfile.MenuBackgroundColor);
+		SelectedProfileMenuHighlightBrush = CreatePreviewBrush(selectedProfile.MenuBackgroundHighlightColor);
+		SelectedProfileAccentBrush = CreatePreviewBrush(selectedProfile.ThemeAccentColor);
 		SelectedThemeProfileDivergenceCount = Config.GetThemeProfileDivergenceCount(selectedProfile.Name);
 		SelectedThemeProfileMatchesDefaults = SelectedThemeProfileDivergenceCount == 0;
 		SelectedThemeProfileIsCustomized = SelectedThemeProfileDivergenceCount > 0;

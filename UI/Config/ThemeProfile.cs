@@ -21,6 +21,13 @@ public sealed class ThemeProfile {
 	public string StartupPrimaryActionColor { get; set; } = "#ffd47a22";
 	public string StartupDividerColor { get; set; } = "#553f2b1f";
 	public string SetupSubtitleColor { get; set; } = "#ffefcfb6";
+	public string MenuBackgroundColor { get; set; } = "#55281a10";
+	public string MenuBackgroundHighlightColor { get; set; } = "#80573721";
+	public string MenuBorderHighlightColor { get; set; } = "#e09a52";
+	public string MenuSeparatorBackgroundColor { get; set; } = "#66c2864f";
+	public string SettingsTabStripBackgroundColor { get; set; } = "#2f2015";
+	public string ThemeAccentColor { get; set; } = "#ccc87423";
+	public string HighlightColor { get; set; } = "#ffc87423";
 	public double SetupTitleFontSize { get; set; } = 34;
 	public double SetupSubtitleFontSize { get; set; } = 16;
 	public double SetupPrimaryActionFontSize { get; set; } = 34;
@@ -45,6 +52,13 @@ public sealed class ThemeProfile {
 				StartupPrimaryActionColor = "#ffd47a22",
 				StartupDividerColor = "#553f2b1f",
 				SetupSubtitleColor = "#ffefcfb6",
+				MenuBackgroundColor = "#55281a10",
+				MenuBackgroundHighlightColor = "#80573721",
+				MenuBorderHighlightColor = "#e09a52",
+				MenuSeparatorBackgroundColor = "#66c2864f",
+				SettingsTabStripBackgroundColor = "#2f2015",
+				ThemeAccentColor = "#ccc87423",
+				HighlightColor = "#ffc87423",
 				SetupTitleFontSize = 34,
 				SetupSubtitleFontSize = 16,
 				SetupPrimaryActionFontSize = 34
@@ -69,6 +83,13 @@ public sealed class ThemeProfile {
 			StartupPrimaryActionColor = "#ffeea55d",
 			StartupDividerColor = "#66bf8b66",
 			SetupSubtitleColor = "#ff6a3f20",
+			MenuBackgroundColor = "#f3e5d7",
+			MenuBackgroundHighlightColor = "#efb57b",
+			MenuBorderHighlightColor = "#9f5c22",
+			MenuSeparatorBackgroundColor = "#c9a788",
+			SettingsTabStripBackgroundColor = "#f5e8dc",
+			ThemeAccentColor = "#ffc56e21",
+			HighlightColor = "#ff8a5116",
 			SetupTitleFontSize = 34,
 			SetupSubtitleFontSize = 16,
 			SetupPrimaryActionFontSize = 34
@@ -113,6 +134,13 @@ public sealed class ThemeProfileFile {
 			&& ThemeProfile.IsValidColor(Profile.StartupActionBorderColor)
 			&& ThemeProfile.IsValidColor(Profile.StartupPrimaryActionColor)
 			&& ThemeProfile.IsValidColor(Profile.StartupDividerColor)
-			&& ThemeProfile.IsValidColor(Profile.SetupSubtitleColor);
+			&& ThemeProfile.IsValidColor(Profile.SetupSubtitleColor)
+			&& ThemeProfile.IsValidColor(Profile.MenuBackgroundColor)
+			&& ThemeProfile.IsValidColor(Profile.MenuBackgroundHighlightColor)
+			&& ThemeProfile.IsValidColor(Profile.MenuBorderHighlightColor)
+			&& ThemeProfile.IsValidColor(Profile.MenuSeparatorBackgroundColor)
+			&& ThemeProfile.IsValidColor(Profile.SettingsTabStripBackgroundColor)
+			&& ThemeProfile.IsValidColor(Profile.ThemeAccentColor)
+			&& ThemeProfile.IsValidColor(Profile.HighlightColor);
 	}
 }

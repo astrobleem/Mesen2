@@ -202,6 +202,12 @@ public sealed class UiScrollabilityMarkupTests {
 		string markup = File.ReadAllText(fullPath);
 		Assert.Contains("Text=\"{l:Translate lblTheme}\"", markup);
 		Assert.Contains("SelectedItem=\"{Binding Config.Theme}\"", markup);
+		Assert.Contains("lblThemeMenuBackground", markup);
+		Assert.Contains("lblThemeMenuHighlight", markup);
+		Assert.Contains("lblThemeAccentColor", markup);
+		Assert.Contains("btnPickThemeMenuBackgroundColor_OnClick", markup);
+		Assert.Contains("btnPickThemeMenuHighlightColor_OnClick", markup);
+		Assert.Contains("btnPickThemeAccentColor_OnClick", markup);
 	}
 
 	[Fact]

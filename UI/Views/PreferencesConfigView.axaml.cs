@@ -270,6 +270,24 @@ public partial class PreferencesConfigView : UserControl {
 		});
 	}
 
+	private async void btnPickThemeMenuBackgroundColor_OnClick(object sender, RoutedEventArgs e) {
+		await PickThemeProfileColor(profile => profile.MenuBackgroundColor, (model, colorHex) => {
+			model.SetSelectedProfileUiChromeColors(colorHex, model.SelectedProfileMenuHighlightColor, model.SelectedProfileAccentColor);
+		});
+	}
+
+	private async void btnPickThemeMenuHighlightColor_OnClick(object sender, RoutedEventArgs e) {
+		await PickThemeProfileColor(profile => profile.MenuBackgroundHighlightColor, (model, colorHex) => {
+			model.SetSelectedProfileUiChromeColors(model.SelectedProfileMenuBackgroundColor, colorHex, model.SelectedProfileAccentColor);
+		});
+	}
+
+	private async void btnPickThemeAccentColor_OnClick(object sender, RoutedEventArgs e) {
+		await PickThemeProfileColor(profile => profile.ThemeAccentColor, (model, colorHex) => {
+			model.SetSelectedProfileUiChromeColors(model.SelectedProfileMenuBackgroundColor, model.SelectedProfileMenuHighlightColor, colorHex);
+		});
+	}
+
 	private async Task PickThemeProfileColor(Func<ThemeProfile, string> colorSelector, Action<PreferencesConfigViewModel, string> updateAction) {
 		PreferencesConfigViewModel? model = GetViewModel();
 		ThemeProfile? profile = model?.GetSelectedThemeProfile();

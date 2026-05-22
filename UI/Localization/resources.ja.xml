@@ -705,6 +705,9 @@
 			<Control ID="lblThemeStartupBackground">起動画面背景</Control>
 			<Control ID="lblThemeStartupText">起動画面テキスト</Control>
 			<Control ID="lblThemePrimaryAction">主要アクション</Control>
+			<Control ID="lblThemeMenuBackground">メニュー背景</Control>
+			<Control ID="lblThemeMenuHighlight">メニューハイライト</Control>
+			<Control ID="lblThemeAccentColor">アクセントカラー</Control>
 			<Control ID="btnThemePickColor">選択</Control>
 			<Control ID="lblThemeLivePreview">ライブプレビュー</Control>
 			<Control ID="lblThemePresetStatus">プリセット状態:</Control>

@@ -99,6 +99,23 @@ Theme profile import/export uses JSON-backed profile models:
 
 When importing, values are validated and then applied through the same profile pipeline used for in-app edits.
 
+Theme profile import/export now covers startup/setup tokens and key UI chrome tokens used by the always-visible shell:
+
+- Menu background/highlight/border/separator
+- Settings tab strip background
+- Accent and highlight colors
+
+These tokens are centralized in `ThemeProfile` and applied through `NexenThemeManager` resource overrides so they are not duplicated as ad-hoc values across the UI runtime path.
+
+## Settings UI Coverage
+
+The Preferences theme section includes profile selection and import/export plus picker-based editing for:
+
+- Startup background, startup text, startup primary action
+- Menu background, menu highlight, accent color
+
+This gives a settings-surface customization path while preserving JSON import/export for advanced profile editing and sharing.
+
 ## Updating Default Theme Values Safely
 
 When changing default colors or sizes:

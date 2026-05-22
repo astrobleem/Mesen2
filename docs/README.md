@@ -32,6 +32,7 @@ This directory contains user-facing documentation for Nexen.
 |---|---|
 | [Manual Testing Hub](manual-testing/README.md) | Starting manual instructions and execution order |
 | [Main Menu Globe Language and Theme Manual Test](manual-testing/main-menu-language-globe-theme-manual-test.md) | Validate right-side globe language switching and brown/orange menu-theme defaults |
+| [Theme Profile Chrome Customization Manual Test](manual-testing/theme-profile-chrome-customization-manual-test.md) | Validate profile-driven menu/chrome/accent customization and import/export roundtrip |
 | [Live Language Switch Manual Test](manual-testing/live-language-switch-manual-test.md) | Validate runtime no-restart language propagation across key windows and menus |
 | [Startup UX, Theme, and Accessibility Manual Test](manual-testing/startup-ux-accessibility-theme-manual-test.md) | Validate splash branding/progress visibility, larger startup defaults, and touch-friendly menu/control sizing |
 | [Atari 2600 Debug and TAS Manual Test](manual-testing/atari2600-debug-and-tas-manual-test.md) | End-to-end debugger, TAS, and movie validation workflow |

@@ -18,7 +18,7 @@ public sealed class ThemeProfileTests {
 	[Fact]
 	public void ThemeProfileFile_IsValid_RejectsInvalidColor() {
 		ThemeProfile profile = ThemeProfile.CreateDefault("Test", NexenTheme.Dark);
-		profile.StartupTextColor = "bad-color";
+		profile.MenuBackgroundColor = "bad-color";
 
 		ThemeProfileFile file = new ThemeProfileFile {
 			Format = "nexen-theme-profile",
@@ -27,6 +27,20 @@ public sealed class ThemeProfileTests {
 		};
 
 		Assert.False(file.IsValid());
+	}
+
+	[Fact]
+	public void ThemeProfile_CreateDefault_IncludesCentralizedMenuAndAccentTokens() {
+		ThemeProfile dark = ThemeProfile.CreateDefault("Default Dark", NexenTheme.Dark);
+		ThemeProfile light = ThemeProfile.CreateDefault("Default Light", NexenTheme.Light);
+
+		Assert.Equal("#55281a10", dark.MenuBackgroundColor);
+		Assert.Equal("#80573721", dark.MenuBackgroundHighlightColor);
+		Assert.Equal("#ccc87423", dark.ThemeAccentColor);
+
+		Assert.Equal("#f3e5d7", light.MenuBackgroundColor);
+		Assert.Equal("#efb57b", light.MenuBackgroundHighlightColor);
+		Assert.Equal("#ffc56e21", light.ThemeAccentColor);
 	}
 
 	[Fact]

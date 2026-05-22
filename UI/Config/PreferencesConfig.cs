@@ -148,6 +148,15 @@ public sealed partial class PreferencesConfig : BaseConfig<PreferencesConfig> {
 		profile.UiFontSize = NexenFont.FontSize;
 		profile.MenuFontFamily = NexenMenuFont.FontFamily;
 		profile.MenuFontSize = NexenMenuFont.FontSize;
+		if (Application.Current?.Resources is not null) {
+			profile.MenuBackgroundColor = TryReadResourceColor("NexenMenuBackground", profile.MenuBackgroundColor);
+			profile.MenuBackgroundHighlightColor = TryReadResourceColor("NexenMenuBackgroundHighlight", profile.MenuBackgroundHighlightColor);
+			profile.MenuBorderHighlightColor = TryReadResourceColor("NexenMenuBorderHighlight", profile.MenuBorderHighlightColor);
+			profile.MenuSeparatorBackgroundColor = TryReadResourceColor("NexenMenuSeparatorBackground", profile.MenuSeparatorBackgroundColor);
+			profile.SettingsTabStripBackgroundColor = TryReadResourceColor("SettingsTabStripBackgroundColor", profile.SettingsTabStripBackgroundColor);
+			profile.ThemeAccentColor = TryReadResourceColor("ThemeAccentColor", profile.ThemeAccentColor);
+			profile.HighlightColor = TryReadResourceColor("HighlightColor", profile.HighlightColor);
+		}
 	}
 
 	public bool DeleteThemeProfile(string? profileName) {
@@ -191,6 +200,13 @@ public sealed partial class PreferencesConfig : BaseConfig<PreferencesConfig> {
 			existing.StartupPrimaryActionColor = profile.StartupPrimaryActionColor;
 			existing.StartupDividerColor = profile.StartupDividerColor;
 			existing.SetupSubtitleColor = profile.SetupSubtitleColor;
+			existing.MenuBackgroundColor = profile.MenuBackgroundColor;
+			existing.MenuBackgroundHighlightColor = profile.MenuBackgroundHighlightColor;
+			existing.MenuBorderHighlightColor = profile.MenuBorderHighlightColor;
+			existing.MenuSeparatorBackgroundColor = profile.MenuSeparatorBackgroundColor;
+			existing.SettingsTabStripBackgroundColor = profile.SettingsTabStripBackgroundColor;
+			existing.ThemeAccentColor = profile.ThemeAccentColor;
+			existing.HighlightColor = profile.HighlightColor;
 			existing.SetupTitleFontSize = profile.SetupTitleFontSize;
 			existing.SetupSubtitleFontSize = profile.SetupSubtitleFontSize;
 			existing.SetupPrimaryActionFontSize = profile.SetupPrimaryActionFontSize;
@@ -277,6 +293,13 @@ public sealed partial class PreferencesConfig : BaseConfig<PreferencesConfig> {
 			StartupPrimaryActionColor = source.StartupPrimaryActionColor,
 			StartupDividerColor = source.StartupDividerColor,
 			SetupSubtitleColor = source.SetupSubtitleColor,
+			MenuBackgroundColor = source.MenuBackgroundColor,
+			MenuBackgroundHighlightColor = source.MenuBackgroundHighlightColor,
+			MenuBorderHighlightColor = source.MenuBorderHighlightColor,
+			MenuSeparatorBackgroundColor = source.MenuSeparatorBackgroundColor,
+			SettingsTabStripBackgroundColor = source.SettingsTabStripBackgroundColor,
+			ThemeAccentColor = source.ThemeAccentColor,
+			HighlightColor = source.HighlightColor,
 			SetupTitleFontSize = source.SetupTitleFontSize,
 			SetupSubtitleFontSize = source.SetupSubtitleFontSize,
 			SetupPrimaryActionFontSize = source.SetupPrimaryActionFontSize
@@ -308,6 +331,13 @@ public sealed partial class PreferencesConfig : BaseConfig<PreferencesConfig> {
 		profile.StartupPrimaryActionColor = defaults.StartupPrimaryActionColor;
 		profile.StartupDividerColor = defaults.StartupDividerColor;
 		profile.SetupSubtitleColor = defaults.SetupSubtitleColor;
+		profile.MenuBackgroundColor = defaults.MenuBackgroundColor;
+		profile.MenuBackgroundHighlightColor = defaults.MenuBackgroundHighlightColor;
+		profile.MenuBorderHighlightColor = defaults.MenuBorderHighlightColor;
+		profile.MenuSeparatorBackgroundColor = defaults.MenuSeparatorBackgroundColor;
+		profile.SettingsTabStripBackgroundColor = defaults.SettingsTabStripBackgroundColor;
+		profile.ThemeAccentColor = defaults.ThemeAccentColor;
+		profile.HighlightColor = defaults.HighlightColor;
 		profile.SetupTitleFontSize = defaults.SetupTitleFontSize;
 		profile.SetupSubtitleFontSize = defaults.SetupSubtitleFontSize;
 		profile.SetupPrimaryActionFontSize = defaults.SetupPrimaryActionFontSize;
@@ -342,6 +372,13 @@ public sealed partial class PreferencesConfig : BaseConfig<PreferencesConfig> {
 		profile.StartupPrimaryActionColor = preset.StartupPrimaryActionColor;
 		profile.StartupDividerColor = preset.StartupDividerColor;
 		profile.SetupSubtitleColor = preset.SetupSubtitleColor;
+		profile.MenuBackgroundColor = preset.MenuBackgroundColor;
+		profile.MenuBackgroundHighlightColor = preset.MenuBackgroundHighlightColor;
+		profile.MenuBorderHighlightColor = preset.MenuBorderHighlightColor;
+		profile.MenuSeparatorBackgroundColor = preset.MenuSeparatorBackgroundColor;
+		profile.SettingsTabStripBackgroundColor = preset.SettingsTabStripBackgroundColor;
+		profile.ThemeAccentColor = preset.ThemeAccentColor;
+		profile.HighlightColor = preset.HighlightColor;
 		profile.SetupTitleFontSize = preset.SetupTitleFontSize;
 		profile.SetupSubtitleFontSize = preset.SetupSubtitleFontSize;
 		profile.SetupPrimaryActionFontSize = preset.SetupPrimaryActionFontSize;
@@ -377,6 +414,13 @@ public sealed partial class PreferencesConfig : BaseConfig<PreferencesConfig> {
 		if (profile.StartupPrimaryActionColor != defaults.StartupPrimaryActionColor) divergenceCount++;
 		if (profile.StartupDividerColor != defaults.StartupDividerColor) divergenceCount++;
 		if (profile.SetupSubtitleColor != defaults.SetupSubtitleColor) divergenceCount++;
+		if (profile.MenuBackgroundColor != defaults.MenuBackgroundColor) divergenceCount++;
+		if (profile.MenuBackgroundHighlightColor != defaults.MenuBackgroundHighlightColor) divergenceCount++;
+		if (profile.MenuBorderHighlightColor != defaults.MenuBorderHighlightColor) divergenceCount++;
+		if (profile.MenuSeparatorBackgroundColor != defaults.MenuSeparatorBackgroundColor) divergenceCount++;
+		if (profile.SettingsTabStripBackgroundColor != defaults.SettingsTabStripBackgroundColor) divergenceCount++;
+		if (profile.ThemeAccentColor != defaults.ThemeAccentColor) divergenceCount++;
+		if (profile.HighlightColor != defaults.HighlightColor) divergenceCount++;
 		if (profile.SetupTitleFontSize != defaults.SetupTitleFontSize) divergenceCount++;
 		if (profile.SetupSubtitleFontSize != defaults.SetupSubtitleFontSize) divergenceCount++;
 		if (profile.SetupPrimaryActionFontSize != defaults.SetupPrimaryActionFontSize) divergenceCount++;
@@ -408,6 +452,13 @@ public sealed partial class PreferencesConfig : BaseConfig<PreferencesConfig> {
 		if (profile.StartupPrimaryActionColor != defaults.StartupPrimaryActionColor) customized.Add(nameof(ThemeProfile.StartupPrimaryActionColor));
 		if (profile.StartupDividerColor != defaults.StartupDividerColor) customized.Add(nameof(ThemeProfile.StartupDividerColor));
 		if (profile.SetupSubtitleColor != defaults.SetupSubtitleColor) customized.Add(nameof(ThemeProfile.SetupSubtitleColor));
+		if (profile.MenuBackgroundColor != defaults.MenuBackgroundColor) customized.Add(nameof(ThemeProfile.MenuBackgroundColor));
+		if (profile.MenuBackgroundHighlightColor != defaults.MenuBackgroundHighlightColor) customized.Add(nameof(ThemeProfile.MenuBackgroundHighlightColor));
+		if (profile.MenuBorderHighlightColor != defaults.MenuBorderHighlightColor) customized.Add(nameof(ThemeProfile.MenuBorderHighlightColor));
+		if (profile.MenuSeparatorBackgroundColor != defaults.MenuSeparatorBackgroundColor) customized.Add(nameof(ThemeProfile.MenuSeparatorBackgroundColor));
+		if (profile.SettingsTabStripBackgroundColor != defaults.SettingsTabStripBackgroundColor) customized.Add(nameof(ThemeProfile.SettingsTabStripBackgroundColor));
+		if (profile.ThemeAccentColor != defaults.ThemeAccentColor) customized.Add(nameof(ThemeProfile.ThemeAccentColor));
+		if (profile.HighlightColor != defaults.HighlightColor) customized.Add(nameof(ThemeProfile.HighlightColor));
 		if (profile.SetupTitleFontSize != defaults.SetupTitleFontSize) customized.Add(nameof(ThemeProfile.SetupTitleFontSize));
 		if (profile.SetupSubtitleFontSize != defaults.SetupSubtitleFontSize) customized.Add(nameof(ThemeProfile.SetupSubtitleFontSize));
 		if (profile.SetupPrimaryActionFontSize != defaults.SetupPrimaryActionFontSize) customized.Add(nameof(ThemeProfile.SetupPrimaryActionFontSize));
@@ -511,6 +562,18 @@ public sealed partial class PreferencesConfig : BaseConfig<PreferencesConfig> {
 				Application.Current.Resources["NexenMenuFontSize"] = (double)NexenMenuFont.FontSize;
 			}
 		}
+	}
+
+	private static string TryReadResourceColor(string resourceKey, string fallback) {
+		if (Application.Current?.Resources is null) {
+			return fallback;
+		}
+
+		if (Application.Current.Resources.TryGetValue(resourceKey, out object? resource) && resource is Color color) {
+			return "#" + color.A.ToString("x2") + color.R.ToString("x2") + color.G.ToString("x2") + color.B.ToString("x2");
+		}
+
+		return fallback;
 	}
 
 	public void InitializeFontDefaults() {

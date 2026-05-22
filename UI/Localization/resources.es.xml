@@ -705,6 +705,9 @@
 			<Control ID="lblThemeStartupBackground">Fondo de inicio</Control>
 			<Control ID="lblThemeStartupText">Texto de inicio</Control>
 			<Control ID="lblThemePrimaryAction">Accion principal</Control>
+			<Control ID="lblThemeMenuBackground">Fondo del menu</Control>
+			<Control ID="lblThemeMenuHighlight">Resaltado del menu</Control>
+			<Control ID="lblThemeAccentColor">Color de acento</Control>
 			<Control ID="btnThemePickColor">Elegir</Control>
 			<Control ID="lblThemeLivePreview">Vista previa en vivo</Control>
 			<Control ID="lblThemePresetStatus">Estado del preajuste:</Control>
