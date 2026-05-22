@@ -2836,8 +2836,12 @@ continue;
 
 Language should be easily changable, add a globe icon to the right of the main menu bar, with Language selection; update theme values and UI for the default theme to use more of our brown and orange color picks; make plans, epics, issues, docs, session-logs, etc, and implement the issues; continue;
 
-
 Language should be easily changable, add a globe icon to the right of the main menu bar, with Language selection menu; update theme values and UI for the default theme to use more of our brown and orange color picks; make plans, epics, issues, docs, session-logs, etc, and implement the issues; continue;
+
+continue;
+
+1
+
 
 
 

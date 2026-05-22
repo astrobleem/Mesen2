@@ -208,14 +208,19 @@ public sealed class UiScrollabilityMarkupTests {
 	public void MainMenuView_ContainsRightAlignedGlobeLanguageMenu() {
 		string repoRoot = GetRepositoryRoot();
 		string fullPath = Path.Combine(repoRoot, "UI", "Views", "MainMenuView.axaml");
+		string codeBehindPath = Path.Combine(repoRoot, "UI", "Views", "MainMenuView.axaml.cs");
 
 		Assert.True(File.Exists(fullPath), $"Expected markup file to exist: {fullPath}");
+		Assert.True(File.Exists(codeBehindPath), $"Expected code-behind file to exist: {codeBehindPath}");
 
 		string markup = File.ReadAllText(fullPath);
+		string codeBehind = File.ReadAllText(codeBehindPath);
 		Assert.Contains("Name=\"LanguageMenu\"", markup);
 		Assert.Contains("DockPanel.Dock=\"Right\"", markup);
 		Assert.Contains("Name=\"mnuLanguageRoot\"", markup);
-		Assert.Contains("Header=\"🌐\"", markup);
+		Assert.DoesNotContain("Header=\"🌐\"", markup);
+		Assert.Contains("\"🌐 \" + languageText", codeBehind);
+		Assert.Contains("GetLocalizedLanguageTextOrFallback", codeBehind);
 		Assert.DoesNotContain("mnuLanguageEnglish", markup);
 		Assert.DoesNotContain("mnuLanguageSpanish", markup);
 		Assert.DoesNotContain("mnuLanguageJapanese", markup);

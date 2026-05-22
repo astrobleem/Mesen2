@@ -12,10 +12,10 @@ Validate the right-aligned globe language selector and brown/orange default menu
 
 ## Test Steps
 
-1. Launch Nexen and confirm a globe icon appears on the right side of the top menu bar.
+1. Launch Nexen and confirm a globe-plus-text language trigger appears on the right side of the top menu bar.
 2. Open the globe menu with mouse.
 3. Confirm language entries are populated from bundled localization resources.
-4. Confirm current bundle entries include English, Spanish, and Japanese.
+4. Confirm current bundle entries include English, Spanish, and Japanese using localized labels for the active UI language.
 5. Select Spanish.
 6. Verify top-level menu labels update immediately without restart.
 7. Open Settings and verify labels are translated there too.
@@ -30,6 +30,7 @@ Validate the right-aligned globe language selector and brown/orange default menu
 ## Pass Criteria
 
 - Globe menu is visible, accessible, and right aligned.
+- Globe trigger remains understandable as text+icon even when emoji rendering differs.
 - Language changes apply immediately and persist across restart.
 - Menu/theme accents visibly reflect brown/orange branding in both light and dark themes.
 - Text and focus/hover states remain readable.

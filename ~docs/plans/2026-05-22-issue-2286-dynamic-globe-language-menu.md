@@ -1,4 +1,4 @@
-# Issue 2286 Plan: Dynamic Globe Language Menu
+﻿# Issue 2286 Plan: Dynamic Globe Language Menu
 
 ## Linked Issues
 

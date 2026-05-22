@@ -52,8 +52,14 @@ public partial class MainMenuView : UserControl {
 	}
 
 	private void ResourceHelper_LanguageChanged(object? sender, System.EventArgs e) {
+		UpdateLanguageRootHeader();
 		RebuildLanguageMenuItems();
 		RefreshLanguageCheckStates();
+	}
+
+	private void UpdateLanguageRootHeader() {
+		string languageText = ResourceHelper.GetViewLabel("MainMenuView", "mnuLanguageSelector");
+		_mnuLanguageRoot.Header = "🌐 " + languageText;
 	}
 
 	private static UiLanguage GetUiLanguageFromCode(string languageCode) {
@@ -74,8 +80,18 @@ public partial class MainMenuView : UserControl {
 		}
 	}
 
+	private static string GetLocalizedLanguageTextOrFallback(string languageCode) {
+		return languageCode switch {
+			"en" => ResourceHelper.GetViewLabel("MainMenuView", "mnuLanguageEnglish"),
+			"es" => ResourceHelper.GetViewLabel("MainMenuView", "mnuLanguageSpanish"),
+			"ja" => ResourceHelper.GetViewLabel("MainMenuView", "mnuLanguageJapanese"),
+			_ => GetLanguageMenuText(languageCode),
+		};
+	}
+
 	private void RebuildLanguageMenuItems() {
 		_languageItems.Clear();
+		UpdateLanguageRootHeader();
 		IList items = (IList)_mnuLanguageRoot.Items;
 		items.Clear();
 
@@ -87,7 +103,7 @@ public partial class MainMenuView : UserControl {
 			}
 
 			MenuItem item = new MenuItem {
-				Header = GetLanguageMenuText(languageCode),
+				Header = GetLocalizedLanguageTextOrFallback(languageCode),
 				ToggleType = MenuItemToggleType.CheckBox,
 			};
 			item.Click += (_, _) => {

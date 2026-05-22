@@ -18,7 +18,7 @@
 
 	<DockPanel Background="{DynamicResource NexenMenuBackground}">
 		<c:NexenMenu Name="LanguageMenu" DockPanel.Dock="Right">
-			<MenuItem Name="mnuLanguageRoot" Header="🌐" ToolTip.Tip="{l:Translate mnuLanguageSelector}" />
+			<MenuItem Name="mnuLanguageRoot" ToolTip.Tip="{l:Translate mnuLanguageSelector}" />
 		</c:NexenMenu>
 
 		<c:NexenMenu Name="ActionMenu" DockPanel.Dock="Left">
