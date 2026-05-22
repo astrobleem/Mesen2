@@ -241,15 +241,16 @@
 
 	<Style Selector="Button, NumericUpDown RepeatButton">
 		<Setter Property="Height" Value="NaN" />
-		<Setter Property="Padding" Value="4 3" />
-		<Setter Property="Margin" Value="1" />
-		<Setter Property="MinWidth" Value="60" />
+		<Setter Property="Padding" Value="8 6" />
+		<Setter Property="Margin" Value="2" />
+		<Setter Property="MinWidth" Value="88" />
+		<Setter Property="MinHeight" Value="32" />
 		<Setter Property="HorizontalContentAlignment" Value="Center" />
 		<Setter Property="VerticalContentAlignment" Value="Center" />
 	</Style>
 
 	<Style Selector="Button.ButtonWithIcon">
-		<Setter Property="Padding" Value="4 2" />
+		<Setter Property="Padding" Value="8 5" />
 	</Style>
 
 	<Style Selector="TimePicker Button">
@@ -276,10 +277,10 @@
 
 		<Setter Property="VerticalContentAlignment" Value="Center" />
 
-		<Setter Property="Margin" Value="1" />
-		<Setter Property="Padding" Value="2 0" />
-		<Setter Property="MinHeight" Value="21" />
-		<Setter Property="Height" Value="21" />
+		<Setter Property="Margin" Value="2" />
+		<Setter Property="Padding" Value="6 2" />
+		<Setter Property="MinHeight" Value="30" />
+		<Setter Property="Height" Value="30" />
 		<Setter Property="SelectionBrush" Value="{DynamicResource TextBoxSelectionBrush}" />
 
 		<Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Hidden" />
@@ -313,19 +314,19 @@
 	</Style>
 
 	<Style Selector="ComboBox">
-		<Setter Property="Margin" Value="1" />
-		<Setter Property="Padding" Value="3 2" />
-		<Setter Property="MinHeight" Value="21" />
+		<Setter Property="Margin" Value="2" />
+		<Setter Property="Padding" Value="6 4" />
+		<Setter Property="MinHeight" Value="30" />
 	</Style>
 
 	<Style Selector="CheckBox">
-		<Setter Property="MinHeight" Value="20" />
+		<Setter Property="MinHeight" Value="24" />
 		<Setter Property="MinWidth" Value="20" />
-		<Setter Property="Padding" Value="2 0 0 0" />
+		<Setter Property="Padding" Value="4 0 0 0" />
 	</Style>
 	<Style Selector="CheckBox /template/ Grid">
-		<Setter Property="Height" Value="20" />
-		<Setter Property="MaxHeight" Value="20" />
+		<Setter Property="Height" Value="22" />
+		<Setter Property="MaxHeight" Value="22" />
 	</Style>
 	<Style Selector="CheckBox /template/ Grid > Grid">
 		<Setter Property="Height" Value="16" />

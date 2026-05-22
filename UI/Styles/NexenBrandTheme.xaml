@@ -36,11 +36,11 @@
 					<SolidColorBrush x:Key="NexenStartupTextBrush" Color="{DynamicResource NexenBrandWhiteColor}" />
 					<SolidColorBrush x:Key="NexenStartupWarningTextBrush" Color="{DynamicResource NexenBrandYellowColor}" />
 					<SolidColorBrush x:Key="NexenStartupDividerBrush" Color="{DynamicResource NexenBrandDividerColor}" />
-					<SolidColorBrush x:Key="NexenStartupSplashBackgroundBrush" Color="#ff1a1a2e" />
-					<SolidColorBrush x:Key="NexenStartupSplashBorderBrush" Color="#ff3a3a5e" />
-					<SolidColorBrush x:Key="NexenStartupSplashStatusBrush" Color="#ff6666aa" />
-					<SolidColorBrush x:Key="NexenStartupProgressForegroundBrush" Color="#ff6666cc" />
-					<SolidColorBrush x:Key="NexenStartupProgressBackgroundBrush" Color="#ff2a2a4e" />
+					<SolidColorBrush x:Key="NexenStartupSplashBackgroundBrush" Color="#ff2a1a10" />
+					<SolidColorBrush x:Key="NexenStartupSplashBorderBrush" Color="#ff8a5116" />
+					<SolidColorBrush x:Key="NexenStartupSplashStatusBrush" Color="#ffffe1aa" />
+					<SolidColorBrush x:Key="NexenStartupProgressForegroundBrush" Color="#ffffbd64" />
+					<SolidColorBrush x:Key="NexenStartupProgressBackgroundBrush" Color="#ff4a2d1a" />
 				</ResourceDictionary>
 
 				<ResourceDictionary x:Key="Light">

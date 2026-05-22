@@ -37,16 +37,18 @@
 				<TextBlock
 					Name="StatusText"
 					Text="Loading..."
-					FontSize="{DynamicResource NexenFontSize}"
+					FontSize="{DynamicResource NexenMenuFontSize}"
 					Foreground="{DynamicResource NexenStartupSplashStatusBrush}"
 					HorizontalAlignment="Center"
 				/>
 				<ProgressBar
 					Name="LoadingBar"
 					IsIndeterminate="True"
-					Width="200"
-					Height="3"
+					Width="240"
+					Height="10"
 					Margin="0 8 0 0"
+					BorderThickness="1"
+					BorderBrush="{DynamicResource NexenStartupSplashBorderBrush}"
 					Foreground="{DynamicResource NexenStartupProgressForegroundBrush}"
 					Background="{DynamicResource NexenStartupProgressBackgroundBrush}"
 				/>

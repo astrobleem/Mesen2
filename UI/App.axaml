@@ -9,10 +9,10 @@
 >
 	<Application.Resources>
 		<FontFamily x:Key="NexenFont">Microsoft Sans Serif</FontFamily>
-		<x:Double x:Key="NexenFontSize">11</x:Double>
+		<x:Double x:Key="NexenFontSize">13</x:Double>
 
 		<FontFamily x:Key="NexenMenuFont">Segoe UI</FontFamily>
-		<x:Double x:Key="NexenMenuFontSize">12</x:Double>
+		<x:Double x:Key="NexenMenuFontSize">14</x:Double>
 
 		<FontFamily x:Key="NexenDisassemblyFont">Consolas</FontFamily>
 		<x:Double x:Key="NexenDisassemblyFontSize">12</x:Double>

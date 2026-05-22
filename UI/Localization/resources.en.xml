@@ -827,6 +827,7 @@
 			<Control ID="lblRequiresRestart">(requires restart)</Control>
 
 			<Control ID="lblDisplayLanguage">Display Language:</Control>
+			<Control ID="btnApplyLanguageNow">Apply Now</Control>
 			<Control ID="lblAvailableLanguages">Available languages:</Control>
 			<Control ID="chkSingleInstance">Only allow one instance of Nexen at a time</Control>
 			<Control ID="chkAutomaticallyCheckForUpdates">Automatically check for updates</Control>
@@ -2095,6 +2096,8 @@ E
 		<Message ID="AlreadyRunningMessage">Nexen is already running. Would you like to close the existing instance and restart?</Message>
 		<Message ID="AlreadyRunningRestart">Close and Restart Nexen</Message>
 		<Message ID="AlreadyRunningLeave">Leave Current Version Running</Message>
+		<Message ID="LanguageChangeRestartPrompt">Display language changes are ready. Restart Nexen now to apply them?</Message>
+		<Message ID="LanguageApplyNowPrompt">Restart Nexen now to apply the selected display language?</Message>
 		<Message ID="GameLoadFailedTitle">Error</Message>
 		<Message ID="GameLoadFailedMessage">Game failed to load. Select a game to try again.</Message>
 

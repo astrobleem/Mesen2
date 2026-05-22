@@ -702,6 +702,7 @@
 			<Control ID="lblThemeCustomizedSetup">セットアップ:</Control>
 			<Control ID="lblRequiresRestart">(再起動が必要)</Control>
 			<Control ID="lblDisplayLanguage">表示言語:</Control>
+			<Control ID="btnApplyLanguageNow">今すぐ適用</Control>
 			<Control ID="lblAvailableLanguages">利用可能な言語:</Control>
 			<Control ID="chkSingleInstance">Nexenの同時起動を1つに制限する</Control>
 			<Control ID="chkAutomaticallyCheckForUpdates">起動時に自動で更新を確認する</Control>
@@ -1871,6 +1872,8 @@ Web サイトにアクセスし、最新リリースを手動でダウンロー�
 		<Message ID="AlreadyRunningMessage">Nexenは既に実行中です。既存のインスタンスを終了して再起動しますか？</Message>
 		<Message ID="AlreadyRunningRestart">終了してNexenを再起動</Message>
 		<Message ID="AlreadyRunningLeave">現在の実行を継続する</Message>
+		<Message ID="LanguageChangeRestartPrompt">表示言語の変更が準備できました。今すぐNexenを再起動して適用しますか？</Message>
+		<Message ID="LanguageApplyNowPrompt">選択した表示言語を適用するため、今すぐNexenを再起動しますか？</Message>
 		<Message ID="GameLoadFailedTitle">エラー</Message>
 		<Message ID="GameLoadFailedMessage">ゲームの読み込みに失敗しました。ゲームを選択して再試行してください。</Message>
 		<Message ID="UnexpectedError">予期しないエラーが発生しました。
