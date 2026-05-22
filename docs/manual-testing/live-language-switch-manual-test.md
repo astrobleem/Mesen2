@@ -1,4 +1,4 @@
-# Live Language Switch Manual Test
+﻿# Live Language Switch Manual Test
 
 Use this checklist to verify that language changes apply immediately at runtime (no restart) across the main UI, debugger UI, and tool windows.
 

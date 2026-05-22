@@ -1,4 +1,4 @@
-# Manual Testing Hub
+﻿# Manual Testing Hub
 
 This section is the starting point for manual release validation in Nexen.
 
