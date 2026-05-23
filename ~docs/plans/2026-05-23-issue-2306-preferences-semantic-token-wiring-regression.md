@@ -1,4 +1,4 @@
-# Issue #2306 Preferences Semantic Token Wiring Regression (2026-05-23)
+﻿# Issue #2306 Preferences Semantic Token Wiring Regression (2026-05-23)
 
 ## Scope
 

@@ -1,4 +1,4 @@
-# Issue #2305 NexenThemeManager Semantic Override Mapping Regression (2026-05-23)
+﻿# Issue #2305 NexenThemeManager Semantic Override Mapping Regression (2026-05-23)
 
 ## Scope
 

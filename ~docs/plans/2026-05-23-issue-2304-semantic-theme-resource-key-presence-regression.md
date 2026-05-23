@@ -1,4 +1,4 @@
-# Issue #2304 Semantic Theme Resource Key Presence Regression (2026-05-23)
+﻿# Issue #2304 Semantic Theme Resource Key Presence Regression (2026-05-23)
 
 ## Scope
 

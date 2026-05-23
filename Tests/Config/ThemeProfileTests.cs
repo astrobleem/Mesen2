@@ -197,6 +197,32 @@ public sealed class ThemeProfileTests {
 	}
 
 	[Fact]
+	public void PreferencesConfig_DuplicateThemeProfile_PreservesNavigationAndListViewSemanticTokens() {
+		PreferencesConfig config = new PreferencesConfig();
+		ThemeProfile? source = config.GetThemeProfileByName("Default Light");
+		Assert.NotNull(source);
+
+		source!.NavigationViewItemHoverBackgroundColor = "#66aa7733";
+		source.NavigationViewItemSelectedBackgroundColor = "#ffbb8844";
+		source.NavigationViewItemSelectedForegroundColor = "#ff112233";
+		source.ListViewItemHoverBackgroundColor = "#66774422";
+		source.ListViewItemSelectedBackgroundColor = "#ff775522";
+		source.ListViewItemSelectedForegroundColor = "#ffeeccaa";
+
+		bool duplicated = config.DuplicateThemeProfile("Default Light", "Default Light Copy");
+		ThemeProfile? duplicate = config.GetThemeProfileByName("Default Light Copy");
+
+		Assert.True(duplicated);
+		Assert.NotNull(duplicate);
+		Assert.Equal("#66aa7733", duplicate!.NavigationViewItemHoverBackgroundColor);
+		Assert.Equal("#ffbb8844", duplicate.NavigationViewItemSelectedBackgroundColor);
+		Assert.Equal("#ff112233", duplicate.NavigationViewItemSelectedForegroundColor);
+		Assert.Equal("#66774422", duplicate.ListViewItemHoverBackgroundColor);
+		Assert.Equal("#ff775522", duplicate.ListViewItemSelectedBackgroundColor);
+		Assert.Equal("#ffeeccaa", duplicate.ListViewItemSelectedForegroundColor);
+	}
+
+	[Fact]
 	public void PreferencesConfig_SetActiveThemeProfile_AppliesFontsAndTheme() {
 		PreferencesConfig config = new PreferencesConfig();
 		ThemeProfile profile = new ThemeProfile {
@@ -272,6 +298,32 @@ public sealed class ThemeProfileTests {
 	}
 
 	[Fact]
+	public void PreferencesConfig_ResetThemeProfileToDefaults_RestoresNavigationAndListViewSemanticTokens() {
+		PreferencesConfig config = new PreferencesConfig();
+		ThemeProfile? dark = config.GetThemeProfileByName("Default Dark");
+		Assert.NotNull(dark);
+
+		dark!.NavigationViewItemHoverBackgroundColor = "#66998877";
+		dark.NavigationViewItemSelectedBackgroundColor = "#ff998877";
+		dark.NavigationViewItemSelectedForegroundColor = "#ff223344";
+		dark.ListViewItemHoverBackgroundColor = "#66665544";
+		dark.ListViewItemSelectedBackgroundColor = "#ff554433";
+		dark.ListViewItemSelectedForegroundColor = "#ffeeeecc";
+
+		bool reset = config.ResetThemeProfileToDefaults("Default Dark");
+		ThemeProfile? resetProfile = config.GetThemeProfileByName("Default Dark");
+
+		Assert.True(reset);
+		Assert.NotNull(resetProfile);
+		Assert.Equal("#66403020", resetProfile!.NavigationViewItemHoverBackgroundColor);
+		Assert.Equal("#ff6a3f20", resetProfile.NavigationViewItemSelectedBackgroundColor);
+		Assert.Equal("#ffffffff", resetProfile.NavigationViewItemSelectedForegroundColor);
+		Assert.Equal("#66403020", resetProfile.ListViewItemHoverBackgroundColor);
+		Assert.Equal("#ff6a3f20", resetProfile.ListViewItemSelectedBackgroundColor);
+		Assert.Equal("#ffffffff", resetProfile.ListViewItemSelectedForegroundColor);
+	}
+
+	[Fact]
 	public void PreferencesConfig_ApplyThemePresetToProfile_AppliesLightDefaults() {
 		PreferencesConfig config = new PreferencesConfig();
 
@@ -298,6 +350,23 @@ public sealed class ThemeProfileTests {
 		Assert.Equal(NexenTheme.Dark, profile!.Theme);
 		Assert.Equal("#ff1d130d", profile.StartupWindowBackgroundColor);
 		Assert.Equal("#ffd47a22", profile.StartupPrimaryActionColor);
+	}
+
+	[Fact]
+	public void PreferencesConfig_ApplyThemePresetToProfile_AppliesLightNavigationAndListViewDefaults() {
+		PreferencesConfig config = new PreferencesConfig();
+
+		bool applied = config.ApplyThemePresetToProfile("Default Dark", NexenTheme.Light);
+		ThemeProfile? profile = config.GetThemeProfileByName("Default Dark");
+
+		Assert.True(applied);
+		Assert.NotNull(profile);
+		Assert.Equal("#fff4ddc7", profile!.NavigationViewItemHoverBackgroundColor);
+		Assert.Equal("#ffb56f33", profile.NavigationViewItemSelectedBackgroundColor);
+		Assert.Equal("#ffffffff", profile.NavigationViewItemSelectedForegroundColor);
+		Assert.Equal("#fff4ddc7", profile.ListViewItemHoverBackgroundColor);
+		Assert.Equal("#ffb56f33", profile.ListViewItemSelectedBackgroundColor);
+		Assert.Equal("#ffffffff", profile.ListViewItemSelectedForegroundColor);
 	}
 
 	[Fact]
@@ -337,6 +406,55 @@ public sealed class ThemeProfileTests {
 		Assert.Equal(2, tokens.Count);
 		Assert.Equal("UiFontSize", tokens[0]);
 		Assert.Equal("StartupTextColor", tokens[1]);
+	}
+
+	[Fact]
+	public void PreferencesConfig_DivergenceAndCustomizedTokens_IncludeNavigationAndListViewSemanticTokens() {
+		PreferencesConfig config = new PreferencesConfig();
+		ThemeProfile? profile = config.GetThemeProfileByName("Default Dark");
+		Assert.NotNull(profile);
+
+		profile!.NavigationViewItemSelectedBackgroundColor = "#ff123456";
+		profile.ListViewItemSelectedForegroundColor = "#ffabcdef";
+
+		int divergenceCount = config.GetThemeProfileDivergenceCount("Default Dark");
+		List<string> customized = config.GetThemeProfileCustomizedTokenNames("Default Dark");
+
+		Assert.Equal(2, divergenceCount);
+		Assert.Equal(2, customized.Count);
+		Assert.Contains("NavigationViewItemSelectedBackgroundColor", customized);
+		Assert.Contains("ListViewItemSelectedForegroundColor", customized);
+	}
+
+	[Fact]
+	public void PreferencesConfig_UpsertThemeProfile_UpdatesNavigationAndListViewSemanticTokens() {
+		PreferencesConfig config = new PreferencesConfig();
+		ThemeProfile profile = ThemeProfile.CreateDefault("Semantic Upsert", NexenTheme.Dark);
+		profile.NavigationViewItemHoverBackgroundColor = "#66111111";
+		profile.NavigationViewItemSelectedBackgroundColor = "#ff222222";
+		profile.NavigationViewItemSelectedForegroundColor = "#ff333333";
+		profile.ListViewItemHoverBackgroundColor = "#66444444";
+		profile.ListViewItemSelectedBackgroundColor = "#ff555555";
+		profile.ListViewItemSelectedForegroundColor = "#ff666666";
+		config.UpsertThemeProfile(profile, false);
+
+		ThemeProfile updated = ThemeProfile.CreateDefault("Semantic Upsert", NexenTheme.Dark);
+		updated.NavigationViewItemHoverBackgroundColor = "#66777777";
+		updated.NavigationViewItemSelectedBackgroundColor = "#ff888888";
+		updated.NavigationViewItemSelectedForegroundColor = "#ff999999";
+		updated.ListViewItemHoverBackgroundColor = "#66aaaaaa";
+		updated.ListViewItemSelectedBackgroundColor = "#ffbbbbbb";
+		updated.ListViewItemSelectedForegroundColor = "#ffcccccc";
+		config.UpsertThemeProfile(updated, false);
+
+		ThemeProfile? roundTripped = config.GetThemeProfileByName("Semantic Upsert");
+		Assert.NotNull(roundTripped);
+		Assert.Equal("#66777777", roundTripped!.NavigationViewItemHoverBackgroundColor);
+		Assert.Equal("#ff888888", roundTripped.NavigationViewItemSelectedBackgroundColor);
+		Assert.Equal("#ff999999", roundTripped.NavigationViewItemSelectedForegroundColor);
+		Assert.Equal("#66aaaaaa", roundTripped.ListViewItemHoverBackgroundColor);
+		Assert.Equal("#ffbbbbbb", roundTripped.ListViewItemSelectedBackgroundColor);
+		Assert.Equal("#ffcccccc", roundTripped.ListViewItemSelectedForegroundColor);
 	}
 
 	[Fact]
