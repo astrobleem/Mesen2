@@ -31,6 +31,34 @@ public sealed class ThemeProfileTests {
 	}
 
 	[Fact]
+	public void ThemeProfileFile_IsValid_RejectsInvalidNavigationViewSemanticColors() {
+		ThemeProfile profile = ThemeProfile.CreateDefault("Test", NexenTheme.Dark);
+		profile.NavigationViewItemHoverBackgroundColor = "bad-color";
+
+		ThemeProfileFile file = new ThemeProfileFile {
+			Format = "nexen-theme-profile",
+			Version = 1,
+			Profile = profile
+		};
+
+		Assert.False(file.IsValid());
+	}
+
+	[Fact]
+	public void ThemeProfileFile_IsValid_RejectsInvalidListViewSemanticColors() {
+		ThemeProfile profile = ThemeProfile.CreateDefault("Test", NexenTheme.Dark);
+		profile.ListViewItemSelectedForegroundColor = "bad-color";
+
+		ThemeProfileFile file = new ThemeProfileFile {
+			Format = "nexen-theme-profile",
+			Version = 1,
+			Profile = profile
+		};
+
+		Assert.False(file.IsValid());
+	}
+
+	[Fact]
 	public void ThemeProfile_CreateDefault_IncludesCentralizedMenuAndAccentTokens() {
 		ThemeProfile dark = ThemeProfile.CreateDefault("Default Dark", NexenTheme.Dark);
 		ThemeProfile light = ThemeProfile.CreateDefault("Default Light", NexenTheme.Light);
@@ -279,6 +307,27 @@ public sealed class ThemeProfileTests {
 	}
 
 	[Fact]
+	public void PreferencesConfig_GenerateUniqueThemeProfileName_TrimsIncomingNameBeforeConflictResolution() {
+		PreferencesConfig config = new PreferencesConfig();
+
+		string unique = config.GenerateUniqueThemeProfileName("  Default Dark  ");
+
+		Assert.Equal("Default Dark (Copy)", unique);
+	}
+
+	[Fact]
+	public void PreferencesConfig_RenameThemeProfile_RejectsTrimmedNameConflict() {
+		PreferencesConfig config = new PreferencesConfig();
+		config.SetActiveThemeProfile("Default Dark");
+
+		bool renamed = config.RenameThemeProfile("Default Dark", "  Default Light  ");
+
+		Assert.False(renamed);
+		Assert.Equal("Default Dark", config.ActiveThemeProfileName);
+		Assert.NotNull(config.GetThemeProfileByName("Default Dark"));
+	}
+
+	[Fact]
 	public void PreferencesConfig_ResetThemeProfileToDefaults_RestoresCanonicalValues() {
 		PreferencesConfig config = new PreferencesConfig();
 		ThemeProfile dark = ThemeProfile.CreateDefault("Default Dark", NexenTheme.Dark);
@@ -510,5 +559,39 @@ public sealed class ThemeProfileTests {
 		Assert.Equal("#66224466", roundTripped.ListViewItemHoverBackgroundColor);
 		Assert.Equal("#ff334477", roundTripped.ListViewItemSelectedBackgroundColor);
 		Assert.Equal("#ffddeeff", roundTripped.ListViewItemSelectedForegroundColor);
+	}
+
+	[Fact]
+	public void PreferencesConfig_SaveCurrentToProfile_WithoutApplicationResources_PreservesNavigationAndListViewSemanticTokenValues() {
+		PreferencesConfig config = new PreferencesConfig();
+		ThemeProfile? profile = config.GetThemeProfileByName("Default Dark");
+		Assert.NotNull(profile);
+
+		profile!.NavigationViewItemHoverBackgroundColor = "#66123456";
+		profile.NavigationViewItemSelectedBackgroundColor = "#ff345678";
+		profile.NavigationViewItemSelectedForegroundColor = "#ff56789a";
+		profile.ListViewItemHoverBackgroundColor = "#66789abc";
+		profile.ListViewItemSelectedBackgroundColor = "#ff89abcd";
+		profile.ListViewItemSelectedForegroundColor = "#ff9abcde";
+
+		config.Theme = NexenTheme.Light;
+		config.NexenFont.FontFamily = "Cascadia Code";
+		config.NexenFont.FontSize = 15;
+		config.NexenMenuFont.FontFamily = "Consolas";
+		config.NexenMenuFont.FontSize = 16;
+
+		config.SaveCurrentToProfile("Default Dark");
+
+		Assert.Equal(NexenTheme.Light, profile.Theme);
+		Assert.Equal("Cascadia Code", profile.UiFontFamily);
+		Assert.Equal(15, profile.UiFontSize);
+		Assert.Equal("Consolas", profile.MenuFontFamily);
+		Assert.Equal(16, profile.MenuFontSize);
+		Assert.Equal("#66123456", profile.NavigationViewItemHoverBackgroundColor);
+		Assert.Equal("#ff345678", profile.NavigationViewItemSelectedBackgroundColor);
+		Assert.Equal("#ff56789a", profile.NavigationViewItemSelectedForegroundColor);
+		Assert.Equal("#66789abc", profile.ListViewItemHoverBackgroundColor);
+		Assert.Equal("#ff89abcd", profile.ListViewItemSelectedBackgroundColor);
+		Assert.Equal("#ff9abcde", profile.ListViewItemSelectedForegroundColor);
 	}
 }

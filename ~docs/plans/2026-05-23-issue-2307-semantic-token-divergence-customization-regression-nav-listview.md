@@ -1,4 +1,4 @@
-# Issue #2307 Semantic Token Divergence and Customization Regression for NavigationView/ListView (2026-05-23)
+﻿# Issue #2307 Semantic Token Divergence and Customization Regression for NavigationView/ListView (2026-05-23)
 
 ## Scope
 

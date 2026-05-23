@@ -1,4 +1,4 @@
-# Issue #2308 Semantic Token Reset/Preset Propagation Regression for NavigationView/ListView (2026-05-23)
+﻿# Issue #2308 Semantic Token Reset/Preset Propagation Regression for NavigationView/ListView (2026-05-23)
 
 ## Scope
 

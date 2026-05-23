@@ -1,4 +1,4 @@
-# Issue #2309 Semantic Token Clone/Upsert Propagation Regression for NavigationView/ListView (2026-05-23)
+﻿# Issue #2309 Semantic Token Clone/Upsert Propagation Regression for NavigationView/ListView (2026-05-23)
 
 ## Scope
 
