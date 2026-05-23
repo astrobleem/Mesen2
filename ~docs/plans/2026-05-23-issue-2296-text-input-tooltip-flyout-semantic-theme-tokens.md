@@ -1,4 +1,4 @@
-# Issue #2296 Text-Input and Tooltip/Flyout Semantic Theme Tokens (2026-05-23)
+﻿# Issue #2296 Text-Input and Tooltip/Flyout Semantic Theme Tokens (2026-05-23)
 
 ## Scope
 

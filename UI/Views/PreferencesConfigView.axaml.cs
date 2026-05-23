@@ -420,6 +420,36 @@ public partial class PreferencesConfigView : UserControl {
 		});
 	}
 
+	private async void btnPickThemeComboBoxDropDownBackgroundColor_OnClick(object sender, RoutedEventArgs e) {
+		await PickThemeProfileColor(profile => profile.ComboBoxDropDownBackgroundColor, (model, colorHex) => {
+			model.SetSelectedProfileComboDropDownAndDataGridSemanticColors(colorHex, model.SelectedProfileComboBoxDropDownBorderColor, model.SelectedProfileDataGridHeaderBackgroundColor, model.SelectedProfileDataGridHeaderForegroundColor, model.SelectedProfileDataGridSelectedRowForegroundColor);
+		});
+	}
+
+	private async void btnPickThemeComboBoxDropDownBorderColor_OnClick(object sender, RoutedEventArgs e) {
+		await PickThemeProfileColor(profile => profile.ComboBoxDropDownBorderColor, (model, colorHex) => {
+			model.SetSelectedProfileComboDropDownAndDataGridSemanticColors(model.SelectedProfileComboBoxDropDownBackgroundColor, colorHex, model.SelectedProfileDataGridHeaderBackgroundColor, model.SelectedProfileDataGridHeaderForegroundColor, model.SelectedProfileDataGridSelectedRowForegroundColor);
+		});
+	}
+
+	private async void btnPickThemeDataGridHeaderBackgroundColor_OnClick(object sender, RoutedEventArgs e) {
+		await PickThemeProfileColor(profile => profile.DataGridHeaderBackgroundColor, (model, colorHex) => {
+			model.SetSelectedProfileComboDropDownAndDataGridSemanticColors(model.SelectedProfileComboBoxDropDownBackgroundColor, model.SelectedProfileComboBoxDropDownBorderColor, colorHex, model.SelectedProfileDataGridHeaderForegroundColor, model.SelectedProfileDataGridSelectedRowForegroundColor);
+		});
+	}
+
+	private async void btnPickThemeDataGridHeaderForegroundColor_OnClick(object sender, RoutedEventArgs e) {
+		await PickThemeProfileColor(profile => profile.DataGridHeaderForegroundColor, (model, colorHex) => {
+			model.SetSelectedProfileComboDropDownAndDataGridSemanticColors(model.SelectedProfileComboBoxDropDownBackgroundColor, model.SelectedProfileComboBoxDropDownBorderColor, model.SelectedProfileDataGridHeaderBackgroundColor, colorHex, model.SelectedProfileDataGridSelectedRowForegroundColor);
+		});
+	}
+
+	private async void btnPickThemeDataGridSelectedRowForegroundColor_OnClick(object sender, RoutedEventArgs e) {
+		await PickThemeProfileColor(profile => profile.DataGridSelectedRowForegroundColor, (model, colorHex) => {
+			model.SetSelectedProfileComboDropDownAndDataGridSemanticColors(model.SelectedProfileComboBoxDropDownBackgroundColor, model.SelectedProfileComboBoxDropDownBorderColor, model.SelectedProfileDataGridHeaderBackgroundColor, model.SelectedProfileDataGridHeaderForegroundColor, colorHex);
+		});
+	}
+
 	private async Task PickThemeProfileColor(Func<ThemeProfile, string> colorSelector, Action<PreferencesConfigViewModel, string> updateAction) {
 		PreferencesConfigViewModel? model = GetViewModel();
 		ThemeProfile? profile = model?.GetSelectedThemeProfile();

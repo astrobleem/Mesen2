@@ -54,7 +54,7 @@
 							<TextBox Width="190" Text="{Binding DuplicateThemeProfileName}" />
 							<Button Content="{l:Translate btnThemeDuplicate}" Click="btnDuplicateThemeProfile_OnClick" />
 						</StackPanel>
-						<Grid ColumnDefinitions="Auto,Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" Margin="0 8 0 0">
+						<Grid ColumnDefinitions="Auto,Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" Margin="0 8 0 0">
 							<TextBlock Grid.Row="0" Text="{l:Translate lblThemeStartupBackground}" VerticalAlignment="Center" />
 							<Button Grid.Row="0" Grid.Column="1" Margin="8 0 8 0" Content="{l:Translate btnThemePickColor}" Click="btnPickThemeBackgroundColor_OnClick" />
 							<TextBox Grid.Row="0" Grid.Column="2" IsReadOnly="True" Text="{Binding SelectedProfileStartupBackgroundColor}" />
@@ -166,6 +166,26 @@
 							<TextBlock Grid.Row="27" Text="{l:Translate lblThemeMenuFlyoutBorder}" VerticalAlignment="Center" />
 							<Button Grid.Row="27" Grid.Column="1" Margin="8 0 8 0" Content="{l:Translate btnThemePickColor}" Click="btnPickThemeMenuFlyoutBorderColor_OnClick" />
 							<TextBox Grid.Row="27" Grid.Column="2" IsReadOnly="True" Text="{Binding SelectedProfileMenuFlyoutBorderColor}" />
+
+							<TextBlock Grid.Row="28" Text="{l:Translate lblThemeComboBoxDropDownBackground}" VerticalAlignment="Center" />
+							<Button Grid.Row="28" Grid.Column="1" Margin="8 0 8 0" Content="{l:Translate btnThemePickColor}" Click="btnPickThemeComboBoxDropDownBackgroundColor_OnClick" />
+							<TextBox Grid.Row="28" Grid.Column="2" IsReadOnly="True" Text="{Binding SelectedProfileComboBoxDropDownBackgroundColor}" />
+
+							<TextBlock Grid.Row="29" Text="{l:Translate lblThemeComboBoxDropDownBorder}" VerticalAlignment="Center" />
+							<Button Grid.Row="29" Grid.Column="1" Margin="8 0 8 0" Content="{l:Translate btnThemePickColor}" Click="btnPickThemeComboBoxDropDownBorderColor_OnClick" />
+							<TextBox Grid.Row="29" Grid.Column="2" IsReadOnly="True" Text="{Binding SelectedProfileComboBoxDropDownBorderColor}" />
+
+							<TextBlock Grid.Row="30" Text="{l:Translate lblThemeDataGridHeaderBackground}" VerticalAlignment="Center" />
+							<Button Grid.Row="30" Grid.Column="1" Margin="8 0 8 0" Content="{l:Translate btnThemePickColor}" Click="btnPickThemeDataGridHeaderBackgroundColor_OnClick" />
+							<TextBox Grid.Row="30" Grid.Column="2" IsReadOnly="True" Text="{Binding SelectedProfileDataGridHeaderBackgroundColor}" />
+
+							<TextBlock Grid.Row="31" Text="{l:Translate lblThemeDataGridHeaderForeground}" VerticalAlignment="Center" />
+							<Button Grid.Row="31" Grid.Column="1" Margin="8 0 8 0" Content="{l:Translate btnThemePickColor}" Click="btnPickThemeDataGridHeaderForegroundColor_OnClick" />
+							<TextBox Grid.Row="31" Grid.Column="2" IsReadOnly="True" Text="{Binding SelectedProfileDataGridHeaderForegroundColor}" />
+
+							<TextBlock Grid.Row="32" Text="{l:Translate lblThemeDataGridSelectedRowForeground}" VerticalAlignment="Center" />
+							<Button Grid.Row="32" Grid.Column="1" Margin="8 0 8 0" Content="{l:Translate btnThemePickColor}" Click="btnPickThemeDataGridSelectedRowForegroundColor_OnClick" />
+							<TextBox Grid.Row="32" Grid.Column="2" IsReadOnly="True" Text="{Binding SelectedProfileDataGridSelectedRowForegroundColor}" />
 						</Grid>
 						<StackPanel Orientation="Horizontal" Spacing="8" Margin="0 8 0 0" VerticalAlignment="Center">
 							<TextBlock Text="{l:Translate lblThemeLivePreview}" VerticalAlignment="Center" />
@@ -197,6 +217,11 @@
 							<Border Width="22" Height="22" BorderBrush="#666666" BorderThickness="1" CornerRadius="3" Background="{Binding SelectedProfileToolTipBackgroundBrush}" ToolTip.Tip="{l:Translate lblThemeToolTipBackground}" />
 							<Border Width="22" Height="22" BorderBrush="#666666" BorderThickness="1" CornerRadius="3" Background="{Binding SelectedProfileMenuFlyoutBackgroundBrush}" ToolTip.Tip="{l:Translate lblThemeMenuFlyoutBackground}" />
 							<Border Width="22" Height="22" BorderBrush="#666666" BorderThickness="1" CornerRadius="3" Background="{Binding SelectedProfileMenuFlyoutBorderBrush}" ToolTip.Tip="{l:Translate lblThemeMenuFlyoutBorder}" />
+							<Border Width="22" Height="22" BorderBrush="#666666" BorderThickness="1" CornerRadius="3" Background="{Binding SelectedProfileComboBoxDropDownBackgroundBrush}" ToolTip.Tip="{l:Translate lblThemeComboBoxDropDownBackground}" />
+							<Border Width="22" Height="22" BorderBrush="#666666" BorderThickness="1" CornerRadius="3" Background="{Binding SelectedProfileComboBoxDropDownBorderBrush}" ToolTip.Tip="{l:Translate lblThemeComboBoxDropDownBorder}" />
+							<Border Width="22" Height="22" BorderBrush="#666666" BorderThickness="1" CornerRadius="3" Background="{Binding SelectedProfileDataGridHeaderBackgroundBrush}" ToolTip.Tip="{l:Translate lblThemeDataGridHeaderBackground}" />
+							<Border Width="22" Height="22" BorderBrush="#666666" BorderThickness="1" CornerRadius="3" Background="{Binding SelectedProfileDataGridHeaderForegroundBrush}" ToolTip.Tip="{l:Translate lblThemeDataGridHeaderForeground}" />
+							<Border Width="22" Height="22" BorderBrush="#666666" BorderThickness="1" CornerRadius="3" Background="{Binding SelectedProfileDataGridSelectedRowForegroundBrush}" ToolTip.Tip="{l:Translate lblThemeDataGridSelectedRowForeground}" />
 						</StackPanel>
 						<StackPanel Orientation="Horizontal" Spacing="6" Margin="0 6 0 0" VerticalAlignment="Center">
 							<TextBlock Text="{l:Translate lblThemePresetStatus}" VerticalAlignment="Center" />

@@ -730,6 +730,11 @@
 			<Control ID="lblThemeToolTipBackground">ツールチップ背景</Control>
 			<Control ID="lblThemeMenuFlyoutBackground">メニューフライアウト背景</Control>
 			<Control ID="lblThemeMenuFlyoutBorder">メニューフライアウト枠線</Control>
+			<Control ID="lblThemeComboBoxDropDownBackground">コンボボックスドロップダウン背景</Control>
+			<Control ID="lblThemeComboBoxDropDownBorder">コンボボックスドロップダウン枠線</Control>
+			<Control ID="lblThemeDataGridHeaderBackground">DataGrid ヘッダー背景</Control>
+			<Control ID="lblThemeDataGridHeaderForeground">DataGrid ヘッダーテキスト</Control>
+			<Control ID="lblThemeDataGridSelectedRowForeground">DataGrid 選択行テキスト</Control>
 			<Control ID="btnThemePickColor">選択</Control>
 			<Control ID="lblThemeLivePreview">ライブプレビュー</Control>
 			<Control ID="lblThemePresetStatus">プリセット状態:</Control>

@@ -139,6 +139,14 @@ Theme profiles also cover semantic text-input and flyout/tooltip tokens:
 - Menu flyout background
 - Menu flyout border
 
+Theme profiles also cover semantic combo-dropdown and datagrid tokens:
+
+- ComboBox dropdown background
+- ComboBox dropdown border
+- DataGrid header background
+- DataGrid header foreground
+- DataGrid selected-row foreground
+
 These tokens are centralized in `ThemeProfile` and applied through `NexenThemeManager` resource overrides so they are not duplicated as ad-hoc values across the UI runtime path.
 
 ## Settings UI Coverage
@@ -151,6 +159,7 @@ The Preferences theme section includes profile selection and import/export plus 
 - Sidebar border, dock tab strip background, dock tab hover background, dock tab active background, dock tab active border
 - Checkbox hover/pressed border/background, radio hover/pressed border/background, slider hover/pressed track
 - Text selection, disabled text-control background, tooltip background, menu flyout background, menu flyout border
+- Combo dropdown background/border and DataGrid header/selected-row semantic colors
 
 This gives a settings-surface customization path while preserving JSON import/export for advanced profile editing and sharing.
 

@@ -156,6 +156,21 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 	/// <summary>Gets or sets selected profile menu flyout border color as ARGB hex.</summary>
 	[Reactive] public partial string SelectedProfileMenuFlyoutBorderColor { get; set; }
 
+	/// <summary>Gets or sets selected profile combo dropdown background color as ARGB hex.</summary>
+	[Reactive] public partial string SelectedProfileComboBoxDropDownBackgroundColor { get; set; }
+
+	/// <summary>Gets or sets selected profile combo dropdown border color as ARGB hex.</summary>
+	[Reactive] public partial string SelectedProfileComboBoxDropDownBorderColor { get; set; }
+
+	/// <summary>Gets or sets selected profile datagrid header background color as ARGB hex.</summary>
+	[Reactive] public partial string SelectedProfileDataGridHeaderBackgroundColor { get; set; }
+
+	/// <summary>Gets or sets selected profile datagrid header foreground color as ARGB hex.</summary>
+	[Reactive] public partial string SelectedProfileDataGridHeaderForegroundColor { get; set; }
+
+	/// <summary>Gets or sets selected profile datagrid selected-row foreground color as ARGB hex.</summary>
+	[Reactive] public partial string SelectedProfileDataGridSelectedRowForegroundColor { get; set; }
+
 	/// <summary>Gets or sets selected profile sidebar border preview brush.</summary>
 	[Reactive] public partial IBrush SelectedProfileSidebarBorderBrush { get; set; }
 
@@ -209,6 +224,21 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 
 	/// <summary>Gets or sets selected profile menu flyout border preview brush.</summary>
 	[Reactive] public partial IBrush SelectedProfileMenuFlyoutBorderBrush { get; set; }
+
+	/// <summary>Gets or sets selected profile combo dropdown background preview brush.</summary>
+	[Reactive] public partial IBrush SelectedProfileComboBoxDropDownBackgroundBrush { get; set; }
+
+	/// <summary>Gets or sets selected profile combo dropdown border preview brush.</summary>
+	[Reactive] public partial IBrush SelectedProfileComboBoxDropDownBorderBrush { get; set; }
+
+	/// <summary>Gets or sets selected profile datagrid header background preview brush.</summary>
+	[Reactive] public partial IBrush SelectedProfileDataGridHeaderBackgroundBrush { get; set; }
+
+	/// <summary>Gets or sets selected profile datagrid header foreground preview brush.</summary>
+	[Reactive] public partial IBrush SelectedProfileDataGridHeaderForegroundBrush { get; set; }
+
+	/// <summary>Gets or sets selected profile datagrid selected-row foreground preview brush.</summary>
+	[Reactive] public partial IBrush SelectedProfileDataGridSelectedRowForegroundBrush { get; set; }
 
 	/// <summary>Gets or sets the number of tokens that differ from canonical defaults.</summary>
 	[Reactive] public partial int SelectedThemeProfileDivergenceCount { get; set; }
@@ -293,6 +323,11 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 		SelectedProfileToolTipBackgroundColor = "";
 		SelectedProfileMenuFlyoutBackgroundColor = "";
 		SelectedProfileMenuFlyoutBorderColor = "";
+		SelectedProfileComboBoxDropDownBackgroundColor = "";
+		SelectedProfileComboBoxDropDownBorderColor = "";
+		SelectedProfileDataGridHeaderBackgroundColor = "";
+		SelectedProfileDataGridHeaderForegroundColor = "";
+		SelectedProfileDataGridSelectedRowForegroundColor = "";
 		SelectedProfileSidebarBorderBrush = Brushes.Transparent;
 		SelectedProfileDockTabStripBackgroundBrush = Brushes.Transparent;
 		SelectedProfileDockTabHoverBrush = Brushes.Transparent;
@@ -311,6 +346,11 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 		SelectedProfileToolTipBackgroundBrush = Brushes.Transparent;
 		SelectedProfileMenuFlyoutBackgroundBrush = Brushes.Transparent;
 		SelectedProfileMenuFlyoutBorderBrush = Brushes.Transparent;
+		SelectedProfileComboBoxDropDownBackgroundBrush = Brushes.Transparent;
+		SelectedProfileComboBoxDropDownBorderBrush = Brushes.Transparent;
+		SelectedProfileDataGridHeaderBackgroundBrush = Brushes.Transparent;
+		SelectedProfileDataGridHeaderForegroundBrush = Brushes.Transparent;
+		SelectedProfileDataGridSelectedRowForegroundBrush = Brushes.Transparent;
 		SelectedThemeProfileDivergenceCount = 0;
 		SelectedThemeProfileMatchesDefaults = true;
 		SelectedThemeProfileIsCustomized = false;
@@ -601,6 +641,21 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 		RefreshThemeProfiles();
 	}
 
+	public void SetSelectedProfileComboDropDownAndDataGridSemanticColors(string comboDropDownBackground, string comboDropDownBorder, string dataGridHeaderBackground, string dataGridHeaderForeground, string dataGridSelectedRowForeground) {
+		ThemeProfile? selectedProfile = GetSelectedThemeProfile();
+		if (selectedProfile is null) {
+			return;
+		}
+
+		selectedProfile.ComboBoxDropDownBackgroundColor = comboDropDownBackground;
+		selectedProfile.ComboBoxDropDownBorderColor = comboDropDownBorder;
+		selectedProfile.DataGridHeaderBackgroundColor = dataGridHeaderBackground;
+		selectedProfile.DataGridHeaderForegroundColor = dataGridHeaderForeground;
+		selectedProfile.DataGridSelectedRowForegroundColor = dataGridSelectedRowForeground;
+		Config.SetActiveThemeProfile(selectedProfile.Name);
+		RefreshThemeProfiles();
+	}
+
 	private void RefreshSelectedThemeProfileDetails() {
 		ThemeProfile? selectedProfile = GetSelectedThemeProfile();
 		if (selectedProfile is null) {
@@ -642,6 +697,11 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 			SelectedProfileToolTipBackgroundColor = "";
 			SelectedProfileMenuFlyoutBackgroundColor = "";
 			SelectedProfileMenuFlyoutBorderColor = "";
+			SelectedProfileComboBoxDropDownBackgroundColor = "";
+			SelectedProfileComboBoxDropDownBorderColor = "";
+			SelectedProfileDataGridHeaderBackgroundColor = "";
+			SelectedProfileDataGridHeaderForegroundColor = "";
+			SelectedProfileDataGridSelectedRowForegroundColor = "";
 			SelectedProfileSidebarBorderBrush = Brushes.Transparent;
 			SelectedProfileDockTabStripBackgroundBrush = Brushes.Transparent;
 			SelectedProfileDockTabHoverBrush = Brushes.Transparent;
@@ -660,6 +720,11 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 			SelectedProfileToolTipBackgroundBrush = Brushes.Transparent;
 			SelectedProfileMenuFlyoutBackgroundBrush = Brushes.Transparent;
 			SelectedProfileMenuFlyoutBorderBrush = Brushes.Transparent;
+			SelectedProfileComboBoxDropDownBackgroundBrush = Brushes.Transparent;
+			SelectedProfileComboBoxDropDownBorderBrush = Brushes.Transparent;
+			SelectedProfileDataGridHeaderBackgroundBrush = Brushes.Transparent;
+			SelectedProfileDataGridHeaderForegroundBrush = Brushes.Transparent;
+			SelectedProfileDataGridSelectedRowForegroundBrush = Brushes.Transparent;
 			SelectedThemeProfileDivergenceCount = 0;
 			SelectedThemeProfileMatchesDefaults = true;
 			SelectedThemeProfileIsCustomized = false;
@@ -711,6 +776,11 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 		SelectedProfileToolTipBackgroundColor = selectedProfile.ToolTipBackgroundColor;
 		SelectedProfileMenuFlyoutBackgroundColor = selectedProfile.MenuFlyoutBackgroundColor;
 		SelectedProfileMenuFlyoutBorderColor = selectedProfile.MenuFlyoutBorderColor;
+		SelectedProfileComboBoxDropDownBackgroundColor = selectedProfile.ComboBoxDropDownBackgroundColor;
+		SelectedProfileComboBoxDropDownBorderColor = selectedProfile.ComboBoxDropDownBorderColor;
+		SelectedProfileDataGridHeaderBackgroundColor = selectedProfile.DataGridHeaderBackgroundColor;
+		SelectedProfileDataGridHeaderForegroundColor = selectedProfile.DataGridHeaderForegroundColor;
+		SelectedProfileDataGridSelectedRowForegroundColor = selectedProfile.DataGridSelectedRowForegroundColor;
 		SelectedProfileSidebarBorderBrush = CreatePreviewBrush(selectedProfile.SettingsTabStripBorderColor);
 		SelectedProfileDockTabStripBackgroundBrush = CreatePreviewBrush(selectedProfile.DockTabStripBackgroundColor);
 		SelectedProfileDockTabHoverBrush = CreatePreviewBrush(selectedProfile.DockTabPointerOverColor);
@@ -729,6 +799,11 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 		SelectedProfileToolTipBackgroundBrush = CreatePreviewBrush(selectedProfile.ToolTipBackgroundColor);
 		SelectedProfileMenuFlyoutBackgroundBrush = CreatePreviewBrush(selectedProfile.MenuFlyoutBackgroundColor);
 		SelectedProfileMenuFlyoutBorderBrush = CreatePreviewBrush(selectedProfile.MenuFlyoutBorderColor);
+		SelectedProfileComboBoxDropDownBackgroundBrush = CreatePreviewBrush(selectedProfile.ComboBoxDropDownBackgroundColor);
+		SelectedProfileComboBoxDropDownBorderBrush = CreatePreviewBrush(selectedProfile.ComboBoxDropDownBorderColor);
+		SelectedProfileDataGridHeaderBackgroundBrush = CreatePreviewBrush(selectedProfile.DataGridHeaderBackgroundColor);
+		SelectedProfileDataGridHeaderForegroundBrush = CreatePreviewBrush(selectedProfile.DataGridHeaderForegroundColor);
+		SelectedProfileDataGridSelectedRowForegroundBrush = CreatePreviewBrush(selectedProfile.DataGridSelectedRowForegroundColor);
 		SelectedThemeProfileDivergenceCount = Config.GetThemeProfileDivergenceCount(selectedProfile.Name);
 		SelectedThemeProfileMatchesDefaults = SelectedThemeProfileDivergenceCount == 0;
 		SelectedThemeProfileIsCustomized = SelectedThemeProfileDivergenceCount > 0;

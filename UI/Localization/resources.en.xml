@@ -854,6 +854,11 @@
 			<Control ID="lblThemeToolTipBackground">Tooltip Background</Control>
 			<Control ID="lblThemeMenuFlyoutBackground">Menu Flyout Background</Control>
 			<Control ID="lblThemeMenuFlyoutBorder">Menu Flyout Border</Control>
+			<Control ID="lblThemeComboBoxDropDownBackground">ComboBox Dropdown Background</Control>
+			<Control ID="lblThemeComboBoxDropDownBorder">ComboBox Dropdown Border</Control>
+			<Control ID="lblThemeDataGridHeaderBackground">DataGrid Header Background</Control>
+			<Control ID="lblThemeDataGridHeaderForeground">DataGrid Header Foreground</Control>
+			<Control ID="lblThemeDataGridSelectedRowForeground">DataGrid Selected Row Foreground</Control>
 			<Control ID="btnThemePickColor">Pick</Control>
 			<Control ID="lblThemeLivePreview">Live Preview</Control>
 			<Control ID="lblThemePresetStatus">Preset Status:</Control>

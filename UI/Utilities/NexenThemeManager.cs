@@ -72,6 +72,11 @@ public static class NexenThemeManager {
 		ApplyColorOverride(app, "ToolTipBackground", profile.ToolTipBackgroundColor);
 		ApplyColorOverride(app, "MenuFlyoutPresenterBackground", profile.MenuFlyoutBackgroundColor);
 		ApplyColorOverride(app, "MenuFlyoutPresenterBorderBrush", profile.MenuFlyoutBorderColor);
+		ApplyColorOverride(app, "ComboBoxDropDownBackground", profile.ComboBoxDropDownBackgroundColor);
+		ApplyColorOverride(app, "ComboBoxDropDownBorderBrush", profile.ComboBoxDropDownBorderColor);
+		ApplyBrushOverride(app, "DataGridColumnHeaderBackgroundBrush", profile.DataGridHeaderBackgroundColor);
+		ApplyBrushOverride(app, "DataGridColumnHeaderForegroundBrush", profile.DataGridHeaderForegroundColor);
+		ApplyBrushOverride(app, "DataGridRowSelectedForegroundBrush", profile.DataGridSelectedRowForegroundColor);
 		ApplyColorOverride(app, "ThemeAccentColor", profile.ThemeAccentColor);
 		ApplyColorOverride(app, "HighlightColor", profile.HighlightColor);
 

@@ -230,6 +230,11 @@ public sealed class UiScrollabilityMarkupTests {
 		Assert.Contains("lblThemeToolTipBackground", markup);
 		Assert.Contains("lblThemeMenuFlyoutBackground", markup);
 		Assert.Contains("lblThemeMenuFlyoutBorder", markup);
+		Assert.Contains("lblThemeComboBoxDropDownBackground", markup);
+		Assert.Contains("lblThemeComboBoxDropDownBorder", markup);
+		Assert.Contains("lblThemeDataGridHeaderBackground", markup);
+		Assert.Contains("lblThemeDataGridHeaderForeground", markup);
+		Assert.Contains("lblThemeDataGridSelectedRowForeground", markup);
 		Assert.Contains("btnPickThemeControlHoverBackgroundColor_OnClick", markup);
 		Assert.Contains("btnPickThemeControlPressedBackgroundColor_OnClick", markup);
 		Assert.Contains("btnPickThemeControlHoverBorderColor_OnClick", markup);
@@ -252,6 +257,11 @@ public sealed class UiScrollabilityMarkupTests {
 		Assert.Contains("btnPickThemeToolTipBackgroundColor_OnClick", markup);
 		Assert.Contains("btnPickThemeMenuFlyoutBackgroundColor_OnClick", markup);
 		Assert.Contains("btnPickThemeMenuFlyoutBorderColor_OnClick", markup);
+		Assert.Contains("btnPickThemeComboBoxDropDownBackgroundColor_OnClick", markup);
+		Assert.Contains("btnPickThemeComboBoxDropDownBorderColor_OnClick", markup);
+		Assert.Contains("btnPickThemeDataGridHeaderBackgroundColor_OnClick", markup);
+		Assert.Contains("btnPickThemeDataGridHeaderForegroundColor_OnClick", markup);
+		Assert.Contains("btnPickThemeDataGridSelectedRowForegroundColor_OnClick", markup);
 	}
 
 	[Fact]

@@ -44,6 +44,11 @@ public sealed class ThemeProfile {
 	public string ToolTipBackgroundColor { get; set; } = "#181818";
 	public string MenuFlyoutBackgroundColor { get; set; } = "#ff2a1a10";
 	public string MenuFlyoutBorderColor { get; set; } = "#a87343";
+	public string ComboBoxDropDownBackgroundColor { get; set; } = "#ff2a2a2a";
+	public string ComboBoxDropDownBorderColor { get; set; } = "#ff909090";
+	public string DataGridHeaderBackgroundColor { get; set; } = "#ff303030";
+	public string DataGridHeaderForegroundColor { get; set; } = "#ffdedede";
+	public string DataGridSelectedRowForegroundColor { get; set; } = "#ffffffff";
 	public string ThemeAccentColor { get; set; } = "#ccc87423";
 	public string HighlightColor { get; set; } = "#ffc87423";
 	public string ControlPointerOverBackgroundColor { get; set; } = "#80573721";
@@ -97,6 +102,11 @@ public sealed class ThemeProfile {
 				ToolTipBackgroundColor = "#181818",
 				MenuFlyoutBackgroundColor = "#ff2a1a10",
 				MenuFlyoutBorderColor = "#a87343",
+				ComboBoxDropDownBackgroundColor = "#ff2a2a2a",
+				ComboBoxDropDownBorderColor = "#ff909090",
+				DataGridHeaderBackgroundColor = "#ff303030",
+				DataGridHeaderForegroundColor = "#ffdedede",
+				DataGridSelectedRowForegroundColor = "#ffffffff",
 				ThemeAccentColor = "#ccc87423",
 				HighlightColor = "#ffc87423",
 				ControlPointerOverBackgroundColor = "#80573721",
@@ -150,6 +160,11 @@ public sealed class ThemeProfile {
 			ToolTipBackgroundColor = "#ffffed",
 			MenuFlyoutBackgroundColor = "#fff6ee",
 			MenuFlyoutBorderColor = "#a87343",
+			ComboBoxDropDownBackgroundColor = "#ffffffff",
+			ComboBoxDropDownBorderColor = "#ff909090",
+			DataGridHeaderBackgroundColor = "#ffededed",
+			DataGridHeaderForegroundColor = "#ff000000",
+			DataGridSelectedRowForegroundColor = "#ffffffff",
 			ThemeAccentColor = "#ffc56e21",
 			HighlightColor = "#ff8a5116",
 			ControlPointerOverBackgroundColor = "#f8d9b8",
@@ -224,6 +239,11 @@ public sealed class ThemeProfileFile {
 			&& ThemeProfile.IsValidColor(Profile.ToolTipBackgroundColor)
 			&& ThemeProfile.IsValidColor(Profile.MenuFlyoutBackgroundColor)
 			&& ThemeProfile.IsValidColor(Profile.MenuFlyoutBorderColor)
+			&& ThemeProfile.IsValidColor(Profile.ComboBoxDropDownBackgroundColor)
+			&& ThemeProfile.IsValidColor(Profile.ComboBoxDropDownBorderColor)
+			&& ThemeProfile.IsValidColor(Profile.DataGridHeaderBackgroundColor)
+			&& ThemeProfile.IsValidColor(Profile.DataGridHeaderForegroundColor)
+			&& ThemeProfile.IsValidColor(Profile.DataGridSelectedRowForegroundColor)
 			&& ThemeProfile.IsValidColor(Profile.ThemeAccentColor)
 			&& ThemeProfile.IsValidColor(Profile.HighlightColor)
 			&& ThemeProfile.IsValidColor(Profile.ControlPointerOverBackgroundColor)

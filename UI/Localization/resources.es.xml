@@ -730,6 +730,11 @@
 			<Control ID="lblThemeToolTipBackground">Fondo de tooltip</Control>
 			<Control ID="lblThemeMenuFlyoutBackground">Fondo de menu emergente</Control>
 			<Control ID="lblThemeMenuFlyoutBorder">Borde de menu emergente</Control>
+			<Control ID="lblThemeComboBoxDropDownBackground">Fondo del desplegable del ComboBox</Control>
+			<Control ID="lblThemeComboBoxDropDownBorder">Borde del desplegable del ComboBox</Control>
+			<Control ID="lblThemeDataGridHeaderBackground">Fondo del encabezado de DataGrid</Control>
+			<Control ID="lblThemeDataGridHeaderForeground">Texto del encabezado de DataGrid</Control>
+			<Control ID="lblThemeDataGridSelectedRowForeground">Texto de fila seleccionada en DataGrid</Control>
 			<Control ID="btnThemePickColor">Elegir</Control>
 			<Control ID="lblThemeLivePreview">Vista previa en vivo</Control>
 			<Control ID="lblThemePresetStatus">Estado del preajuste:</Control>
