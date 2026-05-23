@@ -733,7 +733,7 @@ void Debugger::SleepUntilResume(CpuType sourceCpu, BreakSource source, MemoryOpe
 	_executionStopped = true;
 
 	bool notificationSent = false;
-	if (source != BreakSource::Unspecified || _breakRequestCount == 0) {
+	if (ShouldEmitSleepUntilResumeBreakNotification(source, _breakRequestCount > 0)) {
 		GetMainDebugger()->OnBeforeBreak(sourceCpu);
 		_emu->OnBeforePause(false);
 
@@ -762,7 +762,7 @@ void Debugger::SleepUntilResume(CpuType sourceCpu, BreakSource source, MemoryOpe
 	}
 
 	while ((_waitForBreakResume && !_suspendRequestCount) || _breakRequestCount) {
-		std::this_thread::sleep_for(std::chrono::duration<int, std::milli>(_breakRequestCount ? 1 : 10));
+		std::this_thread::sleep_for(std::chrono::duration<int, std::milli>(GetSleepUntilResumeWaitDelayMs(_breakRequestCount > 0)));
 	}
 
 	if (notificationSent) {

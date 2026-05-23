@@ -1,4 +1,4 @@
-# Issue #2369 Plan: SleepUntilResume Guard Regression Coverage
+﻿# Issue #2369 Plan: SleepUntilResume Guard Regression Coverage
 
 ## Objective
 

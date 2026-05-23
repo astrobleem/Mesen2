@@ -219,6 +219,14 @@ struct SleepUntilResumeGuardContext {
 	return SleepUntilResumeDecision::Continue;
 }
 
+[[nodiscard]] inline bool ShouldEmitSleepUntilResumeBreakNotification(BreakSource source, bool hasBreakRequest) {
+	return source != BreakSource::Unspecified || !hasBreakRequest;
+}
+
+[[nodiscard]] inline int32_t GetSleepUntilResumeWaitDelayMs(bool hasBreakRequest) {
+	return hasBreakRequest ? 1 : 10;
+}
+
 [[nodiscard]] inline bool ShouldDispatchScriptEvent(bool debuggerOwnsInstance) {
 	return debuggerOwnsInstance;
 }

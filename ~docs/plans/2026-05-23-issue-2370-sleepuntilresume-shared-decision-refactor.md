@@ -1,4 +1,4 @@
-# Issue #2370 Plan: SleepUntilResume Shared Decision Refactor
+﻿# Issue #2370 Plan: SleepUntilResume Shared Decision Refactor
 
 ## Objective
 

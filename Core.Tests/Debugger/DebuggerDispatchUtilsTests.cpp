@@ -224,3 +224,17 @@ TEST(DebuggerDispatchUtilsTests, SleepUntilResumeDecisionContinuesWhenNoGuardTri
 
 	EXPECT_EQ(EvaluateSleepUntilResumeDecision(context), SleepUntilResumeDecision::Continue);
 }
+
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumeBreakNotificationPolicyUsesSourceAndBreakRequestState) {
+	EXPECT_TRUE(ShouldEmitSleepUntilResumeBreakNotification(BreakSource::Breakpoint, false));
+	EXPECT_TRUE(ShouldEmitSleepUntilResumeBreakNotification(BreakSource::Breakpoint, true));
+	EXPECT_TRUE(ShouldEmitSleepUntilResumeBreakNotification(BreakSource::CpuStep, true));
+
+	EXPECT_TRUE(ShouldEmitSleepUntilResumeBreakNotification(BreakSource::Unspecified, false));
+	EXPECT_FALSE(ShouldEmitSleepUntilResumeBreakNotification(BreakSource::Unspecified, true));
+}
+
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumeWaitDelayPolicyUsesExpectedMilliseconds) {
+	EXPECT_EQ(GetSleepUntilResumeWaitDelayMs(true), 1);
+	EXPECT_EQ(GetSleepUntilResumeWaitDelayMs(false), 10);
+}

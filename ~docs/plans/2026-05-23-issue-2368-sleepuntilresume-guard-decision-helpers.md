@@ -1,4 +1,4 @@
-# Issue #2368 Plan: SleepUntilResume Guard Decision Helpers
+﻿# Issue #2368 Plan: SleepUntilResume Guard Decision Helpers
 
 ## Objective
 
