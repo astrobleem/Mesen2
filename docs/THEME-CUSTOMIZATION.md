@@ -86,6 +86,15 @@ For visibility issues, always check all three files together.
 
 ## Theme Profile Import and Export
 
+Theme picker layout is organized by semantic component groups for faster editing:
+
+- Startup
+- Chrome and Accent
+- Control States
+- Inputs and Flyouts
+- Combo and DataGrid
+- List and Tree
+
 Theme profile import/export uses JSON-backed profile models:
 
 - Schema and validation:

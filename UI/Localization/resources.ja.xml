@@ -741,6 +741,12 @@
 			<Control ID="lblThemeTreeViewHoverBackground">TreeView ホバー背景</Control>
 			<Control ID="lblThemeTreeViewSelectedBackground">TreeView 選択背景</Control>
 			<Control ID="lblThemeTreeViewSelectedForeground">TreeView 選択テキスト</Control>
+			<Control ID="lblThemeGroupStartup">起動</Control>
+			<Control ID="lblThemeGroupChrome">クロームとアクセント</Control>
+			<Control ID="lblThemeGroupControlStates">コントロール状態</Control>
+			<Control ID="lblThemeGroupInputsAndFlyouts">入力とフライアウト</Control>
+			<Control ID="lblThemeGroupComboAndDataGrid">コンボと DataGrid</Control>
+			<Control ID="lblThemeGroupListAndTree">リストとツリー</Control>
 			<Control ID="btnThemePickColor">選択</Control>
 			<Control ID="lblThemeLivePreview">ライブプレビュー</Control>
 			<Control ID="lblThemePresetStatus">プリセット状態:</Control>

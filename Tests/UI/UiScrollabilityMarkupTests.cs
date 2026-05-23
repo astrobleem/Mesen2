@@ -230,6 +230,12 @@ public sealed class UiScrollabilityMarkupTests {
 		Assert.Contains("lblThemeToolTipBackground", markup);
 		Assert.Contains("lblThemeMenuFlyoutBackground", markup);
 		Assert.Contains("lblThemeMenuFlyoutBorder", markup);
+		Assert.Contains("lblThemeGroupStartup", markup);
+		Assert.Contains("lblThemeGroupChrome", markup);
+		Assert.Contains("lblThemeGroupControlStates", markup);
+		Assert.Contains("lblThemeGroupInputsAndFlyouts", markup);
+		Assert.Contains("lblThemeGroupComboAndDataGrid", markup);
+		Assert.Contains("lblThemeGroupListAndTree", markup);
 		Assert.Contains("lblThemeComboBoxDropDownBackground", markup);
 		Assert.Contains("lblThemeComboBoxDropDownBorder", markup);
 		Assert.Contains("lblThemeDataGridHeaderBackground", markup);

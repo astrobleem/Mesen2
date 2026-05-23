@@ -865,6 +865,12 @@
 			<Control ID="lblThemeTreeViewHoverBackground">TreeView Hover Background</Control>
 			<Control ID="lblThemeTreeViewSelectedBackground">TreeView Selected Background</Control>
 			<Control ID="lblThemeTreeViewSelectedForeground">TreeView Selected Foreground</Control>
+			<Control ID="lblThemeGroupStartup">Startup</Control>
+			<Control ID="lblThemeGroupChrome">Chrome and Accent</Control>
+			<Control ID="lblThemeGroupControlStates">Control States</Control>
+			<Control ID="lblThemeGroupInputsAndFlyouts">Inputs and Flyouts</Control>
+			<Control ID="lblThemeGroupComboAndDataGrid">Combo and DataGrid</Control>
+			<Control ID="lblThemeGroupListAndTree">List and Tree</Control>
 			<Control ID="btnThemePickColor">Pick</Control>
 			<Control ID="lblThemeLivePreview">Live Preview</Control>
 			<Control ID="lblThemePresetStatus">Preset Status:</Control>
