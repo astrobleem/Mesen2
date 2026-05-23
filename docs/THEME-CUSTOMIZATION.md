@@ -147,6 +147,15 @@ Theme profiles also cover semantic combo-dropdown and datagrid tokens:
 - DataGrid header foreground
 - DataGrid selected-row foreground
 
+Theme profiles also cover semantic list/tree selection tokens:
+
+- ListBox hover background
+- ListBox selected background
+- ListBox selected foreground
+- TreeView hover background
+- TreeView selected background
+- TreeView selected foreground
+
 These tokens are centralized in `ThemeProfile` and applied through `NexenThemeManager` resource overrides so they are not duplicated as ad-hoc values across the UI runtime path.
 
 ## Settings UI Coverage
@@ -160,6 +169,7 @@ The Preferences theme section includes profile selection and import/export plus 
 - Checkbox hover/pressed border/background, radio hover/pressed border/background, slider hover/pressed track
 - Text selection, disabled text-control background, tooltip background, menu flyout background, menu flyout border
 - Combo dropdown background/border and DataGrid header/selected-row semantic colors
+- ListBox and TreeView hover/selected semantic colors
 
 This gives a settings-surface customization path while preserving JSON import/export for advanced profile editing and sharing.
 

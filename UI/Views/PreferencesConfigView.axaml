@@ -54,7 +54,7 @@
 							<TextBox Width="190" Text="{Binding DuplicateThemeProfileName}" />
 							<Button Content="{l:Translate btnThemeDuplicate}" Click="btnDuplicateThemeProfile_OnClick" />
 						</StackPanel>
-						<Grid ColumnDefinitions="Auto,Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" Margin="0 8 0 0">
+						<Grid ColumnDefinitions="Auto,Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" Margin="0 8 0 0">
 							<TextBlock Grid.Row="0" Text="{l:Translate lblThemeStartupBackground}" VerticalAlignment="Center" />
 							<Button Grid.Row="0" Grid.Column="1" Margin="8 0 8 0" Content="{l:Translate btnThemePickColor}" Click="btnPickThemeBackgroundColor_OnClick" />
 							<TextBox Grid.Row="0" Grid.Column="2" IsReadOnly="True" Text="{Binding SelectedProfileStartupBackgroundColor}" />
@@ -186,6 +186,30 @@
 							<TextBlock Grid.Row="32" Text="{l:Translate lblThemeDataGridSelectedRowForeground}" VerticalAlignment="Center" />
 							<Button Grid.Row="32" Grid.Column="1" Margin="8 0 8 0" Content="{l:Translate btnThemePickColor}" Click="btnPickThemeDataGridSelectedRowForegroundColor_OnClick" />
 							<TextBox Grid.Row="32" Grid.Column="2" IsReadOnly="True" Text="{Binding SelectedProfileDataGridSelectedRowForegroundColor}" />
+
+							<TextBlock Grid.Row="33" Text="{l:Translate lblThemeListBoxHoverBackground}" VerticalAlignment="Center" />
+							<Button Grid.Row="33" Grid.Column="1" Margin="8 0 8 0" Content="{l:Translate btnThemePickColor}" Click="btnPickThemeListBoxHoverBackgroundColor_OnClick" />
+							<TextBox Grid.Row="33" Grid.Column="2" IsReadOnly="True" Text="{Binding SelectedProfileListBoxHoverBackgroundColor}" />
+
+							<TextBlock Grid.Row="34" Text="{l:Translate lblThemeListBoxSelectedBackground}" VerticalAlignment="Center" />
+							<Button Grid.Row="34" Grid.Column="1" Margin="8 0 8 0" Content="{l:Translate btnThemePickColor}" Click="btnPickThemeListBoxSelectedBackgroundColor_OnClick" />
+							<TextBox Grid.Row="34" Grid.Column="2" IsReadOnly="True" Text="{Binding SelectedProfileListBoxSelectedBackgroundColor}" />
+
+							<TextBlock Grid.Row="35" Text="{l:Translate lblThemeListBoxSelectedForeground}" VerticalAlignment="Center" />
+							<Button Grid.Row="35" Grid.Column="1" Margin="8 0 8 0" Content="{l:Translate btnThemePickColor}" Click="btnPickThemeListBoxSelectedForegroundColor_OnClick" />
+							<TextBox Grid.Row="35" Grid.Column="2" IsReadOnly="True" Text="{Binding SelectedProfileListBoxSelectedForegroundColor}" />
+
+							<TextBlock Grid.Row="36" Text="{l:Translate lblThemeTreeViewHoverBackground}" VerticalAlignment="Center" />
+							<Button Grid.Row="36" Grid.Column="1" Margin="8 0 8 0" Content="{l:Translate btnThemePickColor}" Click="btnPickThemeTreeViewHoverBackgroundColor_OnClick" />
+							<TextBox Grid.Row="36" Grid.Column="2" IsReadOnly="True" Text="{Binding SelectedProfileTreeViewHoverBackgroundColor}" />
+
+							<TextBlock Grid.Row="37" Text="{l:Translate lblThemeTreeViewSelectedBackground}" VerticalAlignment="Center" />
+							<Button Grid.Row="37" Grid.Column="1" Margin="8 0 8 0" Content="{l:Translate btnThemePickColor}" Click="btnPickThemeTreeViewSelectedBackgroundColor_OnClick" />
+							<TextBox Grid.Row="37" Grid.Column="2" IsReadOnly="True" Text="{Binding SelectedProfileTreeViewSelectedBackgroundColor}" />
+
+							<TextBlock Grid.Row="38" Text="{l:Translate lblThemeTreeViewSelectedForeground}" VerticalAlignment="Center" />
+							<Button Grid.Row="38" Grid.Column="1" Margin="8 0 8 0" Content="{l:Translate btnThemePickColor}" Click="btnPickThemeTreeViewSelectedForegroundColor_OnClick" />
+							<TextBox Grid.Row="38" Grid.Column="2" IsReadOnly="True" Text="{Binding SelectedProfileTreeViewSelectedForegroundColor}" />
 						</Grid>
 						<StackPanel Orientation="Horizontal" Spacing="8" Margin="0 8 0 0" VerticalAlignment="Center">
 							<TextBlock Text="{l:Translate lblThemeLivePreview}" VerticalAlignment="Center" />
@@ -222,6 +246,12 @@
 							<Border Width="22" Height="22" BorderBrush="#666666" BorderThickness="1" CornerRadius="3" Background="{Binding SelectedProfileDataGridHeaderBackgroundBrush}" ToolTip.Tip="{l:Translate lblThemeDataGridHeaderBackground}" />
 							<Border Width="22" Height="22" BorderBrush="#666666" BorderThickness="1" CornerRadius="3" Background="{Binding SelectedProfileDataGridHeaderForegroundBrush}" ToolTip.Tip="{l:Translate lblThemeDataGridHeaderForeground}" />
 							<Border Width="22" Height="22" BorderBrush="#666666" BorderThickness="1" CornerRadius="3" Background="{Binding SelectedProfileDataGridSelectedRowForegroundBrush}" ToolTip.Tip="{l:Translate lblThemeDataGridSelectedRowForeground}" />
+							<Border Width="22" Height="22" BorderBrush="#666666" BorderThickness="1" CornerRadius="3" Background="{Binding SelectedProfileListBoxHoverBackgroundBrush}" ToolTip.Tip="{l:Translate lblThemeListBoxHoverBackground}" />
+							<Border Width="22" Height="22" BorderBrush="#666666" BorderThickness="1" CornerRadius="3" Background="{Binding SelectedProfileListBoxSelectedBackgroundBrush}" ToolTip.Tip="{l:Translate lblThemeListBoxSelectedBackground}" />
+							<Border Width="22" Height="22" BorderBrush="#666666" BorderThickness="1" CornerRadius="3" Background="{Binding SelectedProfileListBoxSelectedForegroundBrush}" ToolTip.Tip="{l:Translate lblThemeListBoxSelectedForeground}" />
+							<Border Width="22" Height="22" BorderBrush="#666666" BorderThickness="1" CornerRadius="3" Background="{Binding SelectedProfileTreeViewHoverBackgroundBrush}" ToolTip.Tip="{l:Translate lblThemeTreeViewHoverBackground}" />
+							<Border Width="22" Height="22" BorderBrush="#666666" BorderThickness="1" CornerRadius="3" Background="{Binding SelectedProfileTreeViewSelectedBackgroundBrush}" ToolTip.Tip="{l:Translate lblThemeTreeViewSelectedBackground}" />
+							<Border Width="22" Height="22" BorderBrush="#666666" BorderThickness="1" CornerRadius="3" Background="{Binding SelectedProfileTreeViewSelectedForegroundBrush}" ToolTip.Tip="{l:Translate lblThemeTreeViewSelectedForeground}" />
 						</StackPanel>
 						<StackPanel Orientation="Horizontal" Spacing="6" Margin="0 6 0 0" VerticalAlignment="Center">
 							<TextBlock Text="{l:Translate lblThemePresetStatus}" VerticalAlignment="Center" />

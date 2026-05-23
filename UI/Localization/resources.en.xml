@@ -859,6 +859,12 @@
 			<Control ID="lblThemeDataGridHeaderBackground">DataGrid Header Background</Control>
 			<Control ID="lblThemeDataGridHeaderForeground">DataGrid Header Foreground</Control>
 			<Control ID="lblThemeDataGridSelectedRowForeground">DataGrid Selected Row Foreground</Control>
+			<Control ID="lblThemeListBoxHoverBackground">ListBox Hover Background</Control>
+			<Control ID="lblThemeListBoxSelectedBackground">ListBox Selected Background</Control>
+			<Control ID="lblThemeListBoxSelectedForeground">ListBox Selected Foreground</Control>
+			<Control ID="lblThemeTreeViewHoverBackground">TreeView Hover Background</Control>
+			<Control ID="lblThemeTreeViewSelectedBackground">TreeView Selected Background</Control>
+			<Control ID="lblThemeTreeViewSelectedForeground">TreeView Selected Foreground</Control>
 			<Control ID="btnThemePickColor">Pick</Control>
 			<Control ID="lblThemeLivePreview">Live Preview</Control>
 			<Control ID="lblThemePresetStatus">Preset Status:</Control>

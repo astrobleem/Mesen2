@@ -735,6 +735,12 @@
 			<Control ID="lblThemeDataGridHeaderBackground">Fondo del encabezado de DataGrid</Control>
 			<Control ID="lblThemeDataGridHeaderForeground">Texto del encabezado de DataGrid</Control>
 			<Control ID="lblThemeDataGridSelectedRowForeground">Texto de fila seleccionada en DataGrid</Control>
+			<Control ID="lblThemeListBoxHoverBackground">Fondo al pasar el cursor en ListBox</Control>
+			<Control ID="lblThemeListBoxSelectedBackground">Fondo seleccionado en ListBox</Control>
+			<Control ID="lblThemeListBoxSelectedForeground">Texto seleccionado en ListBox</Control>
+			<Control ID="lblThemeTreeViewHoverBackground">Fondo al pasar el cursor en TreeView</Control>
+			<Control ID="lblThemeTreeViewSelectedBackground">Fondo seleccionado en TreeView</Control>
+			<Control ID="lblThemeTreeViewSelectedForeground">Texto seleccionado en TreeView</Control>
 			<Control ID="btnThemePickColor">Elegir</Control>
 			<Control ID="lblThemeLivePreview">Vista previa en vivo</Control>
 			<Control ID="lblThemePresetStatus">Estado del preajuste:</Control>

@@ -62,6 +62,12 @@ public sealed class ThemeProfileTests {
 		Assert.Equal("#ff303030", dark.DataGridHeaderBackgroundColor);
 		Assert.Equal("#ffdedede", dark.DataGridHeaderForegroundColor);
 		Assert.Equal("#ffffffff", dark.DataGridSelectedRowForegroundColor);
+		Assert.Equal("#66403020", dark.ListBoxItemHoverBackgroundColor);
+		Assert.Equal("#ff6a3f20", dark.ListBoxItemSelectedBackgroundColor);
+		Assert.Equal("#ffffffff", dark.ListBoxItemSelectedForegroundColor);
+		Assert.Equal("#663d2a1b", dark.TreeViewItemHoverBackgroundColor);
+		Assert.Equal("#ff6a3f20", dark.TreeViewItemSelectedBackgroundColor);
+		Assert.Equal("#ffffffff", dark.TreeViewItemSelectedForegroundColor);
 
 		Assert.Equal("#f3e5d7", light.MenuBackgroundColor);
 		Assert.Equal("#efb57b", light.MenuBackgroundHighlightColor);
@@ -91,6 +97,12 @@ public sealed class ThemeProfileTests {
 		Assert.Equal("#ffededed", light.DataGridHeaderBackgroundColor);
 		Assert.Equal("#ff000000", light.DataGridHeaderForegroundColor);
 		Assert.Equal("#ffffffff", light.DataGridSelectedRowForegroundColor);
+		Assert.Equal("#fff4ddc7", light.ListBoxItemHoverBackgroundColor);
+		Assert.Equal("#ffb56f33", light.ListBoxItemSelectedBackgroundColor);
+		Assert.Equal("#ffffffff", light.ListBoxItemSelectedForegroundColor);
+		Assert.Equal("#fff2dcc8", light.TreeViewItemHoverBackgroundColor);
+		Assert.Equal("#ffb56f33", light.TreeViewItemSelectedBackgroundColor);
+		Assert.Equal("#ffffffff", light.TreeViewItemSelectedForegroundColor);
 	}
 
 	[Fact]

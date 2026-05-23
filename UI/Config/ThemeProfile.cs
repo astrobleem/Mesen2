@@ -49,6 +49,12 @@ public sealed class ThemeProfile {
 	public string DataGridHeaderBackgroundColor { get; set; } = "#ff303030";
 	public string DataGridHeaderForegroundColor { get; set; } = "#ffdedede";
 	public string DataGridSelectedRowForegroundColor { get; set; } = "#ffffffff";
+	public string ListBoxItemHoverBackgroundColor { get; set; } = "#66403020";
+	public string ListBoxItemSelectedBackgroundColor { get; set; } = "#ff6a3f20";
+	public string ListBoxItemSelectedForegroundColor { get; set; } = "#ffffffff";
+	public string TreeViewItemHoverBackgroundColor { get; set; } = "#663d2a1b";
+	public string TreeViewItemSelectedBackgroundColor { get; set; } = "#ff6a3f20";
+	public string TreeViewItemSelectedForegroundColor { get; set; } = "#ffffffff";
 	public string ThemeAccentColor { get; set; } = "#ccc87423";
 	public string HighlightColor { get; set; } = "#ffc87423";
 	public string ControlPointerOverBackgroundColor { get; set; } = "#80573721";
@@ -107,6 +113,12 @@ public sealed class ThemeProfile {
 				DataGridHeaderBackgroundColor = "#ff303030",
 				DataGridHeaderForegroundColor = "#ffdedede",
 				DataGridSelectedRowForegroundColor = "#ffffffff",
+				ListBoxItemHoverBackgroundColor = "#66403020",
+				ListBoxItemSelectedBackgroundColor = "#ff6a3f20",
+				ListBoxItemSelectedForegroundColor = "#ffffffff",
+				TreeViewItemHoverBackgroundColor = "#663d2a1b",
+				TreeViewItemSelectedBackgroundColor = "#ff6a3f20",
+				TreeViewItemSelectedForegroundColor = "#ffffffff",
 				ThemeAccentColor = "#ccc87423",
 				HighlightColor = "#ffc87423",
 				ControlPointerOverBackgroundColor = "#80573721",
@@ -165,6 +177,12 @@ public sealed class ThemeProfile {
 			DataGridHeaderBackgroundColor = "#ffededed",
 			DataGridHeaderForegroundColor = "#ff000000",
 			DataGridSelectedRowForegroundColor = "#ffffffff",
+			ListBoxItemHoverBackgroundColor = "#fff4ddc7",
+			ListBoxItemSelectedBackgroundColor = "#ffb56f33",
+			ListBoxItemSelectedForegroundColor = "#ffffffff",
+			TreeViewItemHoverBackgroundColor = "#fff2dcc8",
+			TreeViewItemSelectedBackgroundColor = "#ffb56f33",
+			TreeViewItemSelectedForegroundColor = "#ffffffff",
 			ThemeAccentColor = "#ffc56e21",
 			HighlightColor = "#ff8a5116",
 			ControlPointerOverBackgroundColor = "#f8d9b8",
@@ -244,6 +262,12 @@ public sealed class ThemeProfileFile {
 			&& ThemeProfile.IsValidColor(Profile.DataGridHeaderBackgroundColor)
 			&& ThemeProfile.IsValidColor(Profile.DataGridHeaderForegroundColor)
 			&& ThemeProfile.IsValidColor(Profile.DataGridSelectedRowForegroundColor)
+			&& ThemeProfile.IsValidColor(Profile.ListBoxItemHoverBackgroundColor)
+			&& ThemeProfile.IsValidColor(Profile.ListBoxItemSelectedBackgroundColor)
+			&& ThemeProfile.IsValidColor(Profile.ListBoxItemSelectedForegroundColor)
+			&& ThemeProfile.IsValidColor(Profile.TreeViewItemHoverBackgroundColor)
+			&& ThemeProfile.IsValidColor(Profile.TreeViewItemSelectedBackgroundColor)
+			&& ThemeProfile.IsValidColor(Profile.TreeViewItemSelectedForegroundColor)
 			&& ThemeProfile.IsValidColor(Profile.ThemeAccentColor)
 			&& ThemeProfile.IsValidColor(Profile.HighlightColor)
 			&& ThemeProfile.IsValidColor(Profile.ControlPointerOverBackgroundColor)

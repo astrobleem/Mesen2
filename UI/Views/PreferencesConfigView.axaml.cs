@@ -450,6 +450,42 @@ public partial class PreferencesConfigView : UserControl {
 		});
 	}
 
+	private async void btnPickThemeListBoxHoverBackgroundColor_OnClick(object sender, RoutedEventArgs e) {
+		await PickThemeProfileColor(profile => profile.ListBoxItemHoverBackgroundColor, (model, colorHex) => {
+			model.SetSelectedProfileListBoxAndTreeViewSemanticColors(colorHex, model.SelectedProfileListBoxSelectedBackgroundColor, model.SelectedProfileListBoxSelectedForegroundColor, model.SelectedProfileTreeViewHoverBackgroundColor, model.SelectedProfileTreeViewSelectedBackgroundColor, model.SelectedProfileTreeViewSelectedForegroundColor);
+		});
+	}
+
+	private async void btnPickThemeListBoxSelectedBackgroundColor_OnClick(object sender, RoutedEventArgs e) {
+		await PickThemeProfileColor(profile => profile.ListBoxItemSelectedBackgroundColor, (model, colorHex) => {
+			model.SetSelectedProfileListBoxAndTreeViewSemanticColors(model.SelectedProfileListBoxHoverBackgroundColor, colorHex, model.SelectedProfileListBoxSelectedForegroundColor, model.SelectedProfileTreeViewHoverBackgroundColor, model.SelectedProfileTreeViewSelectedBackgroundColor, model.SelectedProfileTreeViewSelectedForegroundColor);
+		});
+	}
+
+	private async void btnPickThemeListBoxSelectedForegroundColor_OnClick(object sender, RoutedEventArgs e) {
+		await PickThemeProfileColor(profile => profile.ListBoxItemSelectedForegroundColor, (model, colorHex) => {
+			model.SetSelectedProfileListBoxAndTreeViewSemanticColors(model.SelectedProfileListBoxHoverBackgroundColor, model.SelectedProfileListBoxSelectedBackgroundColor, colorHex, model.SelectedProfileTreeViewHoverBackgroundColor, model.SelectedProfileTreeViewSelectedBackgroundColor, model.SelectedProfileTreeViewSelectedForegroundColor);
+		});
+	}
+
+	private async void btnPickThemeTreeViewHoverBackgroundColor_OnClick(object sender, RoutedEventArgs e) {
+		await PickThemeProfileColor(profile => profile.TreeViewItemHoverBackgroundColor, (model, colorHex) => {
+			model.SetSelectedProfileListBoxAndTreeViewSemanticColors(model.SelectedProfileListBoxHoverBackgroundColor, model.SelectedProfileListBoxSelectedBackgroundColor, model.SelectedProfileListBoxSelectedForegroundColor, colorHex, model.SelectedProfileTreeViewSelectedBackgroundColor, model.SelectedProfileTreeViewSelectedForegroundColor);
+		});
+	}
+
+	private async void btnPickThemeTreeViewSelectedBackgroundColor_OnClick(object sender, RoutedEventArgs e) {
+		await PickThemeProfileColor(profile => profile.TreeViewItemSelectedBackgroundColor, (model, colorHex) => {
+			model.SetSelectedProfileListBoxAndTreeViewSemanticColors(model.SelectedProfileListBoxHoverBackgroundColor, model.SelectedProfileListBoxSelectedBackgroundColor, model.SelectedProfileListBoxSelectedForegroundColor, model.SelectedProfileTreeViewHoverBackgroundColor, colorHex, model.SelectedProfileTreeViewSelectedForegroundColor);
+		});
+	}
+
+	private async void btnPickThemeTreeViewSelectedForegroundColor_OnClick(object sender, RoutedEventArgs e) {
+		await PickThemeProfileColor(profile => profile.TreeViewItemSelectedForegroundColor, (model, colorHex) => {
+			model.SetSelectedProfileListBoxAndTreeViewSemanticColors(model.SelectedProfileListBoxHoverBackgroundColor, model.SelectedProfileListBoxSelectedBackgroundColor, model.SelectedProfileListBoxSelectedForegroundColor, model.SelectedProfileTreeViewHoverBackgroundColor, model.SelectedProfileTreeViewSelectedBackgroundColor, colorHex);
+		});
+	}
+
 	private async Task PickThemeProfileColor(Func<ThemeProfile, string> colorSelector, Action<PreferencesConfigViewModel, string> updateAction) {
 		PreferencesConfigViewModel? model = GetViewModel();
 		ThemeProfile? profile = model?.GetSelectedThemeProfile();

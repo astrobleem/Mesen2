@@ -118,6 +118,12 @@
 
 					<Color x:Key="ComboBoxDropDownBackground">#FFFFFF</Color>
 					<Color x:Key="ComboBoxDropDownBorderBrush">#909090</Color>
+					<Color x:Key="ListBoxItemBackgroundPointerOver">#f4ddc7</Color>
+					<Color x:Key="ListBoxItemBackgroundSelected">#b56f33</Color>
+					<Color x:Key="ListBoxItemForegroundSelected">#ffffff</Color>
+					<Color x:Key="TreeViewItemBackgroundPointerOver">#f2dcc8</Color>
+					<Color x:Key="TreeViewItemBackgroundSelected">#b56f33</Color>
+					<Color x:Key="TreeViewItemForegroundSelected">#ffffff</Color>
 
 					<!-- Disabled colors -->
 					<Color x:Key="TextControlBackgroundDisabled">#E0E0E0</Color>

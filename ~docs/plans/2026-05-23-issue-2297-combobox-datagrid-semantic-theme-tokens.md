@@ -1,4 +1,4 @@
-# Issue #2297 ComboBox Dropdown and DataGrid Semantic Theme Tokens (2026-05-23)
+﻿# Issue #2297 ComboBox Dropdown and DataGrid Semantic Theme Tokens (2026-05-23)
 
 ## Scope
 

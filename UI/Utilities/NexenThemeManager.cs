@@ -77,6 +77,12 @@ public static class NexenThemeManager {
 		ApplyBrushOverride(app, "DataGridColumnHeaderBackgroundBrush", profile.DataGridHeaderBackgroundColor);
 		ApplyBrushOverride(app, "DataGridColumnHeaderForegroundBrush", profile.DataGridHeaderForegroundColor);
 		ApplyBrushOverride(app, "DataGridRowSelectedForegroundBrush", profile.DataGridSelectedRowForegroundColor);
+		ApplyColorOverride(app, "ListBoxItemBackgroundPointerOver", profile.ListBoxItemHoverBackgroundColor);
+		ApplyColorOverride(app, "ListBoxItemBackgroundSelected", profile.ListBoxItemSelectedBackgroundColor);
+		ApplyColorOverride(app, "ListBoxItemForegroundSelected", profile.ListBoxItemSelectedForegroundColor);
+		ApplyColorOverride(app, "TreeViewItemBackgroundPointerOver", profile.TreeViewItemHoverBackgroundColor);
+		ApplyColorOverride(app, "TreeViewItemBackgroundSelected", profile.TreeViewItemSelectedBackgroundColor);
+		ApplyColorOverride(app, "TreeViewItemForegroundSelected", profile.TreeViewItemSelectedForegroundColor);
 		ApplyColorOverride(app, "ThemeAccentColor", profile.ThemeAccentColor);
 		ApplyColorOverride(app, "HighlightColor", profile.HighlightColor);
 

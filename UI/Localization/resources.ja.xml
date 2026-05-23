@@ -735,6 +735,12 @@
 			<Control ID="lblThemeDataGridHeaderBackground">DataGrid ヘッダー背景</Control>
 			<Control ID="lblThemeDataGridHeaderForeground">DataGrid ヘッダーテキスト</Control>
 			<Control ID="lblThemeDataGridSelectedRowForeground">DataGrid 選択行テキスト</Control>
+			<Control ID="lblThemeListBoxHoverBackground">ListBox ホバー背景</Control>
+			<Control ID="lblThemeListBoxSelectedBackground">ListBox 選択背景</Control>
+			<Control ID="lblThemeListBoxSelectedForeground">ListBox 選択テキスト</Control>
+			<Control ID="lblThemeTreeViewHoverBackground">TreeView ホバー背景</Control>
+			<Control ID="lblThemeTreeViewSelectedBackground">TreeView 選択背景</Control>
+			<Control ID="lblThemeTreeViewSelectedForeground">TreeView 選択テキスト</Control>
 			<Control ID="btnThemePickColor">選択</Control>
 			<Control ID="lblThemeLivePreview">ライブプレビュー</Control>
 			<Control ID="lblThemePresetStatus">プリセット状態:</Control>
