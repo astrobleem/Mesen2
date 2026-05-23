@@ -75,7 +75,7 @@ public:
 
 	void DrawPartialFrame() override;
 
-	bool SaveRomToDisk(const string& filename, bool saveAsIps, CdlStripOption stripOption);
+	bool SaveRomToDisk(const string& filename, bool saveAsIps, CdlStripOption stripOption) override;
 
 	void ProcessInputOverrides(DebugControllerState inputOverrides[8]) override;
 

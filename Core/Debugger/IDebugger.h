@@ -227,6 +227,14 @@ public:
 	[[nodiscard]] virtual PpuTools* GetPpuTools() { return nullptr; }
 
 	/// <summary>
+	/// Save current ROM to disk with optional IPS export and CDL stripping.
+	/// </summary>
+	/// <param name="filename">Output file path</param>
+	/// <param name="saveAsIps">True to save as IPS patch instead of full ROM</param>
+	/// <param name="stripOption">CDL-based strip option</param>
+	[[nodiscard]] virtual bool SaveRomToDisk(const string& filename, bool saveAsIps, CdlStripOption stripOption) { return false; }
+
+	/// <summary>
 	/// Get ROM header data.
 	/// </summary>
 	/// <param name="headerData">Output header buffer</param>

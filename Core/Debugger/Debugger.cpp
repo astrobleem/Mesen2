@@ -1449,36 +1449,13 @@ string Debugger::GetLog() {
 }
 
 bool Debugger::SaveRomToDisk(const string& filename, bool saveAsIps, CdlStripOption stripOption) {
-	switch (_mainCpuType) {
-		case CpuType::Snes:
-			if (_debuggers[(int)CpuType::Gameboy].Debugger) {
-				// SGB
-				return GetDebugger<CpuType::Gameboy, GbDebugger>()->SaveRomToDisk(filename, saveAsIps, stripOption);
-			} else {
-				return GetDebugger<CpuType::Snes, SnesDebugger>()->SaveRomToDisk(filename, saveAsIps, stripOption);
-			}
-
-		case CpuType::Gameboy:
-			return GetDebugger<CpuType::Gameboy, GbDebugger>()->SaveRomToDisk(filename, saveAsIps, stripOption);
-		case CpuType::Nes:
-			return GetDebugger<CpuType::Nes, NesDebugger>()->SaveRomToDisk(filename, saveAsIps, stripOption);
-		case CpuType::Pce:
-			return GetDebugger<CpuType::Pce, PceDebugger>()->SaveRomToDisk(filename, saveAsIps, stripOption);
-		case CpuType::Sms:
-			return GetDebugger<CpuType::Sms, SmsDebugger>()->SaveRomToDisk(filename, saveAsIps, stripOption);
-		case CpuType::Gba:
-			return GetDebugger<CpuType::Gba, GbaDebugger>()->SaveRomToDisk(filename, saveAsIps, stripOption);
-		case CpuType::Ws:
-			return GetDebugger<CpuType::Ws, WsDebugger>()->SaveRomToDisk(filename, saveAsIps, stripOption);
-		case CpuType::Lynx:
-			return GetDebugger<CpuType::Lynx, LynxDebugger>()->SaveRomToDisk(filename, saveAsIps, stripOption);
-		case CpuType::Atari2600:
-			return GetDebugger<CpuType::Atari2600, Atari2600Debugger>()->SaveRomToDisk(filename, saveAsIps, stripOption);
-		case CpuType::ChannelF:
-			return GetDebugger<CpuType::ChannelF, ChannelFDebugger>()->SaveRomToDisk(filename, saveAsIps, stripOption);
+	if (_mainCpuType == CpuType::Snes && _debuggers[(int)CpuType::Gameboy].Debugger) {
+		// SGB routes ROM export through the GB debugger backend.
+		return _debuggers[(int)CpuType::Gameboy].Debugger->SaveRomToDisk(filename, saveAsIps, stripOption);
 	}
 
-	return false;
+	IDebugger* debugger = GetMainDebugger();
+	return debugger ? debugger->SaveRomToDisk(filename, saveAsIps, stripOption) : false;
 }
 
 FrozenAddressManager* Debugger::GetFrozenAddressManager(CpuType cpuType) {
