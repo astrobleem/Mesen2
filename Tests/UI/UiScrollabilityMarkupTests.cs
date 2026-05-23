@@ -236,6 +236,7 @@ public sealed class UiScrollabilityMarkupTests {
 		Assert.Contains("lblThemeGroupInputsAndFlyouts", markup);
 		Assert.Contains("lblThemeGroupComboAndDataGrid", markup);
 		Assert.Contains("lblThemeGroupListAndTree", markup);
+		Assert.Contains("lblThemeGroupNavigationAndListView", markup);
 		Assert.Contains("lblThemeComboBoxDropDownBackground", markup);
 		Assert.Contains("lblThemeComboBoxDropDownBorder", markup);
 		Assert.Contains("lblThemeDataGridHeaderBackground", markup);
@@ -247,6 +248,12 @@ public sealed class UiScrollabilityMarkupTests {
 		Assert.Contains("lblThemeTreeViewHoverBackground", markup);
 		Assert.Contains("lblThemeTreeViewSelectedBackground", markup);
 		Assert.Contains("lblThemeTreeViewSelectedForeground", markup);
+		Assert.Contains("lblThemeNavigationViewHoverBackground", markup);
+		Assert.Contains("lblThemeNavigationViewSelectedBackground", markup);
+		Assert.Contains("lblThemeNavigationViewSelectedForeground", markup);
+		Assert.Contains("lblThemeListViewHoverBackground", markup);
+		Assert.Contains("lblThemeListViewSelectedBackground", markup);
+		Assert.Contains("lblThemeListViewSelectedForeground", markup);
 		Assert.Contains("btnPickThemeControlHoverBackgroundColor_OnClick", markup);
 		Assert.Contains("btnPickThemeControlPressedBackgroundColor_OnClick", markup);
 		Assert.Contains("btnPickThemeControlHoverBorderColor_OnClick", markup);
@@ -280,6 +287,37 @@ public sealed class UiScrollabilityMarkupTests {
 		Assert.Contains("btnPickThemeTreeViewHoverBackgroundColor_OnClick", markup);
 		Assert.Contains("btnPickThemeTreeViewSelectedBackgroundColor_OnClick", markup);
 		Assert.Contains("btnPickThemeTreeViewSelectedForegroundColor_OnClick", markup);
+		Assert.Contains("btnPickThemeNavigationViewHoverBackgroundColor_OnClick", markup);
+		Assert.Contains("btnPickThemeNavigationViewSelectedBackgroundColor_OnClick", markup);
+		Assert.Contains("btnPickThemeNavigationViewSelectedForegroundColor_OnClick", markup);
+		Assert.Contains("btnPickThemeListViewHoverBackgroundColor_OnClick", markup);
+		Assert.Contains("btnPickThemeListViewSelectedBackgroundColor_OnClick", markup);
+		Assert.Contains("btnPickThemeListViewSelectedForegroundColor_OnClick", markup);
+	}
+
+	[Fact]
+	public void PreferencesView_ThemeGroups_AppearInExpectedSemanticOrder() {
+		string repoRoot = GetRepositoryRoot();
+		string fullPath = Path.Combine(repoRoot, "UI", "Views", "PreferencesConfigView.axaml");
+
+		Assert.True(File.Exists(fullPath), $"Expected markup file to exist: {fullPath}");
+
+		string markup = File.ReadAllText(fullPath);
+		int startupIndex = markup.IndexOf("lblThemeGroupStartup", StringComparison.Ordinal);
+		int chromeIndex = markup.IndexOf("lblThemeGroupChrome", StringComparison.Ordinal);
+		int controlStatesIndex = markup.IndexOf("lblThemeGroupControlStates", StringComparison.Ordinal);
+		int inputsFlyoutsIndex = markup.IndexOf("lblThemeGroupInputsAndFlyouts", StringComparison.Ordinal);
+		int comboDataGridIndex = markup.IndexOf("lblThemeGroupComboAndDataGrid", StringComparison.Ordinal);
+		int listTreeIndex = markup.IndexOf("lblThemeGroupListAndTree", StringComparison.Ordinal);
+		int navigationListViewIndex = markup.IndexOf("lblThemeGroupNavigationAndListView", StringComparison.Ordinal);
+
+		Assert.True(startupIndex >= 0, "Expected startup group header to exist.");
+		Assert.True(chromeIndex > startupIndex, "Expected chrome group after startup.");
+		Assert.True(controlStatesIndex > chromeIndex, "Expected control states group after chrome.");
+		Assert.True(inputsFlyoutsIndex > controlStatesIndex, "Expected inputs/flyouts group after control states.");
+		Assert.True(comboDataGridIndex > inputsFlyoutsIndex, "Expected combo/datagrid group after inputs/flyouts.");
+		Assert.True(listTreeIndex > comboDataGridIndex, "Expected list/tree group after combo/datagrid.");
+		Assert.True(navigationListViewIndex > listTreeIndex, "Expected navigation/listview group after list/tree.");
 	}
 
 	[Fact]

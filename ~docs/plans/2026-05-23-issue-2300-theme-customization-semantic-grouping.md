@@ -1,4 +1,4 @@
-# Issue #2300 Theme Customization Semantic Grouping (2026-05-23)
+﻿# Issue #2300 Theme Customization Semantic Grouping (2026-05-23)
 
 ## Scope
 

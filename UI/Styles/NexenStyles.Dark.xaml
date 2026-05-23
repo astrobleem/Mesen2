@@ -120,6 +120,12 @@
 					<Color x:Key="TreeViewItemBackgroundPointerOver">#663d2a1b</Color>
 					<Color x:Key="TreeViewItemBackgroundSelected">#6a3f20</Color>
 					<Color x:Key="TreeViewItemForegroundSelected">#ffffff</Color>
+					<Color x:Key="NavigationViewItemBackgroundPointerOver">#66403020</Color>
+					<Color x:Key="NavigationViewItemBackgroundSelected">#6a3f20</Color>
+					<Color x:Key="NavigationViewItemForegroundSelected">#ffffff</Color>
+					<Color x:Key="ListViewItemBackgroundPointerOver">#66403020</Color>
+					<Color x:Key="ListViewItemBackgroundSelected">#6a3f20</Color>
+					<Color x:Key="ListViewItemForegroundSelected">#ffffff</Color>
 
 					<!-- Checkboxes -->
 					<Color x:Key="CheckBoxCheckBackgroundStrokeUncheckedPointerOver">#e09a52</Color>

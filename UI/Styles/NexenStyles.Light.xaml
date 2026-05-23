@@ -124,6 +124,12 @@
 					<Color x:Key="TreeViewItemBackgroundPointerOver">#f2dcc8</Color>
 					<Color x:Key="TreeViewItemBackgroundSelected">#b56f33</Color>
 					<Color x:Key="TreeViewItemForegroundSelected">#ffffff</Color>
+					<Color x:Key="NavigationViewItemBackgroundPointerOver">#f4ddc7</Color>
+					<Color x:Key="NavigationViewItemBackgroundSelected">#b56f33</Color>
+					<Color x:Key="NavigationViewItemForegroundSelected">#ffffff</Color>
+					<Color x:Key="ListViewItemBackgroundPointerOver">#f4ddc7</Color>
+					<Color x:Key="ListViewItemBackgroundSelected">#b56f33</Color>
+					<Color x:Key="ListViewItemForegroundSelected">#ffffff</Color>
 
 					<!-- Disabled colors -->
 					<Color x:Key="TextControlBackgroundDisabled">#E0E0E0</Color>

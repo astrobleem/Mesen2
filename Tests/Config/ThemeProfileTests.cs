@@ -69,6 +69,12 @@ public sealed class ThemeProfileTests {
 		Assert.Equal("#663d2a1b", dark.TreeViewItemHoverBackgroundColor);
 		Assert.Equal("#ff6a3f20", dark.TreeViewItemSelectedBackgroundColor);
 		Assert.Equal("#ffffffff", dark.TreeViewItemSelectedForegroundColor);
+		Assert.Equal("#66403020", dark.NavigationViewItemHoverBackgroundColor);
+		Assert.Equal("#ff6a3f20", dark.NavigationViewItemSelectedBackgroundColor);
+		Assert.Equal("#ffffffff", dark.NavigationViewItemSelectedForegroundColor);
+		Assert.Equal("#66403020", dark.ListViewItemHoverBackgroundColor);
+		Assert.Equal("#ff6a3f20", dark.ListViewItemSelectedBackgroundColor);
+		Assert.Equal("#ffffffff", dark.ListViewItemSelectedForegroundColor);
 
 		Assert.Equal("#f3e5d7", light.MenuBackgroundColor);
 		Assert.Equal("#efb57b", light.MenuBackgroundHighlightColor);
@@ -104,6 +110,68 @@ public sealed class ThemeProfileTests {
 		Assert.Equal("#fff2dcc8", light.TreeViewItemHoverBackgroundColor);
 		Assert.Equal("#ffb56f33", light.TreeViewItemSelectedBackgroundColor);
 		Assert.Equal("#ffffffff", light.TreeViewItemSelectedForegroundColor);
+		Assert.Equal("#fff4ddc7", light.NavigationViewItemHoverBackgroundColor);
+		Assert.Equal("#ffb56f33", light.NavigationViewItemSelectedBackgroundColor);
+		Assert.Equal("#ffffffff", light.NavigationViewItemSelectedForegroundColor);
+		Assert.Equal("#fff4ddc7", light.ListViewItemHoverBackgroundColor);
+		Assert.Equal("#ffb56f33", light.ListViewItemSelectedBackgroundColor);
+		Assert.Equal("#ffffffff", light.ListViewItemSelectedForegroundColor);
+	}
+
+	[Fact]
+	public void ThemeProfile_CreateDefault_PreservesSemanticFamilyDefaults_ByThemeMode() {
+		ThemeProfile dark = ThemeProfile.CreateDefault("Default Dark", NexenTheme.Dark);
+		ThemeProfile light = ThemeProfile.CreateDefault("Default Light", NexenTheme.Light);
+
+		string[] darkSemanticTokens = [
+			dark.ComboBoxDropDownBackgroundColor,
+			dark.ComboBoxDropDownBorderColor,
+			dark.DataGridHeaderBackgroundColor,
+			dark.DataGridHeaderForegroundColor,
+			dark.DataGridSelectedRowForegroundColor,
+			dark.ListBoxItemHoverBackgroundColor,
+			dark.ListBoxItemSelectedBackgroundColor,
+			dark.ListBoxItemSelectedForegroundColor,
+			dark.TreeViewItemHoverBackgroundColor,
+			dark.TreeViewItemSelectedBackgroundColor,
+			dark.TreeViewItemSelectedForegroundColor,
+			dark.NavigationViewItemHoverBackgroundColor,
+			dark.NavigationViewItemSelectedBackgroundColor,
+			dark.NavigationViewItemSelectedForegroundColor,
+			dark.ListViewItemHoverBackgroundColor,
+			dark.ListViewItemSelectedBackgroundColor,
+			dark.ListViewItemSelectedForegroundColor
+		];
+
+		string[] lightSemanticTokens = [
+			light.ComboBoxDropDownBackgroundColor,
+			light.ComboBoxDropDownBorderColor,
+			light.DataGridHeaderBackgroundColor,
+			light.DataGridHeaderForegroundColor,
+			light.DataGridSelectedRowForegroundColor,
+			light.ListBoxItemHoverBackgroundColor,
+			light.ListBoxItemSelectedBackgroundColor,
+			light.ListBoxItemSelectedForegroundColor,
+			light.TreeViewItemHoverBackgroundColor,
+			light.TreeViewItemSelectedBackgroundColor,
+			light.TreeViewItemSelectedForegroundColor,
+			light.NavigationViewItemHoverBackgroundColor,
+			light.NavigationViewItemSelectedBackgroundColor,
+			light.NavigationViewItemSelectedForegroundColor,
+			light.ListViewItemHoverBackgroundColor,
+			light.ListViewItemSelectedBackgroundColor,
+			light.ListViewItemSelectedForegroundColor
+		];
+
+		Assert.All(darkSemanticTokens, color => Assert.True(ThemeProfile.IsValidColor(color), $"Invalid dark semantic token color: {color}"));
+		Assert.All(lightSemanticTokens, color => Assert.True(ThemeProfile.IsValidColor(color), $"Invalid light semantic token color: {color}"));
+
+		Assert.NotEqual(dark.ComboBoxDropDownBackgroundColor, light.ComboBoxDropDownBackgroundColor);
+		Assert.NotEqual(dark.DataGridHeaderBackgroundColor, light.DataGridHeaderBackgroundColor);
+		Assert.NotEqual(dark.ListBoxItemHoverBackgroundColor, light.ListBoxItemHoverBackgroundColor);
+		Assert.NotEqual(dark.TreeViewItemHoverBackgroundColor, light.TreeViewItemHoverBackgroundColor);
+		Assert.NotEqual(dark.NavigationViewItemHoverBackgroundColor, light.NavigationViewItemHoverBackgroundColor);
+		Assert.NotEqual(dark.ListViewItemHoverBackgroundColor, light.ListViewItemHoverBackgroundColor);
 	}
 
 	[Fact]
@@ -272,7 +340,7 @@ public sealed class ThemeProfileTests {
 	}
 
 	[Fact]
-	public void ThemeProfile_ImportExportRoundtrip_PreservesComboDataGridAndListTreeSemanticTokens_AfterSaveCurrentCycle() {
+	public void ThemeProfile_ImportExportRoundtrip_PreservesComboDataGridListTreeNavigationListViewSemanticTokens_AfterSaveCurrentCycle() {
 		PreferencesConfig config = new PreferencesConfig();
 		ThemeProfile? sourceProfile = config.GetThemeProfileByName("Default Dark");
 		Assert.NotNull(sourceProfile);
@@ -288,6 +356,12 @@ public sealed class ThemeProfileTests {
 		sourceProfile.TreeViewItemHoverBackgroundColor = "#6699aabb";
 		sourceProfile.TreeViewItemSelectedBackgroundColor = "#ffaabbcc";
 		sourceProfile.TreeViewItemSelectedForegroundColor = "#ffbbccee";
+		sourceProfile.NavigationViewItemHoverBackgroundColor = "#66ccddee";
+		sourceProfile.NavigationViewItemSelectedBackgroundColor = "#ffddeeff";
+		sourceProfile.NavigationViewItemSelectedForegroundColor = "#ff112244";
+		sourceProfile.ListViewItemHoverBackgroundColor = "#66224466";
+		sourceProfile.ListViewItemSelectedBackgroundColor = "#ff334477";
+		sourceProfile.ListViewItemSelectedForegroundColor = "#ffddeeff";
 
 		ThemeProfileFile exportFile = new ThemeProfileFile { Profile = sourceProfile };
 		string json = JsonSerializer.Serialize(exportFile, typeof(ThemeProfileFile), NexenSerializerContext.Default);
@@ -312,5 +386,11 @@ public sealed class ThemeProfileTests {
 		Assert.Equal("#6699aabb", roundTripped.TreeViewItemHoverBackgroundColor);
 		Assert.Equal("#ffaabbcc", roundTripped.TreeViewItemSelectedBackgroundColor);
 		Assert.Equal("#ffbbccee", roundTripped.TreeViewItemSelectedForegroundColor);
+		Assert.Equal("#66ccddee", roundTripped.NavigationViewItemHoverBackgroundColor);
+		Assert.Equal("#ffddeeff", roundTripped.NavigationViewItemSelectedBackgroundColor);
+		Assert.Equal("#ff112244", roundTripped.NavigationViewItemSelectedForegroundColor);
+		Assert.Equal("#66224466", roundTripped.ListViewItemHoverBackgroundColor);
+		Assert.Equal("#ff334477", roundTripped.ListViewItemSelectedBackgroundColor);
+		Assert.Equal("#ffddeeff", roundTripped.ListViewItemSelectedForegroundColor);
 	}
 }

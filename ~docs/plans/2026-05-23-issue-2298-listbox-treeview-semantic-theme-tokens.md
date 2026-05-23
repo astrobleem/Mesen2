@@ -1,4 +1,4 @@
-# Issue #2298 ListBox and TreeView Semantic Theme Tokens (2026-05-23)
+﻿# Issue #2298 ListBox and TreeView Semantic Theme Tokens (2026-05-23)
 
 ## Scope
 

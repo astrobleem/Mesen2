@@ -83,6 +83,12 @@ public static class NexenThemeManager {
 		ApplyColorOverride(app, "TreeViewItemBackgroundPointerOver", profile.TreeViewItemHoverBackgroundColor);
 		ApplyColorOverride(app, "TreeViewItemBackgroundSelected", profile.TreeViewItemSelectedBackgroundColor);
 		ApplyColorOverride(app, "TreeViewItemForegroundSelected", profile.TreeViewItemSelectedForegroundColor);
+		ApplyColorOverride(app, "NavigationViewItemBackgroundPointerOver", profile.NavigationViewItemHoverBackgroundColor);
+		ApplyColorOverride(app, "NavigationViewItemBackgroundSelected", profile.NavigationViewItemSelectedBackgroundColor);
+		ApplyColorOverride(app, "NavigationViewItemForegroundSelected", profile.NavigationViewItemSelectedForegroundColor);
+		ApplyColorOverride(app, "ListViewItemBackgroundPointerOver", profile.ListViewItemHoverBackgroundColor);
+		ApplyColorOverride(app, "ListViewItemBackgroundSelected", profile.ListViewItemSelectedBackgroundColor);
+		ApplyColorOverride(app, "ListViewItemForegroundSelected", profile.ListViewItemSelectedForegroundColor);
 		ApplyColorOverride(app, "ThemeAccentColor", profile.ThemeAccentColor);
 		ApplyColorOverride(app, "HighlightColor", profile.HighlightColor);
 

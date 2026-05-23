@@ -1,4 +1,4 @@
-# Issue #2299 Semantic Token Roundtrip Regression (2026-05-23)
+﻿# Issue #2299 Semantic Token Roundtrip Regression (2026-05-23)
 
 ## Scope
 

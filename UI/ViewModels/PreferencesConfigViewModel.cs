@@ -189,6 +189,24 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 	/// <summary>Gets or sets selected profile treeview selected foreground color as ARGB hex.</summary>
 	[Reactive] public partial string SelectedProfileTreeViewSelectedForegroundColor { get; set; }
 
+	/// <summary>Gets or sets selected profile navigationview hover background color as ARGB hex.</summary>
+	[Reactive] public partial string SelectedProfileNavigationViewHoverBackgroundColor { get; set; }
+
+	/// <summary>Gets or sets selected profile navigationview selected background color as ARGB hex.</summary>
+	[Reactive] public partial string SelectedProfileNavigationViewSelectedBackgroundColor { get; set; }
+
+	/// <summary>Gets or sets selected profile navigationview selected foreground color as ARGB hex.</summary>
+	[Reactive] public partial string SelectedProfileNavigationViewSelectedForegroundColor { get; set; }
+
+	/// <summary>Gets or sets selected profile listview hover background color as ARGB hex.</summary>
+	[Reactive] public partial string SelectedProfileListViewHoverBackgroundColor { get; set; }
+
+	/// <summary>Gets or sets selected profile listview selected background color as ARGB hex.</summary>
+	[Reactive] public partial string SelectedProfileListViewSelectedBackgroundColor { get; set; }
+
+	/// <summary>Gets or sets selected profile listview selected foreground color as ARGB hex.</summary>
+	[Reactive] public partial string SelectedProfileListViewSelectedForegroundColor { get; set; }
+
 	/// <summary>Gets or sets selected profile sidebar border preview brush.</summary>
 	[Reactive] public partial IBrush SelectedProfileSidebarBorderBrush { get; set; }
 
@@ -275,6 +293,24 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 
 	/// <summary>Gets or sets selected profile treeview selected foreground preview brush.</summary>
 	[Reactive] public partial IBrush SelectedProfileTreeViewSelectedForegroundBrush { get; set; }
+
+	/// <summary>Gets or sets selected profile navigationview hover background preview brush.</summary>
+	[Reactive] public partial IBrush SelectedProfileNavigationViewHoverBackgroundBrush { get; set; }
+
+	/// <summary>Gets or sets selected profile navigationview selected background preview brush.</summary>
+	[Reactive] public partial IBrush SelectedProfileNavigationViewSelectedBackgroundBrush { get; set; }
+
+	/// <summary>Gets or sets selected profile navigationview selected foreground preview brush.</summary>
+	[Reactive] public partial IBrush SelectedProfileNavigationViewSelectedForegroundBrush { get; set; }
+
+	/// <summary>Gets or sets selected profile listview hover background preview brush.</summary>
+	[Reactive] public partial IBrush SelectedProfileListViewHoverBackgroundBrush { get; set; }
+
+	/// <summary>Gets or sets selected profile listview selected background preview brush.</summary>
+	[Reactive] public partial IBrush SelectedProfileListViewSelectedBackgroundBrush { get; set; }
+
+	/// <summary>Gets or sets selected profile listview selected foreground preview brush.</summary>
+	[Reactive] public partial IBrush SelectedProfileListViewSelectedForegroundBrush { get; set; }
 
 	/// <summary>Gets or sets the number of tokens that differ from canonical defaults.</summary>
 	[Reactive] public partial int SelectedThemeProfileDivergenceCount { get; set; }
@@ -370,6 +406,12 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 		SelectedProfileTreeViewHoverBackgroundColor = "";
 		SelectedProfileTreeViewSelectedBackgroundColor = "";
 		SelectedProfileTreeViewSelectedForegroundColor = "";
+		SelectedProfileNavigationViewHoverBackgroundColor = "";
+		SelectedProfileNavigationViewSelectedBackgroundColor = "";
+		SelectedProfileNavigationViewSelectedForegroundColor = "";
+		SelectedProfileListViewHoverBackgroundColor = "";
+		SelectedProfileListViewSelectedBackgroundColor = "";
+		SelectedProfileListViewSelectedForegroundColor = "";
 		SelectedProfileSidebarBorderBrush = Brushes.Transparent;
 		SelectedProfileDockTabStripBackgroundBrush = Brushes.Transparent;
 		SelectedProfileDockTabHoverBrush = Brushes.Transparent;
@@ -399,6 +441,12 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 		SelectedProfileTreeViewHoverBackgroundBrush = Brushes.Transparent;
 		SelectedProfileTreeViewSelectedBackgroundBrush = Brushes.Transparent;
 		SelectedProfileTreeViewSelectedForegroundBrush = Brushes.Transparent;
+		SelectedProfileNavigationViewHoverBackgroundBrush = Brushes.Transparent;
+		SelectedProfileNavigationViewSelectedBackgroundBrush = Brushes.Transparent;
+		SelectedProfileNavigationViewSelectedForegroundBrush = Brushes.Transparent;
+		SelectedProfileListViewHoverBackgroundBrush = Brushes.Transparent;
+		SelectedProfileListViewSelectedBackgroundBrush = Brushes.Transparent;
+		SelectedProfileListViewSelectedForegroundBrush = Brushes.Transparent;
 		SelectedThemeProfileDivergenceCount = 0;
 		SelectedThemeProfileMatchesDefaults = true;
 		SelectedThemeProfileIsCustomized = false;
@@ -720,6 +768,22 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 		RefreshThemeProfiles();
 	}
 
+	public void SetSelectedProfileNavigationViewAndListViewSemanticColors(string navigationViewHoverBackground, string navigationViewSelectedBackground, string navigationViewSelectedForeground, string listViewHoverBackground, string listViewSelectedBackground, string listViewSelectedForeground) {
+		ThemeProfile? selectedProfile = GetSelectedThemeProfile();
+		if (selectedProfile is null) {
+			return;
+		}
+
+		selectedProfile.NavigationViewItemHoverBackgroundColor = navigationViewHoverBackground;
+		selectedProfile.NavigationViewItemSelectedBackgroundColor = navigationViewSelectedBackground;
+		selectedProfile.NavigationViewItemSelectedForegroundColor = navigationViewSelectedForeground;
+		selectedProfile.ListViewItemHoverBackgroundColor = listViewHoverBackground;
+		selectedProfile.ListViewItemSelectedBackgroundColor = listViewSelectedBackground;
+		selectedProfile.ListViewItemSelectedForegroundColor = listViewSelectedForeground;
+		Config.SetActiveThemeProfile(selectedProfile.Name);
+		RefreshThemeProfiles();
+	}
+
 	private void RefreshSelectedThemeProfileDetails() {
 		ThemeProfile? selectedProfile = GetSelectedThemeProfile();
 		if (selectedProfile is null) {
@@ -772,6 +836,12 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 			SelectedProfileTreeViewHoverBackgroundColor = "";
 			SelectedProfileTreeViewSelectedBackgroundColor = "";
 			SelectedProfileTreeViewSelectedForegroundColor = "";
+			SelectedProfileNavigationViewHoverBackgroundColor = "";
+			SelectedProfileNavigationViewSelectedBackgroundColor = "";
+			SelectedProfileNavigationViewSelectedForegroundColor = "";
+			SelectedProfileListViewHoverBackgroundColor = "";
+			SelectedProfileListViewSelectedBackgroundColor = "";
+			SelectedProfileListViewSelectedForegroundColor = "";
 			SelectedProfileSidebarBorderBrush = Brushes.Transparent;
 			SelectedProfileDockTabStripBackgroundBrush = Brushes.Transparent;
 			SelectedProfileDockTabHoverBrush = Brushes.Transparent;
@@ -801,6 +871,12 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 			SelectedProfileTreeViewHoverBackgroundBrush = Brushes.Transparent;
 			SelectedProfileTreeViewSelectedBackgroundBrush = Brushes.Transparent;
 			SelectedProfileTreeViewSelectedForegroundBrush = Brushes.Transparent;
+			SelectedProfileNavigationViewHoverBackgroundBrush = Brushes.Transparent;
+			SelectedProfileNavigationViewSelectedBackgroundBrush = Brushes.Transparent;
+			SelectedProfileNavigationViewSelectedForegroundBrush = Brushes.Transparent;
+			SelectedProfileListViewHoverBackgroundBrush = Brushes.Transparent;
+			SelectedProfileListViewSelectedBackgroundBrush = Brushes.Transparent;
+			SelectedProfileListViewSelectedForegroundBrush = Brushes.Transparent;
 			SelectedThemeProfileDivergenceCount = 0;
 			SelectedThemeProfileMatchesDefaults = true;
 			SelectedThemeProfileIsCustomized = false;
@@ -863,6 +939,12 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 		SelectedProfileTreeViewHoverBackgroundColor = selectedProfile.TreeViewItemHoverBackgroundColor;
 		SelectedProfileTreeViewSelectedBackgroundColor = selectedProfile.TreeViewItemSelectedBackgroundColor;
 		SelectedProfileTreeViewSelectedForegroundColor = selectedProfile.TreeViewItemSelectedForegroundColor;
+		SelectedProfileNavigationViewHoverBackgroundColor = selectedProfile.NavigationViewItemHoverBackgroundColor;
+		SelectedProfileNavigationViewSelectedBackgroundColor = selectedProfile.NavigationViewItemSelectedBackgroundColor;
+		SelectedProfileNavigationViewSelectedForegroundColor = selectedProfile.NavigationViewItemSelectedForegroundColor;
+		SelectedProfileListViewHoverBackgroundColor = selectedProfile.ListViewItemHoverBackgroundColor;
+		SelectedProfileListViewSelectedBackgroundColor = selectedProfile.ListViewItemSelectedBackgroundColor;
+		SelectedProfileListViewSelectedForegroundColor = selectedProfile.ListViewItemSelectedForegroundColor;
 		SelectedProfileSidebarBorderBrush = CreatePreviewBrush(selectedProfile.SettingsTabStripBorderColor);
 		SelectedProfileDockTabStripBackgroundBrush = CreatePreviewBrush(selectedProfile.DockTabStripBackgroundColor);
 		SelectedProfileDockTabHoverBrush = CreatePreviewBrush(selectedProfile.DockTabPointerOverColor);
@@ -892,6 +974,12 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 		SelectedProfileTreeViewHoverBackgroundBrush = CreatePreviewBrush(selectedProfile.TreeViewItemHoverBackgroundColor);
 		SelectedProfileTreeViewSelectedBackgroundBrush = CreatePreviewBrush(selectedProfile.TreeViewItemSelectedBackgroundColor);
 		SelectedProfileTreeViewSelectedForegroundBrush = CreatePreviewBrush(selectedProfile.TreeViewItemSelectedForegroundColor);
+		SelectedProfileNavigationViewHoverBackgroundBrush = CreatePreviewBrush(selectedProfile.NavigationViewItemHoverBackgroundColor);
+		SelectedProfileNavigationViewSelectedBackgroundBrush = CreatePreviewBrush(selectedProfile.NavigationViewItemSelectedBackgroundColor);
+		SelectedProfileNavigationViewSelectedForegroundBrush = CreatePreviewBrush(selectedProfile.NavigationViewItemSelectedForegroundColor);
+		SelectedProfileListViewHoverBackgroundBrush = CreatePreviewBrush(selectedProfile.ListViewItemHoverBackgroundColor);
+		SelectedProfileListViewSelectedBackgroundBrush = CreatePreviewBrush(selectedProfile.ListViewItemSelectedBackgroundColor);
+		SelectedProfileListViewSelectedForegroundBrush = CreatePreviewBrush(selectedProfile.ListViewItemSelectedForegroundColor);
 		SelectedThemeProfileDivergenceCount = Config.GetThemeProfileDivergenceCount(selectedProfile.Name);
 		SelectedThemeProfileMatchesDefaults = SelectedThemeProfileDivergenceCount == 0;
 		SelectedThemeProfileIsCustomized = SelectedThemeProfileDivergenceCount > 0;

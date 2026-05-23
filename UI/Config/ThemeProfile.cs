@@ -55,6 +55,12 @@ public sealed class ThemeProfile {
 	public string TreeViewItemHoverBackgroundColor { get; set; } = "#663d2a1b";
 	public string TreeViewItemSelectedBackgroundColor { get; set; } = "#ff6a3f20";
 	public string TreeViewItemSelectedForegroundColor { get; set; } = "#ffffffff";
+	public string NavigationViewItemHoverBackgroundColor { get; set; } = "#66403020";
+	public string NavigationViewItemSelectedBackgroundColor { get; set; } = "#ff6a3f20";
+	public string NavigationViewItemSelectedForegroundColor { get; set; } = "#ffffffff";
+	public string ListViewItemHoverBackgroundColor { get; set; } = "#66403020";
+	public string ListViewItemSelectedBackgroundColor { get; set; } = "#ff6a3f20";
+	public string ListViewItemSelectedForegroundColor { get; set; } = "#ffffffff";
 	public string ThemeAccentColor { get; set; } = "#ccc87423";
 	public string HighlightColor { get; set; } = "#ffc87423";
 	public string ControlPointerOverBackgroundColor { get; set; } = "#80573721";
@@ -119,6 +125,12 @@ public sealed class ThemeProfile {
 				TreeViewItemHoverBackgroundColor = "#663d2a1b",
 				TreeViewItemSelectedBackgroundColor = "#ff6a3f20",
 				TreeViewItemSelectedForegroundColor = "#ffffffff",
+				NavigationViewItemHoverBackgroundColor = "#66403020",
+				NavigationViewItemSelectedBackgroundColor = "#ff6a3f20",
+				NavigationViewItemSelectedForegroundColor = "#ffffffff",
+				ListViewItemHoverBackgroundColor = "#66403020",
+				ListViewItemSelectedBackgroundColor = "#ff6a3f20",
+				ListViewItemSelectedForegroundColor = "#ffffffff",
 				ThemeAccentColor = "#ccc87423",
 				HighlightColor = "#ffc87423",
 				ControlPointerOverBackgroundColor = "#80573721",
@@ -183,6 +195,12 @@ public sealed class ThemeProfile {
 			TreeViewItemHoverBackgroundColor = "#fff2dcc8",
 			TreeViewItemSelectedBackgroundColor = "#ffb56f33",
 			TreeViewItemSelectedForegroundColor = "#ffffffff",
+			NavigationViewItemHoverBackgroundColor = "#fff4ddc7",
+			NavigationViewItemSelectedBackgroundColor = "#ffb56f33",
+			NavigationViewItemSelectedForegroundColor = "#ffffffff",
+			ListViewItemHoverBackgroundColor = "#fff4ddc7",
+			ListViewItemSelectedBackgroundColor = "#ffb56f33",
+			ListViewItemSelectedForegroundColor = "#ffffffff",
 			ThemeAccentColor = "#ffc56e21",
 			HighlightColor = "#ff8a5116",
 			ControlPointerOverBackgroundColor = "#f8d9b8",
@@ -268,6 +286,12 @@ public sealed class ThemeProfileFile {
 			&& ThemeProfile.IsValidColor(Profile.TreeViewItemHoverBackgroundColor)
 			&& ThemeProfile.IsValidColor(Profile.TreeViewItemSelectedBackgroundColor)
 			&& ThemeProfile.IsValidColor(Profile.TreeViewItemSelectedForegroundColor)
+			&& ThemeProfile.IsValidColor(Profile.NavigationViewItemHoverBackgroundColor)
+			&& ThemeProfile.IsValidColor(Profile.NavigationViewItemSelectedBackgroundColor)
+			&& ThemeProfile.IsValidColor(Profile.NavigationViewItemSelectedForegroundColor)
+			&& ThemeProfile.IsValidColor(Profile.ListViewItemHoverBackgroundColor)
+			&& ThemeProfile.IsValidColor(Profile.ListViewItemSelectedBackgroundColor)
+			&& ThemeProfile.IsValidColor(Profile.ListViewItemSelectedForegroundColor)
 			&& ThemeProfile.IsValidColor(Profile.ThemeAccentColor)
 			&& ThemeProfile.IsValidColor(Profile.HighlightColor)
 			&& ThemeProfile.IsValidColor(Profile.ControlPointerOverBackgroundColor)
