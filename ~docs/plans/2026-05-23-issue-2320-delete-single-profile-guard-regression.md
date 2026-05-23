@@ -1,4 +1,4 @@
-# Issue #2320 Plan - Delete Single Profile Guard Regression
+﻿# Issue #2320 Plan - Delete Single Profile Guard Regression
 
 ## Scope
 

@@ -1,4 +1,4 @@
-# Issue #2319 Plan - Delete Active Profile Fallback Regression
+﻿# Issue #2319 Plan - Delete Active Profile Fallback Regression
 
 ## Scope
 

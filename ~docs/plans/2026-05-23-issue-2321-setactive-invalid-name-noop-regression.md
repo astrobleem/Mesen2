@@ -1,4 +1,4 @@
-# Issue #2321 Plan - SetActive Invalid Name No-Op Regression
+﻿# Issue #2321 Plan - SetActive Invalid Name No-Op Regression
 
 ## Scope
 
