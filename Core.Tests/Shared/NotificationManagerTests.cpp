@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Shared/NotificationManager.h"
 
 class TestNotificationListener : public INotificationListener {
@@ -57,5 +57,22 @@ TEST(NotificationManagerTests, SendNotification_PrunesExpiredListenersForSubsequ
 	manager.SendNotification(ConsoleNotificationType::GamePaused, nullptr);
 
 	EXPECT_EQ(liveListener->NotificationCount, 2);
+	EXPECT_TRUE(liveListener->LastType == ConsoleNotificationType::GamePaused);
+}
+
+TEST(NotificationManagerTests, RegisterAfterExpiredChurn_DoesNotDuplicateLiveListener) {
+	NotificationManager manager;
+	auto liveListener = std::make_shared<TestNotificationListener>();
+	manager.RegisterNotificationListener(liveListener);
+
+	for (int i = 0; i < 16; i++) {
+		auto expiredListener = std::make_shared<TestNotificationListener>();
+		manager.RegisterNotificationListener(expiredListener);
+	}
+
+	manager.RegisterNotificationListener(liveListener);
+	manager.SendNotification(ConsoleNotificationType::GamePaused, nullptr);
+
+	EXPECT_EQ(liveListener->NotificationCount, 1);
 	EXPECT_TRUE(liveListener->LastType == ConsoleNotificationType::GamePaused);
 }

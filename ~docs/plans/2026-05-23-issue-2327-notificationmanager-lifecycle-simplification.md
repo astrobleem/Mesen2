@@ -1,4 +1,4 @@
-# Issue #2327 Plan - NotificationManager Lifecycle Simplification
+﻿# Issue #2327 Plan - NotificationManager Lifecycle Simplification
 
 ## Scope
 

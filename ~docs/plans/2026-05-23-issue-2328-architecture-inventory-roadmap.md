@@ -1,4 +1,4 @@
-# Issue #2328 Plan - Architecture Inventory and Phased Simplification Roadmap
+﻿# Issue #2328 Plan - Architecture Inventory and Phased Simplification Roadmap
 
 ## Scope
 

@@ -1,28 +1,31 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Shared/NotificationManager.h"
 
 void NotificationManager::RegisterNotificationListener(shared_ptr<INotificationListener> notificationListener) {
 	auto lock = _lock.AcquireSafe();
+	bool isAlreadyRegistered = false;
 
-	// Cleanup expired listeners while lock is held to avoid lock re-entry in hot registration paths.
-	std::erase_if(_listeners, [](const weak_ptr<INotificationListener>& ptr) { return ptr.expired(); });
-
-	for (const weak_ptr<INotificationListener>& listener : _listeners) {
-		shared_ptr<INotificationListener> existing = listener.lock();
-		if (existing && existing == notificationListener) {
-			// This listener is already registered, do nothing
-			return;
+	// Prune expired listeners and detect duplicates in a single pass.
+	auto writeIt = _listeners.begin();
+	for (auto readIt = _listeners.begin(); readIt != _listeners.end(); readIt++) {
+		shared_ptr<INotificationListener> existing = readIt->lock();
+		if (!existing) {
+			continue;
 		}
+
+		*writeIt = *readIt;
+		writeIt++;
+		if (existing == notificationListener) {
+			isAlreadyRegistered = true;
+		}
+	}
+	_listeners.erase(writeIt, _listeners.end());
+
+	if (isAlreadyRegistered) {
+		return;
 	}
 
 	_listeners.push_back(notificationListener);
-}
-
-void NotificationManager::CleanupNotificationListeners() {
-	auto lock = _lock.AcquireSafe();
-
-	// Remove expired listeners
-	std::erase_if(_listeners, [](const weak_ptr<INotificationListener>& ptr) { return ptr.expired(); });
 }
 
 void NotificationManager::SendNotification(ConsoleNotificationType type, void* parameter) {

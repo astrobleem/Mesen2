@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 // MetadataRecordingBench.cpp
 // Benchmarks for CDL and Pansy metadata recording overhead
 // Focus: realistic CDL byte-OR patterns, enabled vs disabled, and combined pipeline
@@ -13,6 +13,7 @@
 #include <string_view>
 #include <string>
 #include <unordered_map>
+#include "Shared/NotificationManager.h"
 
 // =============================================================================
 // Realistic CDL Recording Benchmarks
@@ -280,6 +281,70 @@ static void BM_Notification_NewIterateUnderLock(benchmark::State& state) {
 	state.SetItemsProcessed(state.iterations() * notificationsPerFrame * listenerCount);
 }
 BENCHMARK(BM_Notification_NewIterateUnderLock);
+
+class BenchNotificationListener final : public INotificationListener {
+public:
+	uint32_t Count = 0;
+
+	void ProcessNotification(ConsoleNotificationType type, void* parameter) override {
+		benchmark::DoNotOptimize(type);
+		benchmark::DoNotOptimize(parameter);
+		Count++;
+	}
+};
+
+static void RegisterNotificationListeners(NotificationManager& manager, std::vector<std::shared_ptr<BenchNotificationListener>>& listeners, size_t listenerCount) {
+	listeners.reserve(listenerCount);
+	for (size_t i = 0; i < listenerCount; i++) {
+		auto listener = std::make_shared<BenchNotificationListener>();
+		manager.RegisterNotificationListener(listener);
+		listeners.push_back(listener);
+	}
+}
+
+static void BM_NotificationManager_Send_8Listeners(benchmark::State& state) {
+	NotificationManager manager;
+	std::vector<std::shared_ptr<BenchNotificationListener>> listeners;
+	RegisterNotificationListeners(manager, listeners, 8);
+
+	for (auto _ : state) {
+		manager.SendNotification(ConsoleNotificationType::GamePaused, nullptr);
+	}
+
+	state.SetItemsProcessed(state.iterations() * 8);
+}
+BENCHMARK(BM_NotificationManager_Send_8Listeners);
+
+static void BM_NotificationManager_Send_64Listeners(benchmark::State& state) {
+	NotificationManager manager;
+	std::vector<std::shared_ptr<BenchNotificationListener>> listeners;
+	RegisterNotificationListeners(manager, listeners, 64);
+
+	for (auto _ : state) {
+		manager.SendNotification(ConsoleNotificationType::GameResumed, nullptr);
+	}
+
+	state.SetItemsProcessed(state.iterations() * 64);
+}
+BENCHMARK(BM_NotificationManager_Send_64Listeners);
+
+static void BM_NotificationManager_Send_WithExpiredChurn(benchmark::State& state) {
+	NotificationManager manager;
+	std::vector<std::shared_ptr<BenchNotificationListener>> listeners;
+	RegisterNotificationListeners(manager, listeners, 8);
+
+	for (int i = 0; i < 64; i++) {
+		auto expiredListener = std::make_shared<BenchNotificationListener>();
+		manager.RegisterNotificationListener(expiredListener);
+	}
+
+	for (auto _ : state) {
+		manager.SendNotification(ConsoleNotificationType::GameLoaded, nullptr);
+	}
+
+	state.SetItemsProcessed(state.iterations() * 8);
+}
+BENCHMARK(BM_NotificationManager_Send_WithExpiredChurn);
 
 // =============================================================================
 // MessageManager Single-Lookup Benchmarks

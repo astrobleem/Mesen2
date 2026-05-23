@@ -1,4 +1,4 @@
-# Epic 25 Architecture Simplification and Redundancy Reduction
+﻿# Epic 25 Architecture Simplification and Redundancy Reduction
 
 ## Goal
 

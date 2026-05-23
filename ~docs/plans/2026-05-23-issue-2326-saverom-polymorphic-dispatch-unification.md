@@ -1,4 +1,4 @@
-# Issue #2326 Plan - SaveRom Polymorphic Dispatch Unification
+﻿# Issue #2326 Plan - SaveRom Polymorphic Dispatch Unification
 
 ## Scope
 

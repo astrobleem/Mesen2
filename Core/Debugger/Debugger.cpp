@@ -70,6 +70,33 @@
 // Row ID counter for trace log entries (global across all trace loggers)
 uint64_t ITraceLogger::NextRowId = 0;
 
+namespace {
+
+[[nodiscard]] int32_t GetPauseScanlineForCpu(CpuType cpuType) {
+	static constexpr std::array<std::pair<CpuType, int32_t>, 10> kPauseScanlineByCpu = {{
+		{CpuType::Snes, 240},
+		{CpuType::Gameboy, 144},
+		{CpuType::Nes, 241},
+		{CpuType::Pce, 243},
+		{CpuType::Sms, 240},
+		{CpuType::Gba, 160},
+		{CpuType::Ws, 145},
+		{CpuType::Lynx, 102},
+		{CpuType::Atari2600, 262},
+		{CpuType::ChannelF, 64}
+	}};
+
+	for (const auto& entry : kPauseScanlineByCpu) {
+		if (entry.first == cpuType) {
+			return entry.second;
+		}
+	}
+
+	return 0;
+}
+
+} // namespace
+
 // Initialize debugger with all debugging subsystems
 Debugger::Debugger(Emulator* emu, IConsole* console) {
 	_executionStopped = true;  // Start paused for debugger attachment
@@ -946,37 +973,9 @@ void Debugger::ClearPendingBreakExceptions() {
 
 void Debugger::PauseOnNextFrame() {
 	// Use BreakSource::PpuStep to prevent "Run single frame" from triggering the "bring to front on pause" feature
-	switch (_mainCpuType) {
-		case CpuType::Snes:
-			Step(CpuType::Snes, 240, StepType::SpecificScanline, BreakSource::PpuStep);
-			break;
-		case CpuType::Gameboy:
-			Step(CpuType::Gameboy, 144, StepType::SpecificScanline, BreakSource::PpuStep);
-			break;
-		case CpuType::Nes:
-			Step(CpuType::Nes, 241, StepType::SpecificScanline, BreakSource::PpuStep);
-			break;
-		case CpuType::Pce:
-			Step(CpuType::Pce, 243, StepType::SpecificScanline, BreakSource::PpuStep);
-			break;
-		case CpuType::Sms:
-			Step(CpuType::Sms, 240, StepType::SpecificScanline, BreakSource::PpuStep);
-			break;
-		case CpuType::Gba:
-			Step(CpuType::Gba, 160, StepType::SpecificScanline, BreakSource::PpuStep);
-			break;
-		case CpuType::Ws:
-			Step(CpuType::Ws, 145, StepType::SpecificScanline, BreakSource::PpuStep);
-			break;
-		case CpuType::Lynx:
-			Step(CpuType::Lynx, 102, StepType::SpecificScanline, BreakSource::PpuStep);
-			break;
-		case CpuType::Atari2600:
-			Step(CpuType::Atari2600, 262, StepType::SpecificScanline, BreakSource::PpuStep);
-			break;
-		case CpuType::ChannelF:
-			Step(CpuType::ChannelF, 64, StepType::SpecificScanline, BreakSource::PpuStep);
-			break;
+	int32_t scanline = GetPauseScanlineForCpu(_mainCpuType);
+	if (scanline > 0) {
+		Step(_mainCpuType, scanline, StepType::SpecificScanline, BreakSource::PpuStep);
 	}
 }
 

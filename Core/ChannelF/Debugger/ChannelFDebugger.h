@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "pch.h"
 #include "Debugger/DebugTypes.h"
 #include "Debugger/IDebugger.h"

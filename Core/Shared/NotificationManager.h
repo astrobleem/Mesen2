@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "pch.h"
 #include "Shared/Interfaces/INotificationListener.h"
 #include "Utilities/SimpleLock.h"
@@ -43,9 +43,6 @@ private:
 	SimpleLock _lock;                                   ///< Thread synchronization lock
 	vector<weak_ptr<INotificationListener>> _listeners; ///< Registered listeners (weak refs)
 	vector<shared_ptr<INotificationListener>> _snapshot; ///< Reusable snapshot buffer (avoids heap alloc per notification)
-
-	/// <summary>Remove dead listener references (expired weak_ptr)</summary>
-	void CleanupNotificationListeners();
 
 public:
 	/// <summary>
