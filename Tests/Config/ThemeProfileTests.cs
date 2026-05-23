@@ -1,4 +1,5 @@
 ﻿using Nexen.Config;
+using System.Text.Json;
 using Xunit;
 
 namespace Nexen.Tests.Config;
@@ -268,5 +269,48 @@ public sealed class ThemeProfileTests {
 		Assert.Equal(2, tokens.Count);
 		Assert.Equal("UiFontSize", tokens[0]);
 		Assert.Equal("StartupTextColor", tokens[1]);
+	}
+
+	[Fact]
+	public void ThemeProfile_ImportExportRoundtrip_PreservesComboDataGridAndListTreeSemanticTokens_AfterSaveCurrentCycle() {
+		PreferencesConfig config = new PreferencesConfig();
+		ThemeProfile? sourceProfile = config.GetThemeProfileByName("Default Dark");
+		Assert.NotNull(sourceProfile);
+
+		sourceProfile!.ComboBoxDropDownBackgroundColor = "#ff112233";
+		sourceProfile.ComboBoxDropDownBorderColor = "#ff223344";
+		sourceProfile.DataGridHeaderBackgroundColor = "#ff334455";
+		sourceProfile.DataGridHeaderForegroundColor = "#ff445566";
+		sourceProfile.DataGridSelectedRowForegroundColor = "#ff556677";
+		sourceProfile.ListBoxItemHoverBackgroundColor = "#66778899";
+		sourceProfile.ListBoxItemSelectedBackgroundColor = "#ff778899";
+		sourceProfile.ListBoxItemSelectedForegroundColor = "#ff8899aa";
+		sourceProfile.TreeViewItemHoverBackgroundColor = "#6699aabb";
+		sourceProfile.TreeViewItemSelectedBackgroundColor = "#ffaabbcc";
+		sourceProfile.TreeViewItemSelectedForegroundColor = "#ffbbccee";
+
+		ThemeProfileFile exportFile = new ThemeProfileFile { Profile = sourceProfile };
+		string json = JsonSerializer.Serialize(exportFile, typeof(ThemeProfileFile), NexenSerializerContext.Default);
+		ThemeProfileFile? importFile = (ThemeProfileFile?)JsonSerializer.Deserialize(json, typeof(ThemeProfileFile), NexenSerializerContext.Default);
+
+		Assert.NotNull(importFile);
+		Assert.True(importFile!.IsValid());
+		importFile.Profile.Name = "Roundtrip Semantic Token Profile";
+		config.UpsertThemeProfile(importFile.Profile, false);
+		config.SaveCurrentToProfile(importFile.Profile.Name);
+
+		ThemeProfile? roundTripped = config.GetThemeProfileByName(importFile.Profile.Name);
+		Assert.NotNull(roundTripped);
+		Assert.Equal("#ff112233", roundTripped!.ComboBoxDropDownBackgroundColor);
+		Assert.Equal("#ff223344", roundTripped.ComboBoxDropDownBorderColor);
+		Assert.Equal("#ff334455", roundTripped.DataGridHeaderBackgroundColor);
+		Assert.Equal("#ff445566", roundTripped.DataGridHeaderForegroundColor);
+		Assert.Equal("#ff556677", roundTripped.DataGridSelectedRowForegroundColor);
+		Assert.Equal("#66778899", roundTripped.ListBoxItemHoverBackgroundColor);
+		Assert.Equal("#ff778899", roundTripped.ListBoxItemSelectedBackgroundColor);
+		Assert.Equal("#ff8899aa", roundTripped.ListBoxItemSelectedForegroundColor);
+		Assert.Equal("#6699aabb", roundTripped.TreeViewItemHoverBackgroundColor);
+		Assert.Equal("#ffaabbcc", roundTripped.TreeViewItemSelectedBackgroundColor);
+		Assert.Equal("#ffbbccee", roundTripped.TreeViewItemSelectedForegroundColor);
 	}
 }
