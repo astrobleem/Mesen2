@@ -1,4 +1,4 @@
-# Issue #2318 Plan - Theme Profile Rename/Unique Trim Conflict Regression
+﻿# Issue #2318 Plan - Theme Profile Rename/Unique Trim Conflict Regression
 
 ## Scope
 

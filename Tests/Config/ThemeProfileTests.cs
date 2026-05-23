@@ -287,6 +287,17 @@ public sealed class ThemeProfileTests {
 	}
 
 	[Fact]
+	public void PreferencesConfig_SetActiveThemeProfile_InvalidName_IsNoOp() {
+		PreferencesConfig config = new PreferencesConfig();
+		config.SetActiveThemeProfile("Default Light");
+
+		config.SetActiveThemeProfile("Not A Real Profile");
+
+		Assert.Equal("Default Light", config.ActiveThemeProfileName);
+		Assert.Equal(NexenTheme.Light, config.Theme);
+	}
+
+	[Fact]
 	public void PreferencesConfig_GenerateUniqueThemeProfileName_ReturnsCopyNameOnConflict() {
 		PreferencesConfig config = new PreferencesConfig();
 
@@ -344,6 +355,45 @@ public sealed class ThemeProfileTests {
 		Assert.Equal("#ff1d130d", resetProfile!.StartupWindowBackgroundColor);
 		Assert.Equal("#ffd47a22", resetProfile.StartupPrimaryActionColor);
 		Assert.Equal(11, resetProfile.UiFontSize);
+	}
+
+	[Fact]
+	public void PreferencesConfig_DeleteThemeProfile_WhenSingleProfileRemaining_ReturnsFalse() {
+		PreferencesConfig config = new PreferencesConfig();
+		Assert.True(config.DeleteThemeProfile("Default Light"));
+
+		bool deletedLast = config.DeleteThemeProfile("Default Dark");
+
+		Assert.False(deletedLast);
+		Assert.NotNull(config.GetThemeProfileByName("Default Dark"));
+	}
+
+	[Fact]
+	public void PreferencesConfig_DeleteThemeProfile_ActiveSemanticProfile_FallsBackAndPreservesFallbackSemanticTokens() {
+		PreferencesConfig config = new PreferencesConfig();
+		ThemeProfile? fallback = config.GetThemeProfileByName("Default Light");
+		Assert.NotNull(fallback);
+		fallback!.NavigationViewItemHoverBackgroundColor = "#66aabbcc";
+		fallback.NavigationViewItemSelectedBackgroundColor = "#ffbbccdd";
+		fallback.NavigationViewItemSelectedForegroundColor = "#ffccddee";
+		fallback.ListViewItemHoverBackgroundColor = "#66ddeeff";
+		fallback.ListViewItemSelectedBackgroundColor = "#ff112244";
+		fallback.ListViewItemSelectedForegroundColor = "#ff334466";
+
+		config.SetActiveThemeProfile("Default Dark");
+
+		bool deleted = config.DeleteThemeProfile("Default Dark");
+		ThemeProfile? remaining = config.GetThemeProfileByName("Default Light");
+
+		Assert.True(deleted);
+		Assert.Equal("Default Light", config.ActiveThemeProfileName);
+		Assert.NotNull(remaining);
+		Assert.Equal("#66aabbcc", remaining!.NavigationViewItemHoverBackgroundColor);
+		Assert.Equal("#ffbbccdd", remaining.NavigationViewItemSelectedBackgroundColor);
+		Assert.Equal("#ffccddee", remaining.NavigationViewItemSelectedForegroundColor);
+		Assert.Equal("#66ddeeff", remaining.ListViewItemHoverBackgroundColor);
+		Assert.Equal("#ff112244", remaining.ListViewItemSelectedBackgroundColor);
+		Assert.Equal("#ff334466", remaining.ListViewItemSelectedForegroundColor);
 	}
 
 	[Fact]

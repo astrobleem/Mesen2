@@ -1,4 +1,4 @@
-# Issue #2316 Plan - SaveCurrent Fallback Regression for NavigationView/ListView
+﻿# Issue #2316 Plan - SaveCurrent Fallback Regression for NavigationView/ListView
 
 ## Scope
 

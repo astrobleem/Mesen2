@@ -1,4 +1,4 @@
-# Issue #2317 Plan - ThemeProfile Validation Regression for NavigationView/ListView Semantic Colors
+﻿# Issue #2317 Plan - ThemeProfile Validation Regression for NavigationView/ListView Semantic Colors
 
 ## Scope
 
