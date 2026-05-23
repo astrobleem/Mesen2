@@ -36,6 +36,7 @@ class IDebugger;
 class ITraceLogger;
 class TraceLogFileSaver;
 class FrozenAddressManager;
+struct ProcessEventDispatchOutcome;
 
 struct TraceRow;
 struct BaseState;
@@ -158,6 +159,9 @@ private:
 	void ClearPendingBreakExceptions();
 
 	[[nodiscard]] bool IsBreakpointForbidden(BreakSource source, CpuType sourceCpu, MemoryOperationInfo* operation);
+	void HandleInputPolledEvent(CpuType requestedCpuType, CpuType routedCpuType, const ProcessEventDispatchOutcome& dispatchOutcome);
+	void HandleStartFrameEvent(CpuType routedCpuType, const ProcessEventDispatchOutcome& dispatchOutcome);
+	void HandleStateLoadedEvent();
 
 public:
 	Debugger(Emulator* emu, IConsole* console);

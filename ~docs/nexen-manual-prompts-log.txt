@@ -2866,8 +2866,14 @@ yes, do these three reccomended tasks and continue working on our architecture i
 
 Analyze the architecture of the Nexen application and make plans to simplify and streamline the architecture and reduce redundancy; use modern practices and standards; after identifying areas which need attention/rewrite/updates pick one and make epics and issues for the cleanup and then implement the changes; continue;
 
+yes, do these three reccomended tasks and continue working on our architecture improvement and simplification effort, continue;
 
+&&&&&&&&&&&&&&
+Analyze the architecture of the Nexen application and make plans to simplify and streamline the architecture and reduce redundancy; use modern practices and standards; after identifying areas which need attention/rewrite/updates pick one and make epics and issues for the cleanup and then implement the changes; continue;
 
+yes, do these three reccomended tasks and continue working on our architecture improvement and simplification effort, continue;
+&&&&&&&&&&&&&&&&&
+----- queue 4 times
 
 
 

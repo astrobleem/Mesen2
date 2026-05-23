@@ -823,7 +823,16 @@ void Debugger::ProcessEvent(EventType type, std::optional<CpuType> cpuTypeOpt) {
 	if (routedCpuType != evtCpuType) {
 		MessageManager::Log(std::format("[Debugger] Rerouting event={} from cpuType={} to mainCpuType={}", (int)type, (int)evtCpuType, (int)routedCpuType));
 	}
-	if (_emu->InternalGetDebugger() == this) {
+
+	ProcessEventDispatchContext dispatchContext = {};
+	dispatchContext.DebuggerOwnsInstance = _emu->InternalGetDebugger() == this;
+	dispatchContext.HasRoutedInputDebugger = HasCpuType(routedCpuType) && _debuggers[(int)routedCpuType].Debugger.get();
+	dispatchContext.HasMainInputDebugger = HasCpuType(_mainCpuType) && _debuggers[(int)_mainCpuType].Debugger.get();
+	dispatchContext.DebuggerBlocked = _emu->IsDebuggerBlocked();
+	dispatchContext.HasRoutedEventManager = GetEventManager(routedCpuType) != nullptr;
+
+	ProcessEventDispatchOutcome dispatchOutcome = ResolveProcessEventDispatchOutcome(type, routedCpuType, _mainCpuType, dispatchContext);
+	if (dispatchOutcome.ShouldDispatchScriptEvent) {
 		_scriptManager->ProcessEvent(type, routedCpuType);
 	} else {
 		MessageManager::Log(std::format("[Debugger] Skipping script event dispatch for non-owned debugger instance (event={}, cpuType={})", (int)type, (int)routedCpuType));
@@ -833,58 +842,67 @@ void Debugger::ProcessEvent(EventType type, std::optional<CpuType> cpuTypeOpt) {
 		default:
 			break;
 
-		case EventType::InputPolled: {
-			IDebugger* inputDebugger = nullptr;
-			if (HasCpuType(routedCpuType)) {
-				inputDebugger = _debuggers[(int)routedCpuType].Debugger.get();
-			}
-
-			bool hasMainInputDebugger = HasCpuType(_mainCpuType) && _debuggers[(int)_mainCpuType].Debugger.get();
-			if (ShouldFallbackToMainInputDebugger(inputDebugger != nullptr, hasMainInputDebugger)) {
-				inputDebugger = _debuggers[(int)_mainCpuType].Debugger.get();
-				if (inputDebugger) {
-					MessageManager::Log(std::format("[Debugger] Rerouting InputPolled from cpuType={} to mainCpuType={}", (int)evtCpuType, (int)_mainCpuType));
-				}
-			}
-
-			if (!inputDebugger) {
-				MessageManager::Log(std::format("[Debugger] Ignoring InputPolled for cpuType={} (no available debugger backend)", (int)evtCpuType));
-				break;
-			}
-
-			inputDebugger->ProcessInputOverrides(_inputOverrides);
+		case EventType::InputPolled:
+			HandleInputPolledEvent(evtCpuType, routedCpuType, dispatchOutcome);
 			break;
-		}
 
-		case EventType::StartFrame: {
-			if (!_emu->IsDebuggerBlocked()) {
-				_emu->GetNotificationManager()->SendNotification(ConsoleNotificationType::EventViewerRefresh, (void*)routedCpuType);
-			}
-			BaseEventManager* evtMgr = GetEventManager(routedCpuType);
-			if (evtMgr) {
-				evtMgr->ClearFrameEvents();
-			}
+		case EventType::StartFrame:
+			HandleStartFrameEvent(routedCpuType, dispatchOutcome);
 			break;
-		}
 
 		case EventType::Reset:
 			Reset();
 			break;
 
 		case EventType::StateLoaded:
-			_memoryAccessCounter->ResetCounts();
-
-			// Update the state for each cpu/debugger
-			for (CpuType cpuType : _cpuTypes) {
-				uint32_t pc = _debuggers[(int)cpuType].Debugger->GetProgramCounter(false);
-				_debuggers[(int)cpuType].Debugger->SetProgramCounter(pc, true);
-
-				CallstackManager* callstackManager = _debuggers[(int)cpuType].Debugger->GetCallstackManager();
-				if (callstackManager) {
-					callstackManager->Clear();
-				}
-			}
+			HandleStateLoadedEvent();
 			break;
+	}
+}
+
+void Debugger::HandleInputPolledEvent(CpuType requestedCpuType, CpuType routedCpuType, const ProcessEventDispatchOutcome& dispatchOutcome) {
+	if (!dispatchOutcome.InputDebuggerCpuType.has_value()) {
+		MessageManager::Log(std::format("[Debugger] Ignoring InputPolled for cpuType={} (no available debugger backend)", (int)requestedCpuType));
+		return;
+	}
+
+	CpuType inputCpuType = dispatchOutcome.InputDebuggerCpuType.value();
+	if (inputCpuType != routedCpuType) {
+		MessageManager::Log(std::format("[Debugger] Rerouting InputPolled from cpuType={} to mainCpuType={}", (int)requestedCpuType, (int)inputCpuType));
+	}
+
+	IDebugger* inputDebugger = _debuggers[(int)inputCpuType].Debugger.get();
+	if (!inputDebugger) {
+		MessageManager::Log(std::format("[Debugger] Ignoring InputPolled for cpuType={} (resolved backend missing)", (int)requestedCpuType));
+		return;
+	}
+
+	inputDebugger->ProcessInputOverrides(_inputOverrides);
+}
+
+void Debugger::HandleStartFrameEvent(CpuType routedCpuType, const ProcessEventDispatchOutcome& dispatchOutcome) {
+	if (dispatchOutcome.ShouldSendEventViewerRefresh) {
+		_emu->GetNotificationManager()->SendNotification(ConsoleNotificationType::EventViewerRefresh, (void*)routedCpuType);
+	}
+
+	if (dispatchOutcome.ShouldClearFrameEvents) {
+		if (BaseEventManager* evtMgr = GetEventManager(routedCpuType)) {
+			evtMgr->ClearFrameEvents();
+		}
+	}
+}
+
+void Debugger::HandleStateLoadedEvent() {
+	_memoryAccessCounter->ResetCounts();
+
+	for (CpuType cpuType : _cpuTypes) {
+		uint32_t pc = _debuggers[(int)cpuType].Debugger->GetProgramCounter(false);
+		_debuggers[(int)cpuType].Debugger->SetProgramCounter(pc, true);
+
+		CallstackManager* callstackManager = _debuggers[(int)cpuType].Debugger->GetCallstackManager();
+		if (callstackManager) {
+			callstackManager->Clear();
+		}
 	}
 }
 

@@ -5,6 +5,7 @@
 #include <optional>
 #include <utility>
 #include "Shared/CpuType.h"
+#include "Shared/EventType.h"
 #include "Shared/SettingTypes.h"
 #include "Debugger/DebugTypes.h"
 
@@ -164,6 +165,56 @@ enum class PpuStateBackend : uint8_t {
 
 [[nodiscard]] inline bool ShouldFallbackToMainInputDebugger(bool hasRoutedInputDebugger, bool hasMainInputDebugger) {
 	return !hasRoutedInputDebugger && hasMainInputDebugger;
+}
+
+struct ProcessEventDispatchContext {
+	bool DebuggerOwnsInstance = false;
+	bool HasRoutedInputDebugger = false;
+	bool HasMainInputDebugger = false;
+	bool DebuggerBlocked = false;
+	bool HasRoutedEventManager = false;
+};
+
+struct ProcessEventDispatchOutcome {
+	bool ShouldDispatchScriptEvent = false;
+	std::optional<CpuType> InputDebuggerCpuType = std::nullopt;
+	bool ShouldSendEventViewerRefresh = false;
+	bool ShouldClearFrameEvents = false;
+};
+
+[[nodiscard]] inline bool ShouldDispatchScriptEvent(bool debuggerOwnsInstance) {
+	return debuggerOwnsInstance;
+}
+
+[[nodiscard]] inline std::optional<CpuType> ResolveInputDebuggerCpuType(CpuType routedCpuType, CpuType mainCpuType, bool hasRoutedInputDebugger, bool hasMainInputDebugger) {
+	if (hasRoutedInputDebugger) {
+		return routedCpuType;
+	}
+
+	if (ShouldFallbackToMainInputDebugger(hasRoutedInputDebugger, hasMainInputDebugger)) {
+		return mainCpuType;
+	}
+
+	return std::nullopt;
+}
+
+[[nodiscard]] inline ProcessEventDispatchOutcome ResolveProcessEventDispatchOutcome(EventType type, CpuType routedCpuType, CpuType mainCpuType, const ProcessEventDispatchContext& context) {
+	ProcessEventDispatchOutcome outcome = {};
+	outcome.ShouldDispatchScriptEvent = ShouldDispatchScriptEvent(context.DebuggerOwnsInstance);
+
+	switch (type) {
+		case EventType::InputPolled:
+			outcome.InputDebuggerCpuType = ResolveInputDebuggerCpuType(routedCpuType, mainCpuType, context.HasRoutedInputDebugger, context.HasMainInputDebugger);
+			break;
+		case EventType::StartFrame:
+			outcome.ShouldSendEventViewerRefresh = !context.DebuggerBlocked;
+			outcome.ShouldClearFrameEvents = context.HasRoutedEventManager;
+			break;
+		default:
+			break;
+	}
+
+	return outcome;
 }
 
 [[nodiscard]] inline int32_t GetPauseScanlineForCpu(CpuType cpuType) {

@@ -125,3 +125,50 @@ TEST(DebuggerDispatchUtilsTests, InputDebuggerFallbackDecisionRequiresMissingRou
 	EXPECT_FALSE(ShouldFallbackToMainInputDebugger(true, true));
 	EXPECT_FALSE(ShouldFallbackToMainInputDebugger(false, false));
 }
+
+TEST(DebuggerDispatchUtilsTests, ScriptDispatchRequiresDebuggerOwnership) {
+	EXPECT_TRUE(ShouldDispatchScriptEvent(true));
+	EXPECT_FALSE(ShouldDispatchScriptEvent(false));
+}
+
+TEST(DebuggerDispatchUtilsTests, InputDebuggerCpuResolutionPrefersRoutedThenMainThenNone) {
+	EXPECT_EQ(ResolveInputDebuggerCpuType(CpuType::Nes, CpuType::Snes, true, true), CpuType::Nes);
+	EXPECT_EQ(ResolveInputDebuggerCpuType(CpuType::Nes, CpuType::Snes, false, true), CpuType::Snes);
+	EXPECT_FALSE(ResolveInputDebuggerCpuType(CpuType::Nes, CpuType::Snes, false, false).has_value());
+}
+
+TEST(DebuggerDispatchUtilsTests, ProcessEventDispatchOutcomeComposesInputFallbackAndScriptOwnership) {
+	ProcessEventDispatchContext context = {};
+	context.DebuggerOwnsInstance = false;
+	context.HasRoutedInputDebugger = false;
+	context.HasMainInputDebugger = true;
+
+	ProcessEventDispatchOutcome outcome = ResolveProcessEventDispatchOutcome(EventType::InputPolled, CpuType::Nes, CpuType::Snes, context);
+	EXPECT_FALSE(outcome.ShouldDispatchScriptEvent);
+	ASSERT_TRUE(outcome.InputDebuggerCpuType.has_value());
+	EXPECT_EQ(outcome.InputDebuggerCpuType.value(), CpuType::Snes);
+	EXPECT_FALSE(outcome.ShouldSendEventViewerRefresh);
+	EXPECT_FALSE(outcome.ShouldClearFrameEvents);
+}
+
+TEST(DebuggerDispatchUtilsTests, ProcessEventDispatchOutcomeComposesStartFrameRefreshAndEventManagerFlags) {
+	ProcessEventDispatchContext activeContext = {};
+	activeContext.DebuggerOwnsInstance = true;
+	activeContext.DebuggerBlocked = false;
+	activeContext.HasRoutedEventManager = true;
+
+	ProcessEventDispatchOutcome activeOutcome = ResolveProcessEventDispatchOutcome(EventType::StartFrame, CpuType::Nes, CpuType::Snes, activeContext);
+	EXPECT_TRUE(activeOutcome.ShouldDispatchScriptEvent);
+	EXPECT_TRUE(activeOutcome.ShouldSendEventViewerRefresh);
+	EXPECT_TRUE(activeOutcome.ShouldClearFrameEvents);
+
+	ProcessEventDispatchContext blockedContext = {};
+	blockedContext.DebuggerOwnsInstance = true;
+	blockedContext.DebuggerBlocked = true;
+	blockedContext.HasRoutedEventManager = false;
+
+	ProcessEventDispatchOutcome blockedOutcome = ResolveProcessEventDispatchOutcome(EventType::StartFrame, CpuType::Nes, CpuType::Snes, blockedContext);
+	EXPECT_TRUE(blockedOutcome.ShouldDispatchScriptEvent);
+	EXPECT_FALSE(blockedOutcome.ShouldSendEventViewerRefresh);
+	EXPECT_FALSE(blockedOutcome.ShouldClearFrameEvents);
+}
