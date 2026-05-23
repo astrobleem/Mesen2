@@ -1,4 +1,4 @@
-# Issue #2351 BreakSource Config Mapping in Shared Dispatch Utils (2026-05-23)
+﻿# Issue #2351 BreakSource Config Mapping in Shared Dispatch Utils (2026-05-23)
 
 ## Scope
 

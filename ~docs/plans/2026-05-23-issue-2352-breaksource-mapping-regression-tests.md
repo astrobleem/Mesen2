@@ -1,4 +1,4 @@
-# Issue #2352 BreakSource Mapping Regression Tests (2026-05-23)
+﻿# Issue #2352 BreakSource Mapping Regression Tests (2026-05-23)
 
 ## Scope
 

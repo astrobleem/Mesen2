@@ -86,3 +86,26 @@ TEST(DebuggerDispatchUtilsTests, BreakSourceMappingDefaultsToTrueForUnmappedSour
 	EXPECT_TRUE(IsBreakOptionEnabledForSource(BreakSource::CpuStep, cfg));
 	EXPECT_TRUE(IsBreakOptionEnabledForSource(BreakSource::BreakOnBrk, cfg));
 }
+
+TEST(DebuggerDispatchUtilsTests, PpuBackendMappingRoutesGroupedCpuTypesToExpectedBackends) {
+	EXPECT_EQ(GetPpuStateBackendForCpu(CpuType::Snes), PpuStateBackend::Snes);
+	EXPECT_EQ(GetPpuStateBackendForCpu(CpuType::Spc), PpuStateBackend::Snes);
+	EXPECT_EQ(GetPpuStateBackendForCpu(CpuType::NecDsp), PpuStateBackend::Snes);
+	EXPECT_EQ(GetPpuStateBackendForCpu(CpuType::Sa1), PpuStateBackend::Snes);
+	EXPECT_EQ(GetPpuStateBackendForCpu(CpuType::Gsu), PpuStateBackend::Snes);
+	EXPECT_EQ(GetPpuStateBackendForCpu(CpuType::Cx4), PpuStateBackend::Snes);
+	EXPECT_EQ(GetPpuStateBackendForCpu(CpuType::St018), PpuStateBackend::Snes);
+	EXPECT_EQ(GetPpuStateBackendForCpu(CpuType::Gameboy), PpuStateBackend::Gameboy);
+	EXPECT_EQ(GetPpuStateBackendForCpu(CpuType::Nes), PpuStateBackend::Nes);
+	EXPECT_EQ(GetPpuStateBackendForCpu(CpuType::Pce), PpuStateBackend::Pce);
+	EXPECT_EQ(GetPpuStateBackendForCpu(CpuType::Sms), PpuStateBackend::Sms);
+	EXPECT_EQ(GetPpuStateBackendForCpu(CpuType::Gba), PpuStateBackend::Gba);
+	EXPECT_EQ(GetPpuStateBackendForCpu(CpuType::Ws), PpuStateBackend::Ws);
+	EXPECT_EQ(GetPpuStateBackendForCpu(CpuType::Lynx), PpuStateBackend::Lynx);
+	EXPECT_EQ(GetPpuStateBackendForCpu(CpuType::Atari2600), PpuStateBackend::Atari2600);
+	EXPECT_EQ(GetPpuStateBackendForCpu(CpuType::ChannelF), PpuStateBackend::ChannelF);
+}
+
+TEST(DebuggerDispatchUtilsTests, PpuBackendMappingReturnsNoneForUnsupportedCpuTypes) {
+	EXPECT_EQ(GetPpuStateBackendForCpu(CpuType::Genesis), PpuStateBackend::None);
+}

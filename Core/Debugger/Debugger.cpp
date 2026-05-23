@@ -1098,43 +1098,38 @@ BaseState& Debugger::GetCpuStateRef(CpuType cpuType) {
 
 template<typename TAction>
 void Debugger::ProcessPpuStateAction(BaseState& state, CpuType cpuType, TAction&& action) {
-	switch (cpuType) {
-		case CpuType::Snes:
-		case CpuType::Spc:
-		case CpuType::NecDsp:
-		case CpuType::Sa1:
-		case CpuType::Gsu:
-		case CpuType::Cx4:
-		case CpuType::St018:
+	switch (GetPpuStateBackendForCpu(cpuType)) {
+		case PpuStateBackend::Snes:
 			action(GetDebugger<CpuType::Snes, SnesDebugger>(), state);
 			break;
-		case CpuType::Gameboy:
+		case PpuStateBackend::Gameboy:
 			action(GetDebugger<CpuType::Gameboy, GbDebugger>(), state);
 			break;
-		case CpuType::Nes:
+		case PpuStateBackend::Nes:
 			action(GetDebugger<CpuType::Nes, NesDebugger>(), state);
 			break;
-		case CpuType::Pce:
+		case PpuStateBackend::Pce:
 			action(GetDebugger<CpuType::Pce, PceDebugger>(), state);
 			break;
-		case CpuType::Sms:
+		case PpuStateBackend::Sms:
 			action(GetDebugger<CpuType::Sms, SmsDebugger>(), state);
 			break;
-		case CpuType::Gba:
+		case PpuStateBackend::Gba:
 			action(GetDebugger<CpuType::Gba, GbaDebugger>(), state);
 			break;
-		case CpuType::Ws:
+		case PpuStateBackend::Ws:
 			action(GetDebugger<CpuType::Ws, WsDebugger>(), state);
 			break;
-		case CpuType::Lynx:
+		case PpuStateBackend::Lynx:
 			action(GetDebugger<CpuType::Lynx, LynxDebugger>(), state);
 			break;
-		case CpuType::Atari2600:
+		case PpuStateBackend::Atari2600:
 			action(GetDebugger<CpuType::Atari2600, Atari2600Debugger>(), state);
 			break;
-		case CpuType::ChannelF:
+		case PpuStateBackend::ChannelF:
 			action(GetDebugger<CpuType::ChannelF, ChannelFDebugger>(), state);
 			break;
+		case PpuStateBackend::None:
 		default:
 			break;
 	}

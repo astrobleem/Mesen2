@@ -1,4 +1,4 @@
-# Issue #2353 PPU State Routing Deduplication (2026-05-23)
+﻿# Issue #2353 PPU State Routing Deduplication (2026-05-23)
 
 ## Scope
 

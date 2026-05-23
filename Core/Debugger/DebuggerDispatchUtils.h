@@ -28,6 +28,20 @@ enum class CpuStateLayout : uint8_t {
 	Unknown
 };
 
+enum class PpuStateBackend : uint8_t {
+	Snes,
+	Gameboy,
+	Nes,
+	Pce,
+	Sms,
+	Gba,
+	Ws,
+	Lynx,
+	Atari2600,
+	ChannelF,
+	None
+};
+
 [[nodiscard]] inline CpuStateLayout GetCpuStateLayout(CpuType cpuType) {
 	switch (cpuType) {
 		case CpuType::Snes:
@@ -107,6 +121,41 @@ enum class CpuStateLayout : uint8_t {
 	}
 
 	return std::nullopt;
+}
+
+[[nodiscard]] inline PpuStateBackend GetPpuStateBackendForCpu(CpuType cpuType) {
+	switch (cpuType) {
+		case CpuType::Snes:
+		case CpuType::Spc:
+		case CpuType::NecDsp:
+		case CpuType::Sa1:
+		case CpuType::Gsu:
+		case CpuType::Cx4:
+		case CpuType::St018:
+			return PpuStateBackend::Snes;
+		case CpuType::Gameboy:
+			return PpuStateBackend::Gameboy;
+		case CpuType::Nes:
+			return PpuStateBackend::Nes;
+		case CpuType::Pce:
+			return PpuStateBackend::Pce;
+		case CpuType::Sms:
+			return PpuStateBackend::Sms;
+		case CpuType::Gba:
+			return PpuStateBackend::Gba;
+		case CpuType::Ws:
+			return PpuStateBackend::Ws;
+		case CpuType::Lynx:
+			return PpuStateBackend::Lynx;
+		case CpuType::Atari2600:
+			return PpuStateBackend::Atari2600;
+		case CpuType::ChannelF:
+			return PpuStateBackend::ChannelF;
+		default:
+			break;
+	}
+
+	return PpuStateBackend::None;
 }
 
 [[nodiscard]] inline int32_t GetPauseScanlineForCpu(CpuType cpuType) {
