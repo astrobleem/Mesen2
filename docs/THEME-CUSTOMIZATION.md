@@ -120,6 +120,17 @@ Theme profiles also cover sidebar/tab chrome tokens for settings and docked tool
 - Dock tab active background
 - Dock tab active border
 
+Theme profiles also cover semantic checkbox/radio/slider interaction tokens:
+
+- Checkbox hover border
+- Checkbox pressed background
+- Checkbox pressed border
+- Radio button hover border
+- Radio button pressed background
+- Radio button pressed border
+- Slider hover track color
+- Slider pressed track color
+
 These tokens are centralized in `ThemeProfile` and applied through `NexenThemeManager` resource overrides so they are not duplicated as ad-hoc values across the UI runtime path.
 
 ## Settings UI Coverage
@@ -130,6 +141,7 @@ The Preferences theme section includes profile selection and import/export plus 
 - Menu background, menu highlight, accent color
 - Control hover/pressed backgrounds and control hover/pressed borders
 - Sidebar border, dock tab strip background, dock tab hover background, dock tab active background, dock tab active border
+- Checkbox hover/pressed border/background, radio hover/pressed border/background, slider hover/pressed track
 
 This gives a settings-surface customization path while preserving JSON import/export for advanced profile editing and sharing.
 

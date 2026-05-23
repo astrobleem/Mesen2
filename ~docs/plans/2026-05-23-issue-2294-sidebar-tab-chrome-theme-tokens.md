@@ -1,4 +1,4 @@
-# Issue #2294 Sidebar and Tab Chrome Theme Tokens
+﻿# Issue #2294 Sidebar and Tab Chrome Theme Tokens
 
 ## Scope
 

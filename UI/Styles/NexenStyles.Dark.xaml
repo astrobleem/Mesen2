@@ -111,8 +111,25 @@
 					<Color x:Key="SystemControlForegroundBaseHighBrush">#D0FFFFFF</Color>
 
 					<!-- Checkboxes -->
+					<Color x:Key="CheckBoxCheckBackgroundStrokeUncheckedPointerOver">#e09a52</Color>
+					<Color x:Key="CheckBoxCheckBackgroundStrokeCheckedPointerOver">#e09a52</Color>
 					<Color x:Key="CheckBoxCheckGlyphForegroundChecked">#C0FFFFFF</Color>
 					<Color x:Key="CheckBoxBorderBrushCheckedPointerOver">#C0FFFFFF</Color>
+					<Color x:Key="CheckBoxBackgroundCheckedPressed">#9960382a</Color>
+					<Color x:Key="CheckBoxCheckBackgroundFillCheckedPressed">#9960382a</Color>
+					<Color x:Key="CheckBoxCheckBackgroundFillUncheckedPressed">#9960382a</Color>
+					<Color x:Key="CheckBoxCheckBackgroundStrokeCheckedPressed">#c27b38</Color>
+					<Color x:Key="CheckBoxCheckBackgroundStrokeUncheckedPressed">#c27b38</Color>
+					<Color x:Key="CheckBoxBorderBrushCheckedPressed">#c27b38</Color>
+
+					<!-- Radio buttons -->
+					<Color x:Key="RadioButtonOuterEllipseStrokePointerOver">#e09a52</Color>
+					<Color x:Key="RadioButtonOuterEllipseFillPressed">#9960382a</Color>
+					<Color x:Key="RadioButtonOuterEllipseStrokePressed">#c27b38</Color>
+
+					<!-- Sliders -->
+					<Color x:Key="SliderTrackFillPointerOver">#e09a52</Color>
+					<Color x:Key="SliderTrackFillPressed">#c27b38</Color>
 
 					<!-- base -->
 					<Color x:Key="ErrorColor">#FFFF8080</Color>

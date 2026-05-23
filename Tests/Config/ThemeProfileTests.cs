@@ -18,7 +18,7 @@ public sealed class ThemeProfileTests {
 	[Fact]
 	public void ThemeProfileFile_IsValid_RejectsInvalidColor() {
 		ThemeProfile profile = ThemeProfile.CreateDefault("Test", NexenTheme.Dark);
-		profile.DockTabActiveBorderColor = "bad-color";
+		profile.RadioButtonPressedBorderColor = "bad-color";
 
 		ThemeProfileFile file = new ThemeProfileFile {
 			Format = "nexen-theme-profile",
@@ -44,6 +44,14 @@ public sealed class ThemeProfileTests {
 		Assert.Equal("#40808080", dark.DockTabPointerOverColor);
 		Assert.Equal("#ff282828", dark.DockTabActiveBackgroundColor);
 		Assert.Equal("#ff505050", dark.DockTabActiveBorderColor);
+		Assert.Equal("#e09a52", dark.CheckBoxPointerOverBorderColor);
+		Assert.Equal("#9960382a", dark.CheckBoxPressedBackgroundColor);
+		Assert.Equal("#c27b38", dark.CheckBoxPressedBorderColor);
+		Assert.Equal("#e09a52", dark.RadioButtonPointerOverBorderColor);
+		Assert.Equal("#9960382a", dark.RadioButtonPressedBackgroundColor);
+		Assert.Equal("#c27b38", dark.RadioButtonPressedBorderColor);
+		Assert.Equal("#e09a52", dark.SliderTrackPointerOverColor);
+		Assert.Equal("#c27b38", dark.SliderTrackPressedColor);
 
 		Assert.Equal("#f3e5d7", light.MenuBackgroundColor);
 		Assert.Equal("#efb57b", light.MenuBackgroundHighlightColor);
@@ -55,6 +63,14 @@ public sealed class ThemeProfileTests {
 		Assert.Equal("#40808080", light.DockTabPointerOverColor);
 		Assert.Equal("#ffffffff", light.DockTabActiveBackgroundColor);
 		Assert.Equal("#ff808080", light.DockTabActiveBorderColor);
+		Assert.Equal("#9f5c22", light.CheckBoxPointerOverBorderColor);
+		Assert.Equal("#e9c098", light.CheckBoxPressedBackgroundColor);
+		Assert.Equal("#7b4517", light.CheckBoxPressedBorderColor);
+		Assert.Equal("#9f5c22", light.RadioButtonPointerOverBorderColor);
+		Assert.Equal("#e9c098", light.RadioButtonPressedBackgroundColor);
+		Assert.Equal("#7b4517", light.RadioButtonPressedBorderColor);
+		Assert.Equal("#9f5c22", light.SliderTrackPointerOverColor);
+		Assert.Equal("#7b4517", light.SliderTrackPressedColor);
 	}
 
 	[Fact]

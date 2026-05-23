@@ -31,6 +31,14 @@ public sealed class ThemeProfile {
 	public string DockTabPointerOverColor { get; set; } = "#40808080";
 	public string DockTabActiveBackgroundColor { get; set; } = "#ff282828";
 	public string DockTabActiveBorderColor { get; set; } = "#ff505050";
+	public string CheckBoxPointerOverBorderColor { get; set; } = "#e09a52";
+	public string CheckBoxPressedBackgroundColor { get; set; } = "#9960382a";
+	public string CheckBoxPressedBorderColor { get; set; } = "#c27b38";
+	public string RadioButtonPointerOverBorderColor { get; set; } = "#e09a52";
+	public string RadioButtonPressedBackgroundColor { get; set; } = "#9960382a";
+	public string RadioButtonPressedBorderColor { get; set; } = "#c27b38";
+	public string SliderTrackPointerOverColor { get; set; } = "#e09a52";
+	public string SliderTrackPressedColor { get; set; } = "#c27b38";
 	public string ThemeAccentColor { get; set; } = "#ccc87423";
 	public string HighlightColor { get; set; } = "#ffc87423";
 	public string ControlPointerOverBackgroundColor { get; set; } = "#80573721";
@@ -71,6 +79,14 @@ public sealed class ThemeProfile {
 				DockTabPointerOverColor = "#40808080",
 				DockTabActiveBackgroundColor = "#ff282828",
 				DockTabActiveBorderColor = "#ff505050",
+				CheckBoxPointerOverBorderColor = "#e09a52",
+				CheckBoxPressedBackgroundColor = "#9960382a",
+				CheckBoxPressedBorderColor = "#c27b38",
+				RadioButtonPointerOverBorderColor = "#e09a52",
+				RadioButtonPressedBackgroundColor = "#9960382a",
+				RadioButtonPressedBorderColor = "#c27b38",
+				SliderTrackPointerOverColor = "#e09a52",
+				SliderTrackPressedColor = "#c27b38",
 				ThemeAccentColor = "#ccc87423",
 				HighlightColor = "#ffc87423",
 				ControlPointerOverBackgroundColor = "#80573721",
@@ -111,6 +127,14 @@ public sealed class ThemeProfile {
 			DockTabPointerOverColor = "#40808080",
 			DockTabActiveBackgroundColor = "#ffffffff",
 			DockTabActiveBorderColor = "#ff808080",
+			CheckBoxPointerOverBorderColor = "#9f5c22",
+			CheckBoxPressedBackgroundColor = "#e9c098",
+			CheckBoxPressedBorderColor = "#7b4517",
+			RadioButtonPointerOverBorderColor = "#9f5c22",
+			RadioButtonPressedBackgroundColor = "#e9c098",
+			RadioButtonPressedBorderColor = "#7b4517",
+			SliderTrackPointerOverColor = "#9f5c22",
+			SliderTrackPressedColor = "#7b4517",
 			ThemeAccentColor = "#ffc56e21",
 			HighlightColor = "#ff8a5116",
 			ControlPointerOverBackgroundColor = "#f8d9b8",
@@ -172,6 +196,14 @@ public sealed class ThemeProfileFile {
 			&& ThemeProfile.IsValidColor(Profile.DockTabPointerOverColor)
 			&& ThemeProfile.IsValidColor(Profile.DockTabActiveBackgroundColor)
 			&& ThemeProfile.IsValidColor(Profile.DockTabActiveBorderColor)
+			&& ThemeProfile.IsValidColor(Profile.CheckBoxPointerOverBorderColor)
+			&& ThemeProfile.IsValidColor(Profile.CheckBoxPressedBackgroundColor)
+			&& ThemeProfile.IsValidColor(Profile.CheckBoxPressedBorderColor)
+			&& ThemeProfile.IsValidColor(Profile.RadioButtonPointerOverBorderColor)
+			&& ThemeProfile.IsValidColor(Profile.RadioButtonPressedBackgroundColor)
+			&& ThemeProfile.IsValidColor(Profile.RadioButtonPressedBorderColor)
+			&& ThemeProfile.IsValidColor(Profile.SliderTrackPointerOverColor)
+			&& ThemeProfile.IsValidColor(Profile.SliderTrackPressedColor)
 			&& ThemeProfile.IsValidColor(Profile.ThemeAccentColor)
 			&& ThemeProfile.IsValidColor(Profile.HighlightColor)
 			&& ThemeProfile.IsValidColor(Profile.ControlPointerOverBackgroundColor)

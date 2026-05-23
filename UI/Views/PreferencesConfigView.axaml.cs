@@ -342,6 +342,54 @@ public partial class PreferencesConfigView : UserControl {
 		});
 	}
 
+	private async void btnPickThemeCheckBoxHoverBorderColor_OnClick(object sender, RoutedEventArgs e) {
+		await PickThemeProfileColor(profile => profile.CheckBoxPointerOverBorderColor, (model, colorHex) => {
+			model.SetSelectedProfileControlStateSemanticColors(colorHex, model.SelectedProfileCheckBoxPressedBackgroundColor, model.SelectedProfileCheckBoxPressedBorderColor, model.SelectedProfileRadioButtonHoverBorderColor, model.SelectedProfileRadioButtonPressedBackgroundColor, model.SelectedProfileRadioButtonPressedBorderColor, model.SelectedProfileSliderHoverTrackColor, model.SelectedProfileSliderPressedTrackColor);
+		});
+	}
+
+	private async void btnPickThemeCheckBoxPressedBackgroundColor_OnClick(object sender, RoutedEventArgs e) {
+		await PickThemeProfileColor(profile => profile.CheckBoxPressedBackgroundColor, (model, colorHex) => {
+			model.SetSelectedProfileControlStateSemanticColors(model.SelectedProfileCheckBoxHoverBorderColor, colorHex, model.SelectedProfileCheckBoxPressedBorderColor, model.SelectedProfileRadioButtonHoverBorderColor, model.SelectedProfileRadioButtonPressedBackgroundColor, model.SelectedProfileRadioButtonPressedBorderColor, model.SelectedProfileSliderHoverTrackColor, model.SelectedProfileSliderPressedTrackColor);
+		});
+	}
+
+	private async void btnPickThemeCheckBoxPressedBorderColor_OnClick(object sender, RoutedEventArgs e) {
+		await PickThemeProfileColor(profile => profile.CheckBoxPressedBorderColor, (model, colorHex) => {
+			model.SetSelectedProfileControlStateSemanticColors(model.SelectedProfileCheckBoxHoverBorderColor, model.SelectedProfileCheckBoxPressedBackgroundColor, colorHex, model.SelectedProfileRadioButtonHoverBorderColor, model.SelectedProfileRadioButtonPressedBackgroundColor, model.SelectedProfileRadioButtonPressedBorderColor, model.SelectedProfileSliderHoverTrackColor, model.SelectedProfileSliderPressedTrackColor);
+		});
+	}
+
+	private async void btnPickThemeRadioButtonHoverBorderColor_OnClick(object sender, RoutedEventArgs e) {
+		await PickThemeProfileColor(profile => profile.RadioButtonPointerOverBorderColor, (model, colorHex) => {
+			model.SetSelectedProfileControlStateSemanticColors(model.SelectedProfileCheckBoxHoverBorderColor, model.SelectedProfileCheckBoxPressedBackgroundColor, model.SelectedProfileCheckBoxPressedBorderColor, colorHex, model.SelectedProfileRadioButtonPressedBackgroundColor, model.SelectedProfileRadioButtonPressedBorderColor, model.SelectedProfileSliderHoverTrackColor, model.SelectedProfileSliderPressedTrackColor);
+		});
+	}
+
+	private async void btnPickThemeRadioButtonPressedBackgroundColor_OnClick(object sender, RoutedEventArgs e) {
+		await PickThemeProfileColor(profile => profile.RadioButtonPressedBackgroundColor, (model, colorHex) => {
+			model.SetSelectedProfileControlStateSemanticColors(model.SelectedProfileCheckBoxHoverBorderColor, model.SelectedProfileCheckBoxPressedBackgroundColor, model.SelectedProfileCheckBoxPressedBorderColor, model.SelectedProfileRadioButtonHoverBorderColor, colorHex, model.SelectedProfileRadioButtonPressedBorderColor, model.SelectedProfileSliderHoverTrackColor, model.SelectedProfileSliderPressedTrackColor);
+		});
+	}
+
+	private async void btnPickThemeRadioButtonPressedBorderColor_OnClick(object sender, RoutedEventArgs e) {
+		await PickThemeProfileColor(profile => profile.RadioButtonPressedBorderColor, (model, colorHex) => {
+			model.SetSelectedProfileControlStateSemanticColors(model.SelectedProfileCheckBoxHoverBorderColor, model.SelectedProfileCheckBoxPressedBackgroundColor, model.SelectedProfileCheckBoxPressedBorderColor, model.SelectedProfileRadioButtonHoverBorderColor, model.SelectedProfileRadioButtonPressedBackgroundColor, colorHex, model.SelectedProfileSliderHoverTrackColor, model.SelectedProfileSliderPressedTrackColor);
+		});
+	}
+
+	private async void btnPickThemeSliderHoverTrackColor_OnClick(object sender, RoutedEventArgs e) {
+		await PickThemeProfileColor(profile => profile.SliderTrackPointerOverColor, (model, colorHex) => {
+			model.SetSelectedProfileControlStateSemanticColors(model.SelectedProfileCheckBoxHoverBorderColor, model.SelectedProfileCheckBoxPressedBackgroundColor, model.SelectedProfileCheckBoxPressedBorderColor, model.SelectedProfileRadioButtonHoverBorderColor, model.SelectedProfileRadioButtonPressedBackgroundColor, model.SelectedProfileRadioButtonPressedBorderColor, colorHex, model.SelectedProfileSliderPressedTrackColor);
+		});
+	}
+
+	private async void btnPickThemeSliderPressedTrackColor_OnClick(object sender, RoutedEventArgs e) {
+		await PickThemeProfileColor(profile => profile.SliderTrackPressedColor, (model, colorHex) => {
+			model.SetSelectedProfileControlStateSemanticColors(model.SelectedProfileCheckBoxHoverBorderColor, model.SelectedProfileCheckBoxPressedBackgroundColor, model.SelectedProfileCheckBoxPressedBorderColor, model.SelectedProfileRadioButtonHoverBorderColor, model.SelectedProfileRadioButtonPressedBackgroundColor, model.SelectedProfileRadioButtonPressedBorderColor, model.SelectedProfileSliderHoverTrackColor, colorHex);
+		});
+	}
+
 	private async Task PickThemeProfileColor(Func<ThemeProfile, string> colorSelector, Action<PreferencesConfigViewModel, string> updateAction) {
 		PreferencesConfigViewModel? model = GetViewModel();
 		ThemeProfile? profile = model?.GetSelectedThemeProfile();

@@ -117,6 +117,30 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 	/// <summary>Gets or sets selected profile dock tab active border color as ARGB hex.</summary>
 	[Reactive] public partial string SelectedProfileDockTabActiveBorderColor { get; set; }
 
+	/// <summary>Gets or sets selected profile checkbox hover border color as ARGB hex.</summary>
+	[Reactive] public partial string SelectedProfileCheckBoxHoverBorderColor { get; set; }
+
+	/// <summary>Gets or sets selected profile checkbox pressed background color as ARGB hex.</summary>
+	[Reactive] public partial string SelectedProfileCheckBoxPressedBackgroundColor { get; set; }
+
+	/// <summary>Gets or sets selected profile checkbox pressed border color as ARGB hex.</summary>
+	[Reactive] public partial string SelectedProfileCheckBoxPressedBorderColor { get; set; }
+
+	/// <summary>Gets or sets selected profile radio button hover border color as ARGB hex.</summary>
+	[Reactive] public partial string SelectedProfileRadioButtonHoverBorderColor { get; set; }
+
+	/// <summary>Gets or sets selected profile radio button pressed background color as ARGB hex.</summary>
+	[Reactive] public partial string SelectedProfileRadioButtonPressedBackgroundColor { get; set; }
+
+	/// <summary>Gets or sets selected profile radio button pressed border color as ARGB hex.</summary>
+	[Reactive] public partial string SelectedProfileRadioButtonPressedBorderColor { get; set; }
+
+	/// <summary>Gets or sets selected profile slider hover track color as ARGB hex.</summary>
+	[Reactive] public partial string SelectedProfileSliderHoverTrackColor { get; set; }
+
+	/// <summary>Gets or sets selected profile slider pressed track color as ARGB hex.</summary>
+	[Reactive] public partial string SelectedProfileSliderPressedTrackColor { get; set; }
+
 	/// <summary>Gets or sets selected profile sidebar border preview brush.</summary>
 	[Reactive] public partial IBrush SelectedProfileSidebarBorderBrush { get; set; }
 
@@ -131,6 +155,30 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 
 	/// <summary>Gets or sets selected profile dock tab active border preview brush.</summary>
 	[Reactive] public partial IBrush SelectedProfileDockTabActiveBorderBrush { get; set; }
+
+	/// <summary>Gets or sets selected profile checkbox hover border preview brush.</summary>
+	[Reactive] public partial IBrush SelectedProfileCheckBoxHoverBorderBrush { get; set; }
+
+	/// <summary>Gets or sets selected profile checkbox pressed background preview brush.</summary>
+	[Reactive] public partial IBrush SelectedProfileCheckBoxPressedBackgroundBrush { get; set; }
+
+	/// <summary>Gets or sets selected profile checkbox pressed border preview brush.</summary>
+	[Reactive] public partial IBrush SelectedProfileCheckBoxPressedBorderBrush { get; set; }
+
+	/// <summary>Gets or sets selected profile radio button hover border preview brush.</summary>
+	[Reactive] public partial IBrush SelectedProfileRadioButtonHoverBorderBrush { get; set; }
+
+	/// <summary>Gets or sets selected profile radio button pressed background preview brush.</summary>
+	[Reactive] public partial IBrush SelectedProfileRadioButtonPressedBackgroundBrush { get; set; }
+
+	/// <summary>Gets or sets selected profile radio button pressed border preview brush.</summary>
+	[Reactive] public partial IBrush SelectedProfileRadioButtonPressedBorderBrush { get; set; }
+
+	/// <summary>Gets or sets selected profile slider hover track preview brush.</summary>
+	[Reactive] public partial IBrush SelectedProfileSliderHoverTrackBrush { get; set; }
+
+	/// <summary>Gets or sets selected profile slider pressed track preview brush.</summary>
+	[Reactive] public partial IBrush SelectedProfileSliderPressedTrackBrush { get; set; }
 
 	/// <summary>Gets or sets the number of tokens that differ from canonical defaults.</summary>
 	[Reactive] public partial int SelectedThemeProfileDivergenceCount { get; set; }
@@ -202,11 +250,27 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 		SelectedProfileDockTabHoverColor = "";
 		SelectedProfileDockTabActiveBackgroundColor = "";
 		SelectedProfileDockTabActiveBorderColor = "";
+		SelectedProfileCheckBoxHoverBorderColor = "";
+		SelectedProfileCheckBoxPressedBackgroundColor = "";
+		SelectedProfileCheckBoxPressedBorderColor = "";
+		SelectedProfileRadioButtonHoverBorderColor = "";
+		SelectedProfileRadioButtonPressedBackgroundColor = "";
+		SelectedProfileRadioButtonPressedBorderColor = "";
+		SelectedProfileSliderHoverTrackColor = "";
+		SelectedProfileSliderPressedTrackColor = "";
 		SelectedProfileSidebarBorderBrush = Brushes.Transparent;
 		SelectedProfileDockTabStripBackgroundBrush = Brushes.Transparent;
 		SelectedProfileDockTabHoverBrush = Brushes.Transparent;
 		SelectedProfileDockTabActiveBackgroundBrush = Brushes.Transparent;
 		SelectedProfileDockTabActiveBorderBrush = Brushes.Transparent;
+		SelectedProfileCheckBoxHoverBorderBrush = Brushes.Transparent;
+		SelectedProfileCheckBoxPressedBackgroundBrush = Brushes.Transparent;
+		SelectedProfileCheckBoxPressedBorderBrush = Brushes.Transparent;
+		SelectedProfileRadioButtonHoverBorderBrush = Brushes.Transparent;
+		SelectedProfileRadioButtonPressedBackgroundBrush = Brushes.Transparent;
+		SelectedProfileRadioButtonPressedBorderBrush = Brushes.Transparent;
+		SelectedProfileSliderHoverTrackBrush = Brushes.Transparent;
+		SelectedProfileSliderPressedTrackBrush = Brushes.Transparent;
 		SelectedThemeProfileDivergenceCount = 0;
 		SelectedThemeProfileMatchesDefaults = true;
 		SelectedThemeProfileIsCustomized = false;
@@ -464,6 +528,24 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 		RefreshThemeProfiles();
 	}
 
+	public void SetSelectedProfileControlStateSemanticColors(string checkBoxHoverBorder, string checkBoxPressedBackground, string checkBoxPressedBorder, string radioHoverBorder, string radioPressedBackground, string radioPressedBorder, string sliderHoverTrack, string sliderPressedTrack) {
+		ThemeProfile? selectedProfile = GetSelectedThemeProfile();
+		if (selectedProfile is null) {
+			return;
+		}
+
+		selectedProfile.CheckBoxPointerOverBorderColor = checkBoxHoverBorder;
+		selectedProfile.CheckBoxPressedBackgroundColor = checkBoxPressedBackground;
+		selectedProfile.CheckBoxPressedBorderColor = checkBoxPressedBorder;
+		selectedProfile.RadioButtonPointerOverBorderColor = radioHoverBorder;
+		selectedProfile.RadioButtonPressedBackgroundColor = radioPressedBackground;
+		selectedProfile.RadioButtonPressedBorderColor = radioPressedBorder;
+		selectedProfile.SliderTrackPointerOverColor = sliderHoverTrack;
+		selectedProfile.SliderTrackPressedColor = sliderPressedTrack;
+		Config.SetActiveThemeProfile(selectedProfile.Name);
+		RefreshThemeProfiles();
+	}
+
 	private void RefreshSelectedThemeProfileDetails() {
 		ThemeProfile? selectedProfile = GetSelectedThemeProfile();
 		if (selectedProfile is null) {
@@ -492,11 +574,27 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 			SelectedProfileDockTabHoverColor = "";
 			SelectedProfileDockTabActiveBackgroundColor = "";
 			SelectedProfileDockTabActiveBorderColor = "";
+			SelectedProfileCheckBoxHoverBorderColor = "";
+			SelectedProfileCheckBoxPressedBackgroundColor = "";
+			SelectedProfileCheckBoxPressedBorderColor = "";
+			SelectedProfileRadioButtonHoverBorderColor = "";
+			SelectedProfileRadioButtonPressedBackgroundColor = "";
+			SelectedProfileRadioButtonPressedBorderColor = "";
+			SelectedProfileSliderHoverTrackColor = "";
+			SelectedProfileSliderPressedTrackColor = "";
 			SelectedProfileSidebarBorderBrush = Brushes.Transparent;
 			SelectedProfileDockTabStripBackgroundBrush = Brushes.Transparent;
 			SelectedProfileDockTabHoverBrush = Brushes.Transparent;
 			SelectedProfileDockTabActiveBackgroundBrush = Brushes.Transparent;
 			SelectedProfileDockTabActiveBorderBrush = Brushes.Transparent;
+			SelectedProfileCheckBoxHoverBorderBrush = Brushes.Transparent;
+			SelectedProfileCheckBoxPressedBackgroundBrush = Brushes.Transparent;
+			SelectedProfileCheckBoxPressedBorderBrush = Brushes.Transparent;
+			SelectedProfileRadioButtonHoverBorderBrush = Brushes.Transparent;
+			SelectedProfileRadioButtonPressedBackgroundBrush = Brushes.Transparent;
+			SelectedProfileRadioButtonPressedBorderBrush = Brushes.Transparent;
+			SelectedProfileSliderHoverTrackBrush = Brushes.Transparent;
+			SelectedProfileSliderPressedTrackBrush = Brushes.Transparent;
 			SelectedThemeProfileDivergenceCount = 0;
 			SelectedThemeProfileMatchesDefaults = true;
 			SelectedThemeProfileIsCustomized = false;
@@ -535,11 +633,27 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 		SelectedProfileDockTabHoverColor = selectedProfile.DockTabPointerOverColor;
 		SelectedProfileDockTabActiveBackgroundColor = selectedProfile.DockTabActiveBackgroundColor;
 		SelectedProfileDockTabActiveBorderColor = selectedProfile.DockTabActiveBorderColor;
+		SelectedProfileCheckBoxHoverBorderColor = selectedProfile.CheckBoxPointerOverBorderColor;
+		SelectedProfileCheckBoxPressedBackgroundColor = selectedProfile.CheckBoxPressedBackgroundColor;
+		SelectedProfileCheckBoxPressedBorderColor = selectedProfile.CheckBoxPressedBorderColor;
+		SelectedProfileRadioButtonHoverBorderColor = selectedProfile.RadioButtonPointerOverBorderColor;
+		SelectedProfileRadioButtonPressedBackgroundColor = selectedProfile.RadioButtonPressedBackgroundColor;
+		SelectedProfileRadioButtonPressedBorderColor = selectedProfile.RadioButtonPressedBorderColor;
+		SelectedProfileSliderHoverTrackColor = selectedProfile.SliderTrackPointerOverColor;
+		SelectedProfileSliderPressedTrackColor = selectedProfile.SliderTrackPressedColor;
 		SelectedProfileSidebarBorderBrush = CreatePreviewBrush(selectedProfile.SettingsTabStripBorderColor);
 		SelectedProfileDockTabStripBackgroundBrush = CreatePreviewBrush(selectedProfile.DockTabStripBackgroundColor);
 		SelectedProfileDockTabHoverBrush = CreatePreviewBrush(selectedProfile.DockTabPointerOverColor);
 		SelectedProfileDockTabActiveBackgroundBrush = CreatePreviewBrush(selectedProfile.DockTabActiveBackgroundColor);
 		SelectedProfileDockTabActiveBorderBrush = CreatePreviewBrush(selectedProfile.DockTabActiveBorderColor);
+		SelectedProfileCheckBoxHoverBorderBrush = CreatePreviewBrush(selectedProfile.CheckBoxPointerOverBorderColor);
+		SelectedProfileCheckBoxPressedBackgroundBrush = CreatePreviewBrush(selectedProfile.CheckBoxPressedBackgroundColor);
+		SelectedProfileCheckBoxPressedBorderBrush = CreatePreviewBrush(selectedProfile.CheckBoxPressedBorderColor);
+		SelectedProfileRadioButtonHoverBorderBrush = CreatePreviewBrush(selectedProfile.RadioButtonPointerOverBorderColor);
+		SelectedProfileRadioButtonPressedBackgroundBrush = CreatePreviewBrush(selectedProfile.RadioButtonPressedBackgroundColor);
+		SelectedProfileRadioButtonPressedBorderBrush = CreatePreviewBrush(selectedProfile.RadioButtonPressedBorderColor);
+		SelectedProfileSliderHoverTrackBrush = CreatePreviewBrush(selectedProfile.SliderTrackPointerOverColor);
+		SelectedProfileSliderPressedTrackBrush = CreatePreviewBrush(selectedProfile.SliderTrackPressedColor);
 		SelectedThemeProfileDivergenceCount = Config.GetThemeProfileDivergenceCount(selectedProfile.Name);
 		SelectedThemeProfileMatchesDefaults = SelectedThemeProfileDivergenceCount == 0;
 		SelectedThemeProfileIsCustomized = SelectedThemeProfileDivergenceCount > 0;

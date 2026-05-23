@@ -841,6 +841,14 @@
 			<Control ID="lblThemeDockTabHoverBackground">Dock Tab Hover Background</Control>
 			<Control ID="lblThemeDockTabActiveBackground">Dock Tab Active Background</Control>
 			<Control ID="lblThemeDockTabActiveBorder">Dock Tab Active Border</Control>
+			<Control ID="lblThemeCheckBoxHoverBorder">Checkbox Hover Border</Control>
+			<Control ID="lblThemeCheckBoxPressedBackground">Checkbox Pressed Background</Control>
+			<Control ID="lblThemeCheckBoxPressedBorder">Checkbox Pressed Border</Control>
+			<Control ID="lblThemeRadioButtonHoverBorder">Radio Button Hover Border</Control>
+			<Control ID="lblThemeRadioButtonPressedBackground">Radio Button Pressed Background</Control>
+			<Control ID="lblThemeRadioButtonPressedBorder">Radio Button Pressed Border</Control>
+			<Control ID="lblThemeSliderHoverTrack">Slider Hover Track</Control>
+			<Control ID="lblThemeSliderPressedTrack">Slider Pressed Track</Control>
 			<Control ID="btnThemePickColor">Pick</Control>
 			<Control ID="lblThemeLivePreview">Live Preview</Control>
 			<Control ID="lblThemePresetStatus">Preset Status:</Control>

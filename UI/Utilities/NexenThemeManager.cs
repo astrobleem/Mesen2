@@ -53,6 +53,20 @@ public static class NexenThemeManager {
 		ApplyColorOverride(app, "NexenDockTabPointerOverColor", profile.DockTabPointerOverColor);
 		ApplyColorOverride(app, "NexenDockTabActiveBackgroundColor", profile.DockTabActiveBackgroundColor);
 		ApplyColorOverride(app, "NexenDockTabActiveBorderColor", profile.DockTabActiveBorderColor);
+		ApplyColorOverride(app, "CheckBoxCheckBackgroundStrokeUncheckedPointerOver", profile.CheckBoxPointerOverBorderColor);
+		ApplyColorOverride(app, "CheckBoxCheckBackgroundStrokeCheckedPointerOver", profile.CheckBoxPointerOverBorderColor);
+		ApplyColorOverride(app, "CheckBoxBorderBrushCheckedPointerOver", profile.CheckBoxPointerOverBorderColor);
+		ApplyColorOverride(app, "CheckBoxCheckBackgroundFillCheckedPressed", profile.CheckBoxPressedBackgroundColor);
+		ApplyColorOverride(app, "CheckBoxCheckBackgroundFillUncheckedPressed", profile.CheckBoxPressedBackgroundColor);
+		ApplyColorOverride(app, "CheckBoxBackgroundCheckedPressed", profile.CheckBoxPressedBackgroundColor);
+		ApplyColorOverride(app, "CheckBoxCheckBackgroundStrokeCheckedPressed", profile.CheckBoxPressedBorderColor);
+		ApplyColorOverride(app, "CheckBoxCheckBackgroundStrokeUncheckedPressed", profile.CheckBoxPressedBorderColor);
+		ApplyColorOverride(app, "CheckBoxBorderBrushCheckedPressed", profile.CheckBoxPressedBorderColor);
+		ApplyColorOverride(app, "RadioButtonOuterEllipseStrokePointerOver", profile.RadioButtonPointerOverBorderColor);
+		ApplyColorOverride(app, "RadioButtonOuterEllipseFillPressed", profile.RadioButtonPressedBackgroundColor);
+		ApplyColorOverride(app, "RadioButtonOuterEllipseStrokePressed", profile.RadioButtonPressedBorderColor);
+		ApplyColorOverride(app, "SliderTrackFillPointerOver", profile.SliderTrackPointerOverColor);
+		ApplyColorOverride(app, "SliderTrackFillPressed", profile.SliderTrackPressedColor);
 		ApplyColorOverride(app, "ThemeAccentColor", profile.ThemeAccentColor);
 		ApplyColorOverride(app, "HighlightColor", profile.HighlightColor);
 

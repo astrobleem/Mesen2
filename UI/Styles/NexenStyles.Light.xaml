@@ -162,7 +162,17 @@
 
 					<Color x:Key="CheckBoxCheckBackgroundFillCheckedPressed">#e9c098</Color>
 					<Color x:Key="CheckBoxCheckBackgroundFillUncheckedPressed">#e9c098</Color>
+					<Color x:Key="CheckBoxCheckBackgroundStrokeCheckedPressed">#7b4517</Color>
+					<Color x:Key="CheckBoxCheckBackgroundStrokeUncheckedPressed">#7b4517</Color>
+					<Color x:Key="CheckBoxBorderBrushCheckedPressed">#7b4517</Color>
 					<Color x:Key="CheckBoxCheckGlyphForegroundCheckedPressed">Black</Color>
+
+					<Color x:Key="RadioButtonOuterEllipseStrokePointerOver">#9f5c22</Color>
+					<Color x:Key="RadioButtonOuterEllipseFillPressed">#e9c098</Color>
+					<Color x:Key="RadioButtonOuterEllipseStrokePressed">#7b4517</Color>
+
+					<Color x:Key="SliderTrackFillPointerOver">#9f5c22</Color>
+					<Color x:Key="SliderTrackFillPressed">#7b4517</Color>
 
 					<!-- light yellow tooltips -->
 					<Color x:Key="ToolTipBackground">#ffffed</Color>

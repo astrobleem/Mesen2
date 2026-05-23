@@ -54,7 +54,7 @@
 							<TextBox Width="190" Text="{Binding DuplicateThemeProfileName}" />
 							<Button Content="{l:Translate btnThemeDuplicate}" Click="btnDuplicateThemeProfile_OnClick" />
 						</StackPanel>
-						<Grid ColumnDefinitions="Auto,Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" Margin="0 8 0 0">
+						<Grid ColumnDefinitions="Auto,Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" Margin="0 8 0 0">
 							<TextBlock Grid.Row="0" Text="{l:Translate lblThemeStartupBackground}" VerticalAlignment="Center" />
 							<Button Grid.Row="0" Grid.Column="1" Margin="8 0 8 0" Content="{l:Translate btnThemePickColor}" Click="btnPickThemeBackgroundColor_OnClick" />
 							<TextBox Grid.Row="0" Grid.Column="2" IsReadOnly="True" Text="{Binding SelectedProfileStartupBackgroundColor}" />
@@ -114,6 +114,38 @@
 							<TextBlock Grid.Row="14" Text="{l:Translate lblThemeDockTabActiveBorder}" VerticalAlignment="Center" />
 							<Button Grid.Row="14" Grid.Column="1" Margin="8 0 8 0" Content="{l:Translate btnThemePickColor}" Click="btnPickThemeDockTabActiveBorderColor_OnClick" />
 							<TextBox Grid.Row="14" Grid.Column="2" IsReadOnly="True" Text="{Binding SelectedProfileDockTabActiveBorderColor}" />
+
+							<TextBlock Grid.Row="15" Text="{l:Translate lblThemeCheckBoxHoverBorder}" VerticalAlignment="Center" />
+							<Button Grid.Row="15" Grid.Column="1" Margin="8 0 8 0" Content="{l:Translate btnThemePickColor}" Click="btnPickThemeCheckBoxHoverBorderColor_OnClick" />
+							<TextBox Grid.Row="15" Grid.Column="2" IsReadOnly="True" Text="{Binding SelectedProfileCheckBoxHoverBorderColor}" />
+
+							<TextBlock Grid.Row="16" Text="{l:Translate lblThemeCheckBoxPressedBackground}" VerticalAlignment="Center" />
+							<Button Grid.Row="16" Grid.Column="1" Margin="8 0 8 0" Content="{l:Translate btnThemePickColor}" Click="btnPickThemeCheckBoxPressedBackgroundColor_OnClick" />
+							<TextBox Grid.Row="16" Grid.Column="2" IsReadOnly="True" Text="{Binding SelectedProfileCheckBoxPressedBackgroundColor}" />
+
+							<TextBlock Grid.Row="17" Text="{l:Translate lblThemeCheckBoxPressedBorder}" VerticalAlignment="Center" />
+							<Button Grid.Row="17" Grid.Column="1" Margin="8 0 8 0" Content="{l:Translate btnThemePickColor}" Click="btnPickThemeCheckBoxPressedBorderColor_OnClick" />
+							<TextBox Grid.Row="17" Grid.Column="2" IsReadOnly="True" Text="{Binding SelectedProfileCheckBoxPressedBorderColor}" />
+
+							<TextBlock Grid.Row="18" Text="{l:Translate lblThemeRadioButtonHoverBorder}" VerticalAlignment="Center" />
+							<Button Grid.Row="18" Grid.Column="1" Margin="8 0 8 0" Content="{l:Translate btnThemePickColor}" Click="btnPickThemeRadioButtonHoverBorderColor_OnClick" />
+							<TextBox Grid.Row="18" Grid.Column="2" IsReadOnly="True" Text="{Binding SelectedProfileRadioButtonHoverBorderColor}" />
+
+							<TextBlock Grid.Row="19" Text="{l:Translate lblThemeRadioButtonPressedBackground}" VerticalAlignment="Center" />
+							<Button Grid.Row="19" Grid.Column="1" Margin="8 0 8 0" Content="{l:Translate btnThemePickColor}" Click="btnPickThemeRadioButtonPressedBackgroundColor_OnClick" />
+							<TextBox Grid.Row="19" Grid.Column="2" IsReadOnly="True" Text="{Binding SelectedProfileRadioButtonPressedBackgroundColor}" />
+
+							<TextBlock Grid.Row="20" Text="{l:Translate lblThemeRadioButtonPressedBorder}" VerticalAlignment="Center" />
+							<Button Grid.Row="20" Grid.Column="1" Margin="8 0 8 0" Content="{l:Translate btnThemePickColor}" Click="btnPickThemeRadioButtonPressedBorderColor_OnClick" />
+							<TextBox Grid.Row="20" Grid.Column="2" IsReadOnly="True" Text="{Binding SelectedProfileRadioButtonPressedBorderColor}" />
+
+							<TextBlock Grid.Row="21" Text="{l:Translate lblThemeSliderHoverTrack}" VerticalAlignment="Center" />
+							<Button Grid.Row="21" Grid.Column="1" Margin="8 0 8 0" Content="{l:Translate btnThemePickColor}" Click="btnPickThemeSliderHoverTrackColor_OnClick" />
+							<TextBox Grid.Row="21" Grid.Column="2" IsReadOnly="True" Text="{Binding SelectedProfileSliderHoverTrackColor}" />
+
+							<TextBlock Grid.Row="22" Text="{l:Translate lblThemeSliderPressedTrack}" VerticalAlignment="Center" />
+							<Button Grid.Row="22" Grid.Column="1" Margin="8 0 8 0" Content="{l:Translate btnThemePickColor}" Click="btnPickThemeSliderPressedTrackColor_OnClick" />
+							<TextBox Grid.Row="22" Grid.Column="2" IsReadOnly="True" Text="{Binding SelectedProfileSliderPressedTrackColor}" />
 						</Grid>
 						<StackPanel Orientation="Horizontal" Spacing="8" Margin="0 8 0 0" VerticalAlignment="Center">
 							<TextBlock Text="{l:Translate lblThemeLivePreview}" VerticalAlignment="Center" />
@@ -132,6 +164,14 @@
 							<Border Width="22" Height="22" BorderBrush="#666666" BorderThickness="1" CornerRadius="3" Background="{Binding SelectedProfileDockTabHoverBrush}" ToolTip.Tip="{l:Translate lblThemeDockTabHoverBackground}" />
 							<Border Width="22" Height="22" BorderBrush="#666666" BorderThickness="1" CornerRadius="3" Background="{Binding SelectedProfileDockTabActiveBackgroundBrush}" ToolTip.Tip="{l:Translate lblThemeDockTabActiveBackground}" />
 							<Border Width="22" Height="22" BorderBrush="#666666" BorderThickness="1" CornerRadius="3" Background="{Binding SelectedProfileDockTabActiveBorderBrush}" ToolTip.Tip="{l:Translate lblThemeDockTabActiveBorder}" />
+							<Border Width="22" Height="22" BorderBrush="#666666" BorderThickness="1" CornerRadius="3" Background="{Binding SelectedProfileCheckBoxHoverBorderBrush}" ToolTip.Tip="{l:Translate lblThemeCheckBoxHoverBorder}" />
+							<Border Width="22" Height="22" BorderBrush="#666666" BorderThickness="1" CornerRadius="3" Background="{Binding SelectedProfileCheckBoxPressedBackgroundBrush}" ToolTip.Tip="{l:Translate lblThemeCheckBoxPressedBackground}" />
+							<Border Width="22" Height="22" BorderBrush="#666666" BorderThickness="1" CornerRadius="3" Background="{Binding SelectedProfileCheckBoxPressedBorderBrush}" ToolTip.Tip="{l:Translate lblThemeCheckBoxPressedBorder}" />
+							<Border Width="22" Height="22" BorderBrush="#666666" BorderThickness="1" CornerRadius="3" Background="{Binding SelectedProfileRadioButtonHoverBorderBrush}" ToolTip.Tip="{l:Translate lblThemeRadioButtonHoverBorder}" />
+							<Border Width="22" Height="22" BorderBrush="#666666" BorderThickness="1" CornerRadius="3" Background="{Binding SelectedProfileRadioButtonPressedBackgroundBrush}" ToolTip.Tip="{l:Translate lblThemeRadioButtonPressedBackground}" />
+							<Border Width="22" Height="22" BorderBrush="#666666" BorderThickness="1" CornerRadius="3" Background="{Binding SelectedProfileRadioButtonPressedBorderBrush}" ToolTip.Tip="{l:Translate lblThemeRadioButtonPressedBorder}" />
+							<Border Width="22" Height="22" BorderBrush="#666666" BorderThickness="1" CornerRadius="3" Background="{Binding SelectedProfileSliderHoverTrackBrush}" ToolTip.Tip="{l:Translate lblThemeSliderHoverTrack}" />
+							<Border Width="22" Height="22" BorderBrush="#666666" BorderThickness="1" CornerRadius="3" Background="{Binding SelectedProfileSliderPressedTrackBrush}" ToolTip.Tip="{l:Translate lblThemeSliderPressedTrack}" />
 						</StackPanel>
 						<StackPanel Orientation="Horizontal" Spacing="6" Margin="0 6 0 0" VerticalAlignment="Center">
 							<TextBlock Text="{l:Translate lblThemePresetStatus}" VerticalAlignment="Center" />
