@@ -1,4 +1,4 @@
-# Issue #2338 Core.Benchmarks LNK4020 Warning Hygiene (2026-05-23)
+﻿# Issue #2338 Core.Benchmarks LNK4020 Warning Hygiene (2026-05-23)
 
 ## Scope
 

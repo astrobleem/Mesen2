@@ -1017,39 +1017,9 @@ void Debugger::SuspendDebugger(bool release) {
 }
 
 bool Debugger::IsDebugWindowOpened(CpuType cpuType) {
-	switch (cpuType) {
-		case CpuType::Snes:
-			return _settings->CheckDebuggerFlag(DebuggerFlags::SnesDebuggerEnabled);
-		case CpuType::Spc:
-			return _settings->CheckDebuggerFlag(DebuggerFlags::SpcDebuggerEnabled);
-		case CpuType::NecDsp:
-			return _settings->CheckDebuggerFlag(DebuggerFlags::NecDspDebuggerEnabled);
-		case CpuType::Sa1:
-			return _settings->CheckDebuggerFlag(DebuggerFlags::Sa1DebuggerEnabled);
-		case CpuType::Gsu:
-			return _settings->CheckDebuggerFlag(DebuggerFlags::GsuDebuggerEnabled);
-		case CpuType::Cx4:
-			return _settings->CheckDebuggerFlag(DebuggerFlags::Cx4DebuggerEnabled);
-		case CpuType::St018:
-			return _settings->CheckDebuggerFlag(DebuggerFlags::St018DebuggerEnabled);
-		case CpuType::Gameboy:
-			return _settings->CheckDebuggerFlag(DebuggerFlags::GbDebuggerEnabled);
-		case CpuType::Nes:
-			return _settings->CheckDebuggerFlag(DebuggerFlags::NesDebuggerEnabled);
-		case CpuType::Pce:
-			return _settings->CheckDebuggerFlag(DebuggerFlags::PceDebuggerEnabled);
-		case CpuType::Sms:
-			return _settings->CheckDebuggerFlag(DebuggerFlags::SmsDebuggerEnabled);
-		case CpuType::Gba:
-			return _settings->CheckDebuggerFlag(DebuggerFlags::GbaDebuggerEnabled);
-		case CpuType::Ws:
-			return _settings->CheckDebuggerFlag(DebuggerFlags::WsDebuggerEnabled);
-		case CpuType::Lynx:
-			return _settings->CheckDebuggerFlag(DebuggerFlags::LynxDebuggerEnabled);
-		case CpuType::Atari2600:
-			return _settings->CheckDebuggerFlag(DebuggerFlags::Atari2600DebuggerEnabled);
-		case CpuType::ChannelF:
-			return _settings->CheckDebuggerFlag(DebuggerFlags::ChannelFDebuggerEnabled);
+	auto debugWindowFlag = GetDebuggerFlagForCpu(cpuType);
+	if (debugWindowFlag.has_value()) {
+		return _settings->CheckDebuggerFlag(debugWindowFlag.value());
 	}
 
 	return false;
@@ -1095,40 +1065,41 @@ bool Debugger::IsBreakOptionEnabled(BreakSource src) {
 }
 
 static size_t GetCpuStateSize(CpuType cpuType) {
-	switch (cpuType) {
-		case CpuType::Snes:
-		case CpuType::Sa1:
+	switch (GetCpuStateLayout(cpuType)) {
+		case CpuStateLayout::SnesCpu:
 			return sizeof(SnesCpuState);
-		case CpuType::Spc:
+		case CpuStateLayout::Spc:
 			return sizeof(SpcState);
-		case CpuType::NecDsp:
+		case CpuStateLayout::NecDsp:
 			return sizeof(NecDspState);
-		case CpuType::Gsu:
+		case CpuStateLayout::Gsu:
 			return sizeof(GsuState);
-		case CpuType::Cx4:
+		case CpuStateLayout::Cx4:
 			return sizeof(Cx4State);
-		case CpuType::St018:
+		case CpuStateLayout::ArmV3:
 			return sizeof(ArmV3CpuState);
-		case CpuType::Gameboy:
+		case CpuStateLayout::GbCpu:
 			return sizeof(GbCpuState);
-		case CpuType::Nes:
+		case CpuStateLayout::NesCpu:
 			return sizeof(NesCpuState);
-		case CpuType::Pce:
+		case CpuStateLayout::PceCpu:
 			return sizeof(PceCpuState);
-		case CpuType::Sms:
+		case CpuStateLayout::SmsCpu:
 			return sizeof(SmsCpuState);
-		case CpuType::Gba:
+		case CpuStateLayout::GbaCpu:
 			return sizeof(GbaCpuState);
-		case CpuType::Ws:
+		case CpuStateLayout::WsCpu:
 			return sizeof(WsCpuState);
-		case CpuType::Lynx:
+		case CpuStateLayout::LynxCpu:
 			return sizeof(LynxCpuState);
-		case CpuType::Atari2600:
+		case CpuStateLayout::Atari2600Cpu:
 			return sizeof(Atari2600CpuState);
-		case CpuType::ChannelF:
+		case CpuStateLayout::ChannelFCpu:
 			return sizeof(ChannelFCpuState);
-		case CpuType::Genesis:
+		case CpuStateLayout::GenesisM68k:
 			return sizeof(GenesisM68kState);
+		case CpuStateLayout::Unknown:
+			break;
 	}
 
 	return sizeof(BaseState);

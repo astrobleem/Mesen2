@@ -1,4 +1,4 @@
-# Issue #2337 PauseOnNextFrame Scanline Mapping Tests (2026-05-23)
+﻿# Issue #2337 PauseOnNextFrame Scanline Mapping Tests (2026-05-23)
 
 ## Scope
 

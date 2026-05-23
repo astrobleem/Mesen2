@@ -2861,6 +2861,7 @@ Analyze the architecture of the Nexen application and make plans to simplify and
 
 yes, do these three reccomended tasks and continue working on our architecture improvement and simplification effort, continue;
 yes, do these three reccomended tasks and continue working on our architecture improvement and simplification effort, continue;
+yes, do these three reccomended tasks and continue working on our architecture improvement and simplification effort, continue;
 
 
 

@@ -1,4 +1,4 @@
-# Issue #2336 CPU State Size Dispatch Consolidation (2026-05-23)
+﻿# Issue #2336 CPU State Size Dispatch Consolidation (2026-05-23)
 
 ## Scope
 
