@@ -172,3 +172,55 @@ TEST(DebuggerDispatchUtilsTests, ProcessEventDispatchOutcomeComposesStartFrameRe
 	EXPECT_FALSE(blockedOutcome.ShouldSendEventViewerRefresh);
 	EXPECT_FALSE(blockedOutcome.ShouldClearFrameEvents);
 }
+
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumeDecisionSkipsForSuspendRequestFirst) {
+	SleepUntilResumeGuardContext context = {};
+	context.HasSuspendRequest = true;
+	context.ExecutionAlreadyStopped = true;
+	context.HasBreakRequest = true;
+	context.SourceCpuIsMainCpu = false;
+	context.AllowChangeProgramCounter = false;
+	context.BreakpointForbidden = true;
+
+	EXPECT_EQ(EvaluateSleepUntilResumeDecision(context), SleepUntilResumeDecision::SkipForSuspendRequest);
+}
+
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumeDecisionSkipsForExecutionAlreadyStoppedWhenNoSuspend) {
+	SleepUntilResumeGuardContext context = {};
+	context.ExecutionAlreadyStopped = true;
+
+	EXPECT_EQ(EvaluateSleepUntilResumeDecision(context), SleepUntilResumeDecision::SkipForExecutionAlreadyStopped);
+}
+
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumeDecisionSkipsForBreakRequestMainCpuBoundary) {
+	SleepUntilResumeGuardContext nonMainCpuContext = {};
+	nonMainCpuContext.HasBreakRequest = true;
+	nonMainCpuContext.SourceCpuIsMainCpu = false;
+	nonMainCpuContext.AllowChangeProgramCounter = true;
+	EXPECT_EQ(EvaluateSleepUntilResumeDecision(nonMainCpuContext), SleepUntilResumeDecision::SkipForBreakRequestMainCpuBoundary);
+
+	SleepUntilResumeGuardContext blockedProgramCounterContext = {};
+	blockedProgramCounterContext.HasBreakRequest = true;
+	blockedProgramCounterContext.SourceCpuIsMainCpu = true;
+	blockedProgramCounterContext.AllowChangeProgramCounter = false;
+	EXPECT_EQ(EvaluateSleepUntilResumeDecision(blockedProgramCounterContext), SleepUntilResumeDecision::SkipForBreakRequestMainCpuBoundary);
+}
+
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumeDecisionSkipsForForbiddenBreakpointWhenOtherGuardsPass) {
+	SleepUntilResumeGuardContext context = {};
+	context.BreakpointForbidden = true;
+
+	EXPECT_EQ(EvaluateSleepUntilResumeDecision(context), SleepUntilResumeDecision::SkipForForbiddenBreakpoint);
+}
+
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumeDecisionContinuesWhenNoGuardTriggers) {
+	SleepUntilResumeGuardContext context = {};
+	context.HasSuspendRequest = false;
+	context.ExecutionAlreadyStopped = false;
+	context.HasBreakRequest = false;
+	context.SourceCpuIsMainCpu = true;
+	context.AllowChangeProgramCounter = true;
+	context.BreakpointForbidden = false;
+
+	EXPECT_EQ(EvaluateSleepUntilResumeDecision(context), SleepUntilResumeDecision::Continue);
+}

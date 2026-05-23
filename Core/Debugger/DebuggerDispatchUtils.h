@@ -182,6 +182,43 @@ struct ProcessEventDispatchOutcome {
 	bool ShouldClearFrameEvents = false;
 };
 
+enum class SleepUntilResumeDecision : uint8_t {
+	Continue,
+	SkipForSuspendRequest,
+	SkipForExecutionAlreadyStopped,
+	SkipForBreakRequestMainCpuBoundary,
+	SkipForForbiddenBreakpoint
+};
+
+struct SleepUntilResumeGuardContext {
+	bool HasSuspendRequest = false;
+	bool ExecutionAlreadyStopped = false;
+	bool HasBreakRequest = false;
+	bool SourceCpuIsMainCpu = false;
+	bool AllowChangeProgramCounter = false;
+	bool BreakpointForbidden = false;
+};
+
+[[nodiscard]] inline SleepUntilResumeDecision EvaluateSleepUntilResumeDecision(const SleepUntilResumeGuardContext& context) {
+	if (context.HasSuspendRequest) {
+		return SleepUntilResumeDecision::SkipForSuspendRequest;
+	}
+
+	if (context.ExecutionAlreadyStopped) {
+		return SleepUntilResumeDecision::SkipForExecutionAlreadyStopped;
+	}
+
+	if (context.HasBreakRequest && (!context.SourceCpuIsMainCpu || !context.AllowChangeProgramCounter)) {
+		return SleepUntilResumeDecision::SkipForBreakRequestMainCpuBoundary;
+	}
+
+	if (context.BreakpointForbidden) {
+		return SleepUntilResumeDecision::SkipForForbiddenBreakpoint;
+	}
+
+	return SleepUntilResumeDecision::Continue;
+}
+
 [[nodiscard]] inline bool ShouldDispatchScriptEvent(bool debuggerOwnsInstance) {
 	return debuggerOwnsInstance;
 }
