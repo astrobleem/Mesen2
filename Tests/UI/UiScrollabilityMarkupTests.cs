@@ -321,6 +321,104 @@ public sealed class UiScrollabilityMarkupTests {
 	}
 
 	[Fact]
+	public void ThemeStyles_DefineSemanticListTreeNavigationAndListViewKeys_InLightAndDarkThemes() {
+		string repoRoot = GetRepositoryRoot();
+		string lightPath = Path.Combine(repoRoot, "UI", "Styles", "NexenStyles.Light.xaml");
+		string darkPath = Path.Combine(repoRoot, "UI", "Styles", "NexenStyles.Dark.xaml");
+
+		Assert.True(File.Exists(lightPath), $"Expected style file to exist: {lightPath}");
+		Assert.True(File.Exists(darkPath), $"Expected style file to exist: {darkPath}");
+
+		string lightMarkup = File.ReadAllText(lightPath);
+		string darkMarkup = File.ReadAllText(darkPath);
+
+		string[] requiredKeys = [
+			"ListBoxItemBackgroundPointerOver",
+			"ListBoxItemBackgroundSelected",
+			"ListBoxItemForegroundSelected",
+			"TreeViewItemBackgroundPointerOver",
+			"TreeViewItemBackgroundSelected",
+			"TreeViewItemForegroundSelected",
+			"NavigationViewItemBackgroundPointerOver",
+			"NavigationViewItemBackgroundSelected",
+			"NavigationViewItemForegroundSelected",
+			"ListViewItemBackgroundPointerOver",
+			"ListViewItemBackgroundSelected",
+			"ListViewItemForegroundSelected"
+		];
+
+		foreach (string key in requiredKeys) {
+			Assert.Contains(key, lightMarkup);
+			Assert.Contains(key, darkMarkup);
+		}
+	}
+
+	[Fact]
+	public void NexenThemeManager_ContainsSemanticOverrideMappings_ForAllCurrentFamilies() {
+		string repoRoot = GetRepositoryRoot();
+		string managerPath = Path.Combine(repoRoot, "UI", "Utilities", "NexenThemeManager.cs");
+
+		Assert.True(File.Exists(managerPath), $"Expected source file to exist: {managerPath}");
+
+		string source = File.ReadAllText(managerPath);
+		Assert.Contains("ApplyColorOverride(app, \"ComboBoxDropDownBackground\"", source);
+		Assert.Contains("ApplyColorOverride(app, \"ComboBoxDropDownBorderBrush\"", source);
+		Assert.Contains("ApplyBrushOverride(app, \"DataGridColumnHeaderBackgroundBrush\"", source);
+		Assert.Contains("ApplyBrushOverride(app, \"DataGridColumnHeaderForegroundBrush\"", source);
+		Assert.Contains("ApplyBrushOverride(app, \"DataGridRowSelectedForegroundBrush\"", source);
+		Assert.Contains("ApplyColorOverride(app, \"ListBoxItemBackgroundPointerOver\"", source);
+		Assert.Contains("ApplyColorOverride(app, \"ListBoxItemBackgroundSelected\"", source);
+		Assert.Contains("ApplyColorOverride(app, \"ListBoxItemForegroundSelected\"", source);
+		Assert.Contains("ApplyColorOverride(app, \"TreeViewItemBackgroundPointerOver\"", source);
+		Assert.Contains("ApplyColorOverride(app, \"TreeViewItemBackgroundSelected\"", source);
+		Assert.Contains("ApplyColorOverride(app, \"TreeViewItemForegroundSelected\"", source);
+		Assert.Contains("ApplyColorOverride(app, \"NavigationViewItemBackgroundPointerOver\"", source);
+		Assert.Contains("ApplyColorOverride(app, \"NavigationViewItemBackgroundSelected\"", source);
+		Assert.Contains("ApplyColorOverride(app, \"NavigationViewItemForegroundSelected\"", source);
+		Assert.Contains("ApplyColorOverride(app, \"ListViewItemBackgroundPointerOver\"", source);
+		Assert.Contains("ApplyColorOverride(app, \"ListViewItemBackgroundSelected\"", source);
+		Assert.Contains("ApplyColorOverride(app, \"ListViewItemForegroundSelected\"", source);
+	}
+
+	[Fact]
+	public void PreferencesThemeCustomization_WiresSemanticBindingsAndHandlers_ForNavigationAndListView() {
+		string repoRoot = GetRepositoryRoot();
+		string vmPath = Path.Combine(repoRoot, "UI", "ViewModels", "PreferencesConfigViewModel.cs");
+		string viewPath = Path.Combine(repoRoot, "UI", "Views", "PreferencesConfigView.axaml");
+		string codeBehindPath = Path.Combine(repoRoot, "UI", "Views", "PreferencesConfigView.axaml.cs");
+
+		Assert.True(File.Exists(vmPath), $"Expected source file to exist: {vmPath}");
+		Assert.True(File.Exists(viewPath), $"Expected markup file to exist: {viewPath}");
+		Assert.True(File.Exists(codeBehindPath), $"Expected code-behind file to exist: {codeBehindPath}");
+
+		string vmSource = File.ReadAllText(vmPath);
+		string viewMarkup = File.ReadAllText(viewPath);
+		string codeBehindSource = File.ReadAllText(codeBehindPath);
+
+		Assert.Contains("SetSelectedProfileNavigationViewAndListViewSemanticColors", vmSource);
+		Assert.Contains("SelectedProfileNavigationViewHoverBackgroundColor", vmSource);
+		Assert.Contains("SelectedProfileNavigationViewSelectedBackgroundColor", vmSource);
+		Assert.Contains("SelectedProfileNavigationViewSelectedForegroundColor", vmSource);
+		Assert.Contains("SelectedProfileListViewHoverBackgroundColor", vmSource);
+		Assert.Contains("SelectedProfileListViewSelectedBackgroundColor", vmSource);
+		Assert.Contains("SelectedProfileListViewSelectedForegroundColor", vmSource);
+
+		Assert.Contains("{Binding SelectedProfileNavigationViewHoverBackgroundColor}", viewMarkup);
+		Assert.Contains("{Binding SelectedProfileNavigationViewSelectedBackgroundColor}", viewMarkup);
+		Assert.Contains("{Binding SelectedProfileNavigationViewSelectedForegroundColor}", viewMarkup);
+		Assert.Contains("{Binding SelectedProfileListViewHoverBackgroundColor}", viewMarkup);
+		Assert.Contains("{Binding SelectedProfileListViewSelectedBackgroundColor}", viewMarkup);
+		Assert.Contains("{Binding SelectedProfileListViewSelectedForegroundColor}", viewMarkup);
+
+		Assert.Contains("btnPickThemeNavigationViewHoverBackgroundColor_OnClick", codeBehindSource);
+		Assert.Contains("btnPickThemeNavigationViewSelectedBackgroundColor_OnClick", codeBehindSource);
+		Assert.Contains("btnPickThemeNavigationViewSelectedForegroundColor_OnClick", codeBehindSource);
+		Assert.Contains("btnPickThemeListViewHoverBackgroundColor_OnClick", codeBehindSource);
+		Assert.Contains("btnPickThemeListViewSelectedBackgroundColor_OnClick", codeBehindSource);
+		Assert.Contains("btnPickThemeListViewSelectedForegroundColor_OnClick", codeBehindSource);
+	}
+
+	[Fact]
 	public void MainMenuView_ContainsRightAlignedGlobeLanguageMenu() {
 		string repoRoot = GetRepositoryRoot();
 		string fullPath = Path.Combine(repoRoot, "UI", "Views", "MainMenuView.axaml");

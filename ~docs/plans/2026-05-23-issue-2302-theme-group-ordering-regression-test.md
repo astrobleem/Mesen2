@@ -1,4 +1,4 @@
-# Issue #2302 Theme Group Ordering Regression Test (2026-05-23)
+﻿# Issue #2302 Theme Group Ordering Regression Test (2026-05-23)
 
 ## Scope
 

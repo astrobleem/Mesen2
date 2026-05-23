@@ -1,4 +1,4 @@
-# Issue #2303 Semantic Theme-Mode Default Regression (2026-05-23)
+﻿# Issue #2303 Semantic Theme-Mode Default Regression (2026-05-23)
 
 ## Scope
 

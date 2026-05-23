@@ -1,4 +1,4 @@
-# Issue #2301 NavigationView and ListView Semantic Theme Tokens (2026-05-23)
+﻿# Issue #2301 NavigationView and ListView Semantic Theme Tokens (2026-05-23)
 
 ## Scope
 
