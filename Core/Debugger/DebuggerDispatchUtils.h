@@ -158,6 +158,14 @@ enum class PpuStateBackend : uint8_t {
 	return PpuStateBackend::None;
 }
 
+[[nodiscard]] inline CpuType ResolveEventCpuType(CpuType requestedCpuType, CpuType mainCpuType, bool hasRequestedCpuType) {
+	return hasRequestedCpuType ? requestedCpuType : mainCpuType;
+}
+
+[[nodiscard]] inline bool ShouldFallbackToMainInputDebugger(bool hasRoutedInputDebugger, bool hasMainInputDebugger) {
+	return !hasRoutedInputDebugger && hasMainInputDebugger;
+}
+
 [[nodiscard]] inline int32_t GetPauseScanlineForCpu(CpuType cpuType) {
 	static constexpr std::array<std::pair<CpuType, int32_t>, 10> kPauseScanlineByCpu = {{
 		{CpuType::Snes, 240},

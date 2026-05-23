@@ -109,3 +109,19 @@ TEST(DebuggerDispatchUtilsTests, PpuBackendMappingRoutesGroupedCpuTypesToExpecte
 TEST(DebuggerDispatchUtilsTests, PpuBackendMappingReturnsNoneForUnsupportedCpuTypes) {
 	EXPECT_EQ(GetPpuStateBackendForCpu(CpuType::Genesis), PpuStateBackend::None);
 }
+
+TEST(DebuggerDispatchUtilsTests, EventCpuRoutingUsesRequestedCpuWhenAvailable) {
+	EXPECT_EQ(ResolveEventCpuType(CpuType::Nes, CpuType::Snes, true), CpuType::Nes);
+	EXPECT_EQ(ResolveEventCpuType(CpuType::Gba, CpuType::Snes, true), CpuType::Gba);
+}
+
+TEST(DebuggerDispatchUtilsTests, EventCpuRoutingFallsBackToMainCpuWhenRequestedCpuUnavailable) {
+	EXPECT_EQ(ResolveEventCpuType(CpuType::Nes, CpuType::Snes, false), CpuType::Snes);
+	EXPECT_EQ(ResolveEventCpuType(CpuType::ChannelF, CpuType::Gameboy, false), CpuType::Gameboy);
+}
+
+TEST(DebuggerDispatchUtilsTests, InputDebuggerFallbackDecisionRequiresMissingRoutedAndPresentMain) {
+	EXPECT_TRUE(ShouldFallbackToMainInputDebugger(false, true));
+	EXPECT_FALSE(ShouldFallbackToMainInputDebugger(true, true));
+	EXPECT_FALSE(ShouldFallbackToMainInputDebugger(false, false));
+}

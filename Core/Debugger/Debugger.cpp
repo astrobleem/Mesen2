@@ -819,7 +819,7 @@ void Debugger::InternalProcessInterrupt(CpuType cpuType, IDebugger& dbg, StepReq
 
 void Debugger::ProcessEvent(EventType type, std::optional<CpuType> cpuTypeOpt) {
 	CpuType evtCpuType = cpuTypeOpt.value_or(_mainCpuType);
-	CpuType routedCpuType = HasCpuType(evtCpuType) ? evtCpuType : _mainCpuType;
+	CpuType routedCpuType = ResolveEventCpuType(evtCpuType, _mainCpuType, HasCpuType(evtCpuType));
 	if (routedCpuType != evtCpuType) {
 		MessageManager::Log(std::format("[Debugger] Rerouting event={} from cpuType={} to mainCpuType={}", (int)type, (int)evtCpuType, (int)routedCpuType));
 	}
@@ -839,7 +839,8 @@ void Debugger::ProcessEvent(EventType type, std::optional<CpuType> cpuTypeOpt) {
 				inputDebugger = _debuggers[(int)routedCpuType].Debugger.get();
 			}
 
-			if (!inputDebugger && HasCpuType(_mainCpuType)) {
+			bool hasMainInputDebugger = HasCpuType(_mainCpuType) && _debuggers[(int)_mainCpuType].Debugger.get();
+			if (ShouldFallbackToMainInputDebugger(inputDebugger != nullptr, hasMainInputDebugger)) {
 				inputDebugger = _debuggers[(int)_mainCpuType].Debugger.get();
 				if (inputDebugger) {
 					MessageManager::Log(std::format("[Debugger] Rerouting InputPolled from cpuType={} to mainCpuType={}", (int)evtCpuType, (int)_mainCpuType));
