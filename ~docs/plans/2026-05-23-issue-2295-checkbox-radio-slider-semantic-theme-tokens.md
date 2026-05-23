@@ -1,4 +1,4 @@
-# Issue #2295 Checkbox/Radio/Slider Semantic Theme Tokens (2026-05-23)
+﻿# Issue #2295 Checkbox/Radio/Slider Semantic Theme Tokens (2026-05-23)
 
 ## Scope
 

@@ -141,6 +141,21 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 	/// <summary>Gets or sets selected profile slider pressed track color as ARGB hex.</summary>
 	[Reactive] public partial string SelectedProfileSliderPressedTrackColor { get; set; }
 
+	/// <summary>Gets or sets selected profile text selection color as ARGB hex.</summary>
+	[Reactive] public partial string SelectedProfileTextSelectionColor { get; set; }
+
+	/// <summary>Gets or sets selected profile disabled text-control background color as ARGB hex.</summary>
+	[Reactive] public partial string SelectedProfileTextControlDisabledBackgroundColor { get; set; }
+
+	/// <summary>Gets or sets selected profile tooltip background color as ARGB hex.</summary>
+	[Reactive] public partial string SelectedProfileToolTipBackgroundColor { get; set; }
+
+	/// <summary>Gets or sets selected profile menu flyout background color as ARGB hex.</summary>
+	[Reactive] public partial string SelectedProfileMenuFlyoutBackgroundColor { get; set; }
+
+	/// <summary>Gets or sets selected profile menu flyout border color as ARGB hex.</summary>
+	[Reactive] public partial string SelectedProfileMenuFlyoutBorderColor { get; set; }
+
 	/// <summary>Gets or sets selected profile sidebar border preview brush.</summary>
 	[Reactive] public partial IBrush SelectedProfileSidebarBorderBrush { get; set; }
 
@@ -179,6 +194,21 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 
 	/// <summary>Gets or sets selected profile slider pressed track preview brush.</summary>
 	[Reactive] public partial IBrush SelectedProfileSliderPressedTrackBrush { get; set; }
+
+	/// <summary>Gets or sets selected profile text selection preview brush.</summary>
+	[Reactive] public partial IBrush SelectedProfileTextSelectionBrush { get; set; }
+
+	/// <summary>Gets or sets selected profile disabled text-control background preview brush.</summary>
+	[Reactive] public partial IBrush SelectedProfileTextControlDisabledBackgroundBrush { get; set; }
+
+	/// <summary>Gets or sets selected profile tooltip background preview brush.</summary>
+	[Reactive] public partial IBrush SelectedProfileToolTipBackgroundBrush { get; set; }
+
+	/// <summary>Gets or sets selected profile menu flyout background preview brush.</summary>
+	[Reactive] public partial IBrush SelectedProfileMenuFlyoutBackgroundBrush { get; set; }
+
+	/// <summary>Gets or sets selected profile menu flyout border preview brush.</summary>
+	[Reactive] public partial IBrush SelectedProfileMenuFlyoutBorderBrush { get; set; }
 
 	/// <summary>Gets or sets the number of tokens that differ from canonical defaults.</summary>
 	[Reactive] public partial int SelectedThemeProfileDivergenceCount { get; set; }
@@ -258,6 +288,11 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 		SelectedProfileRadioButtonPressedBorderColor = "";
 		SelectedProfileSliderHoverTrackColor = "";
 		SelectedProfileSliderPressedTrackColor = "";
+		SelectedProfileTextSelectionColor = "";
+		SelectedProfileTextControlDisabledBackgroundColor = "";
+		SelectedProfileToolTipBackgroundColor = "";
+		SelectedProfileMenuFlyoutBackgroundColor = "";
+		SelectedProfileMenuFlyoutBorderColor = "";
 		SelectedProfileSidebarBorderBrush = Brushes.Transparent;
 		SelectedProfileDockTabStripBackgroundBrush = Brushes.Transparent;
 		SelectedProfileDockTabHoverBrush = Brushes.Transparent;
@@ -271,6 +306,11 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 		SelectedProfileRadioButtonPressedBorderBrush = Brushes.Transparent;
 		SelectedProfileSliderHoverTrackBrush = Brushes.Transparent;
 		SelectedProfileSliderPressedTrackBrush = Brushes.Transparent;
+		SelectedProfileTextSelectionBrush = Brushes.Transparent;
+		SelectedProfileTextControlDisabledBackgroundBrush = Brushes.Transparent;
+		SelectedProfileToolTipBackgroundBrush = Brushes.Transparent;
+		SelectedProfileMenuFlyoutBackgroundBrush = Brushes.Transparent;
+		SelectedProfileMenuFlyoutBorderBrush = Brushes.Transparent;
 		SelectedThemeProfileDivergenceCount = 0;
 		SelectedThemeProfileMatchesDefaults = true;
 		SelectedThemeProfileIsCustomized = false;
@@ -546,6 +586,21 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 		RefreshThemeProfiles();
 	}
 
+	public void SetSelectedProfileTextInputAndFlyoutSemanticColors(string textSelection, string textControlDisabledBackground, string toolTipBackground, string menuFlyoutBackground, string menuFlyoutBorder) {
+		ThemeProfile? selectedProfile = GetSelectedThemeProfile();
+		if (selectedProfile is null) {
+			return;
+		}
+
+		selectedProfile.TextBoxSelectionColor = textSelection;
+		selectedProfile.TextControlDisabledBackgroundColor = textControlDisabledBackground;
+		selectedProfile.ToolTipBackgroundColor = toolTipBackground;
+		selectedProfile.MenuFlyoutBackgroundColor = menuFlyoutBackground;
+		selectedProfile.MenuFlyoutBorderColor = menuFlyoutBorder;
+		Config.SetActiveThemeProfile(selectedProfile.Name);
+		RefreshThemeProfiles();
+	}
+
 	private void RefreshSelectedThemeProfileDetails() {
 		ThemeProfile? selectedProfile = GetSelectedThemeProfile();
 		if (selectedProfile is null) {
@@ -582,6 +637,11 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 			SelectedProfileRadioButtonPressedBorderColor = "";
 			SelectedProfileSliderHoverTrackColor = "";
 			SelectedProfileSliderPressedTrackColor = "";
+			SelectedProfileTextSelectionColor = "";
+			SelectedProfileTextControlDisabledBackgroundColor = "";
+			SelectedProfileToolTipBackgroundColor = "";
+			SelectedProfileMenuFlyoutBackgroundColor = "";
+			SelectedProfileMenuFlyoutBorderColor = "";
 			SelectedProfileSidebarBorderBrush = Brushes.Transparent;
 			SelectedProfileDockTabStripBackgroundBrush = Brushes.Transparent;
 			SelectedProfileDockTabHoverBrush = Brushes.Transparent;
@@ -595,6 +655,11 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 			SelectedProfileRadioButtonPressedBorderBrush = Brushes.Transparent;
 			SelectedProfileSliderHoverTrackBrush = Brushes.Transparent;
 			SelectedProfileSliderPressedTrackBrush = Brushes.Transparent;
+			SelectedProfileTextSelectionBrush = Brushes.Transparent;
+			SelectedProfileTextControlDisabledBackgroundBrush = Brushes.Transparent;
+			SelectedProfileToolTipBackgroundBrush = Brushes.Transparent;
+			SelectedProfileMenuFlyoutBackgroundBrush = Brushes.Transparent;
+			SelectedProfileMenuFlyoutBorderBrush = Brushes.Transparent;
 			SelectedThemeProfileDivergenceCount = 0;
 			SelectedThemeProfileMatchesDefaults = true;
 			SelectedThemeProfileIsCustomized = false;
@@ -641,6 +706,11 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 		SelectedProfileRadioButtonPressedBorderColor = selectedProfile.RadioButtonPressedBorderColor;
 		SelectedProfileSliderHoverTrackColor = selectedProfile.SliderTrackPointerOverColor;
 		SelectedProfileSliderPressedTrackColor = selectedProfile.SliderTrackPressedColor;
+		SelectedProfileTextSelectionColor = selectedProfile.TextBoxSelectionColor;
+		SelectedProfileTextControlDisabledBackgroundColor = selectedProfile.TextControlDisabledBackgroundColor;
+		SelectedProfileToolTipBackgroundColor = selectedProfile.ToolTipBackgroundColor;
+		SelectedProfileMenuFlyoutBackgroundColor = selectedProfile.MenuFlyoutBackgroundColor;
+		SelectedProfileMenuFlyoutBorderColor = selectedProfile.MenuFlyoutBorderColor;
 		SelectedProfileSidebarBorderBrush = CreatePreviewBrush(selectedProfile.SettingsTabStripBorderColor);
 		SelectedProfileDockTabStripBackgroundBrush = CreatePreviewBrush(selectedProfile.DockTabStripBackgroundColor);
 		SelectedProfileDockTabHoverBrush = CreatePreviewBrush(selectedProfile.DockTabPointerOverColor);
@@ -654,6 +724,11 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 		SelectedProfileRadioButtonPressedBorderBrush = CreatePreviewBrush(selectedProfile.RadioButtonPressedBorderColor);
 		SelectedProfileSliderHoverTrackBrush = CreatePreviewBrush(selectedProfile.SliderTrackPointerOverColor);
 		SelectedProfileSliderPressedTrackBrush = CreatePreviewBrush(selectedProfile.SliderTrackPressedColor);
+		SelectedProfileTextSelectionBrush = CreatePreviewBrush(selectedProfile.TextBoxSelectionColor);
+		SelectedProfileTextControlDisabledBackgroundBrush = CreatePreviewBrush(selectedProfile.TextControlDisabledBackgroundColor);
+		SelectedProfileToolTipBackgroundBrush = CreatePreviewBrush(selectedProfile.ToolTipBackgroundColor);
+		SelectedProfileMenuFlyoutBackgroundBrush = CreatePreviewBrush(selectedProfile.MenuFlyoutBackgroundColor);
+		SelectedProfileMenuFlyoutBorderBrush = CreatePreviewBrush(selectedProfile.MenuFlyoutBorderColor);
 		SelectedThemeProfileDivergenceCount = Config.GetThemeProfileDivergenceCount(selectedProfile.Name);
 		SelectedThemeProfileMatchesDefaults = SelectedThemeProfileDivergenceCount == 0;
 		SelectedThemeProfileIsCustomized = SelectedThemeProfileDivergenceCount > 0;

@@ -18,7 +18,7 @@ public sealed class ThemeProfileTests {
 	[Fact]
 	public void ThemeProfileFile_IsValid_RejectsInvalidColor() {
 		ThemeProfile profile = ThemeProfile.CreateDefault("Test", NexenTheme.Dark);
-		profile.RadioButtonPressedBorderColor = "bad-color";
+		profile.MenuFlyoutBorderColor = "bad-color";
 
 		ThemeProfileFile file = new ThemeProfileFile {
 			Format = "nexen-theme-profile",
@@ -52,6 +52,11 @@ public sealed class ThemeProfileTests {
 		Assert.Equal("#c27b38", dark.RadioButtonPressedBorderColor);
 		Assert.Equal("#e09a52", dark.SliderTrackPointerOverColor);
 		Assert.Equal("#c27b38", dark.SliderTrackPressedColor);
+		Assert.Equal("#2a509f", dark.TextBoxSelectionColor);
+		Assert.Equal("#ff333333", dark.TextControlDisabledBackgroundColor);
+		Assert.Equal("#181818", dark.ToolTipBackgroundColor);
+		Assert.Equal("#ff2a1a10", dark.MenuFlyoutBackgroundColor);
+		Assert.Equal("#a87343", dark.MenuFlyoutBorderColor);
 
 		Assert.Equal("#f3e5d7", light.MenuBackgroundColor);
 		Assert.Equal("#efb57b", light.MenuBackgroundHighlightColor);
@@ -71,6 +76,11 @@ public sealed class ThemeProfileTests {
 		Assert.Equal("#7b4517", light.RadioButtonPressedBorderColor);
 		Assert.Equal("#9f5c22", light.SliderTrackPointerOverColor);
 		Assert.Equal("#7b4517", light.SliderTrackPressedColor);
+		Assert.Equal("#70c0ff", light.TextBoxSelectionColor);
+		Assert.Equal("#e0e0e0", light.TextControlDisabledBackgroundColor);
+		Assert.Equal("#ffffed", light.ToolTipBackgroundColor);
+		Assert.Equal("#fff6ee", light.MenuFlyoutBackgroundColor);
+		Assert.Equal("#a87343", light.MenuFlyoutBorderColor);
 	}
 
 	[Fact]

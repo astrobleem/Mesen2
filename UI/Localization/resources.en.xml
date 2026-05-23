@@ -849,6 +849,11 @@
 			<Control ID="lblThemeRadioButtonPressedBorder">Radio Button Pressed Border</Control>
 			<Control ID="lblThemeSliderHoverTrack">Slider Hover Track</Control>
 			<Control ID="lblThemeSliderPressedTrack">Slider Pressed Track</Control>
+			<Control ID="lblThemeTextSelection">Text Selection</Control>
+			<Control ID="lblThemeTextControlDisabledBackground">Disabled Text Background</Control>
+			<Control ID="lblThemeToolTipBackground">Tooltip Background</Control>
+			<Control ID="lblThemeMenuFlyoutBackground">Menu Flyout Background</Control>
+			<Control ID="lblThemeMenuFlyoutBorder">Menu Flyout Border</Control>
 			<Control ID="btnThemePickColor">Pick</Control>
 			<Control ID="lblThemeLivePreview">Live Preview</Control>
 			<Control ID="lblThemePresetStatus">Preset Status:</Control>

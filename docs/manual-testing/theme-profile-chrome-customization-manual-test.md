@@ -35,6 +35,11 @@ Validate that theme profiles can customize centralized menu/chrome/accent tokens
 	- Radio Button Pressed Border
 	- Slider Hover Track
 	- Slider Pressed Track
+	- Text Selection
+	- Disabled Text Background
+	- Tooltip Background
+	- Menu Flyout Background
+	- Menu Flyout Border
 4. Click `Apply` for the selected profile.
 5. Verify the top menu bar and menu selection visuals reflect the new values.
 6. Verify button/combo/repeat hover and pressed visuals reflect the updated control semantic tokens.
@@ -43,12 +48,14 @@ Validate that theme profiles can customize centralized menu/chrome/accent tokens
 9. Verify checkbox hover and pressed visuals reflect checkbox semantic tokens.
 10. Verify radio button hover and pressed visuals reflect radio semantic tokens.
 11. Verify slider hover and pressed track visuals reflect slider semantic tokens.
-12. Click `Export Profile` and save the `.nexen-theme.json` file.
-13. Modify the exported file name and import it back with `Import Profile`.
-14. Confirm the imported profile appears in the profile dropdown.
-15. Select and apply the imported profile.
-16. Confirm menu/chrome/accent/control/sidebar/tab/check/radio/slider visuals match the imported token values.
-17. Use `Reset Defaults` and verify colors return to canonical defaults for the profile theme mode.
+12. Verify text selection and disabled text background reflect text-input semantic tokens.
+13. Verify tooltip and menu flyout surfaces reflect semantic background/border tokens.
+14. Click `Export Profile` and save the `.nexen-theme.json` file.
+15. Modify the exported file name and import it back with `Import Profile`.
+16. Confirm the imported profile appears in the profile dropdown.
+17. Select and apply the imported profile.
+18. Confirm menu/chrome/accent/control/sidebar/tab/check/radio/slider/text/flyout visuals match the imported token values.
+19. Use `Reset Defaults` and verify colors return to canonical defaults for the profile theme mode.
 
 ## Expected Results
 
@@ -56,6 +63,7 @@ Validate that theme profiles can customize centralized menu/chrome/accent tokens
 - Picker changes apply to menu/chrome/accent/control hover+pressed visuals when profile is active.
 - Picker changes apply to sidebar/tab strip hover/active visuals when profile is active.
 - Picker changes apply to checkbox/radio hover+pressed and slider hover+pressed track visuals when profile is active.
+- Picker changes apply to text-input and tooltip/menu-flyout semantic visuals when profile is active.
 - Exported profile includes UI chrome token values.
 - Imported valid profile is accepted and selectable.
 - Reset Defaults restores canonical values for light/dark profile mode.

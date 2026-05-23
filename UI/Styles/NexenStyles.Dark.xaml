@@ -107,8 +107,11 @@
 					<SolidColorBrush x:Key="DataGridRowSelectedForegroundBrush" Color="White" />
 
 					<!-- Avalonia colors -->
+					<Color x:Key="MenuFlyoutPresenterBackground">#2a1a10</Color>
+					<Color x:Key="MenuFlyoutPresenterBorderBrush">#a87343</Color>
 					<Color x:Key="MenuFlyoutItemForeground">#D0FFFFFF</Color>
 					<Color x:Key="SystemControlForegroundBaseHighBrush">#D0FFFFFF</Color>
+					<Color x:Key="TextControlBackgroundDisabled">#333333</Color>
 
 					<!-- Checkboxes -->
 					<Color x:Key="CheckBoxCheckBackgroundStrokeUncheckedPointerOver">#e09a52</Color>

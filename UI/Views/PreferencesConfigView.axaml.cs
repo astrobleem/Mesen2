@@ -390,6 +390,36 @@ public partial class PreferencesConfigView : UserControl {
 		});
 	}
 
+	private async void btnPickThemeTextSelectionColor_OnClick(object sender, RoutedEventArgs e) {
+		await PickThemeProfileColor(profile => profile.TextBoxSelectionColor, (model, colorHex) => {
+			model.SetSelectedProfileTextInputAndFlyoutSemanticColors(colorHex, model.SelectedProfileTextControlDisabledBackgroundColor, model.SelectedProfileToolTipBackgroundColor, model.SelectedProfileMenuFlyoutBackgroundColor, model.SelectedProfileMenuFlyoutBorderColor);
+		});
+	}
+
+	private async void btnPickThemeTextControlDisabledBackgroundColor_OnClick(object sender, RoutedEventArgs e) {
+		await PickThemeProfileColor(profile => profile.TextControlDisabledBackgroundColor, (model, colorHex) => {
+			model.SetSelectedProfileTextInputAndFlyoutSemanticColors(model.SelectedProfileTextSelectionColor, colorHex, model.SelectedProfileToolTipBackgroundColor, model.SelectedProfileMenuFlyoutBackgroundColor, model.SelectedProfileMenuFlyoutBorderColor);
+		});
+	}
+
+	private async void btnPickThemeToolTipBackgroundColor_OnClick(object sender, RoutedEventArgs e) {
+		await PickThemeProfileColor(profile => profile.ToolTipBackgroundColor, (model, colorHex) => {
+			model.SetSelectedProfileTextInputAndFlyoutSemanticColors(model.SelectedProfileTextSelectionColor, model.SelectedProfileTextControlDisabledBackgroundColor, colorHex, model.SelectedProfileMenuFlyoutBackgroundColor, model.SelectedProfileMenuFlyoutBorderColor);
+		});
+	}
+
+	private async void btnPickThemeMenuFlyoutBackgroundColor_OnClick(object sender, RoutedEventArgs e) {
+		await PickThemeProfileColor(profile => profile.MenuFlyoutBackgroundColor, (model, colorHex) => {
+			model.SetSelectedProfileTextInputAndFlyoutSemanticColors(model.SelectedProfileTextSelectionColor, model.SelectedProfileTextControlDisabledBackgroundColor, model.SelectedProfileToolTipBackgroundColor, colorHex, model.SelectedProfileMenuFlyoutBorderColor);
+		});
+	}
+
+	private async void btnPickThemeMenuFlyoutBorderColor_OnClick(object sender, RoutedEventArgs e) {
+		await PickThemeProfileColor(profile => profile.MenuFlyoutBorderColor, (model, colorHex) => {
+			model.SetSelectedProfileTextInputAndFlyoutSemanticColors(model.SelectedProfileTextSelectionColor, model.SelectedProfileTextControlDisabledBackgroundColor, model.SelectedProfileToolTipBackgroundColor, model.SelectedProfileMenuFlyoutBackgroundColor, colorHex);
+		});
+	}
+
 	private async Task PickThemeProfileColor(Func<ThemeProfile, string> colorSelector, Action<PreferencesConfigViewModel, string> updateAction) {
 		PreferencesConfigViewModel? model = GetViewModel();
 		ThemeProfile? profile = model?.GetSelectedThemeProfile();

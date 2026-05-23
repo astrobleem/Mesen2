@@ -725,6 +725,11 @@
 			<Control ID="lblThemeRadioButtonPressedBorder">Borde de boton de opcion al presionar</Control>
 			<Control ID="lblThemeSliderHoverTrack">Pista del deslizador al pasar el cursor</Control>
 			<Control ID="lblThemeSliderPressedTrack">Pista del deslizador al presionar</Control>
+			<Control ID="lblThemeTextSelection">Seleccion de texto</Control>
+			<Control ID="lblThemeTextControlDisabledBackground">Fondo de texto deshabilitado</Control>
+			<Control ID="lblThemeToolTipBackground">Fondo de tooltip</Control>
+			<Control ID="lblThemeMenuFlyoutBackground">Fondo de menu emergente</Control>
+			<Control ID="lblThemeMenuFlyoutBorder">Borde de menu emergente</Control>
 			<Control ID="btnThemePickColor">Elegir</Control>
 			<Control ID="lblThemeLivePreview">Vista previa en vivo</Control>
 			<Control ID="lblThemePresetStatus">Estado del preajuste:</Control>

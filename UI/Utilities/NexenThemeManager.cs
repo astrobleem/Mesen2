@@ -67,6 +67,11 @@ public static class NexenThemeManager {
 		ApplyColorOverride(app, "RadioButtonOuterEllipseStrokePressed", profile.RadioButtonPressedBorderColor);
 		ApplyColorOverride(app, "SliderTrackFillPointerOver", profile.SliderTrackPointerOverColor);
 		ApplyColorOverride(app, "SliderTrackFillPressed", profile.SliderTrackPressedColor);
+		ApplyBrushOverride(app, "TextBoxSelectionBrush", profile.TextBoxSelectionColor);
+		ApplyColorOverride(app, "TextControlBackgroundDisabled", profile.TextControlDisabledBackgroundColor);
+		ApplyColorOverride(app, "ToolTipBackground", profile.ToolTipBackgroundColor);
+		ApplyColorOverride(app, "MenuFlyoutPresenterBackground", profile.MenuFlyoutBackgroundColor);
+		ApplyColorOverride(app, "MenuFlyoutPresenterBorderBrush", profile.MenuFlyoutBorderColor);
 		ApplyColorOverride(app, "ThemeAccentColor", profile.ThemeAccentColor);
 		ApplyColorOverride(app, "HighlightColor", profile.HighlightColor);
 

@@ -39,6 +39,11 @@ public sealed class ThemeProfile {
 	public string RadioButtonPressedBorderColor { get; set; } = "#c27b38";
 	public string SliderTrackPointerOverColor { get; set; } = "#e09a52";
 	public string SliderTrackPressedColor { get; set; } = "#c27b38";
+	public string TextBoxSelectionColor { get; set; } = "#2a509f";
+	public string TextControlDisabledBackgroundColor { get; set; } = "#ff333333";
+	public string ToolTipBackgroundColor { get; set; } = "#181818";
+	public string MenuFlyoutBackgroundColor { get; set; } = "#ff2a1a10";
+	public string MenuFlyoutBorderColor { get; set; } = "#a87343";
 	public string ThemeAccentColor { get; set; } = "#ccc87423";
 	public string HighlightColor { get; set; } = "#ffc87423";
 	public string ControlPointerOverBackgroundColor { get; set; } = "#80573721";
@@ -87,6 +92,11 @@ public sealed class ThemeProfile {
 				RadioButtonPressedBorderColor = "#c27b38",
 				SliderTrackPointerOverColor = "#e09a52",
 				SliderTrackPressedColor = "#c27b38",
+				TextBoxSelectionColor = "#2a509f",
+				TextControlDisabledBackgroundColor = "#ff333333",
+				ToolTipBackgroundColor = "#181818",
+				MenuFlyoutBackgroundColor = "#ff2a1a10",
+				MenuFlyoutBorderColor = "#a87343",
 				ThemeAccentColor = "#ccc87423",
 				HighlightColor = "#ffc87423",
 				ControlPointerOverBackgroundColor = "#80573721",
@@ -135,6 +145,11 @@ public sealed class ThemeProfile {
 			RadioButtonPressedBorderColor = "#7b4517",
 			SliderTrackPointerOverColor = "#9f5c22",
 			SliderTrackPressedColor = "#7b4517",
+			TextBoxSelectionColor = "#70c0ff",
+			TextControlDisabledBackgroundColor = "#e0e0e0",
+			ToolTipBackgroundColor = "#ffffed",
+			MenuFlyoutBackgroundColor = "#fff6ee",
+			MenuFlyoutBorderColor = "#a87343",
 			ThemeAccentColor = "#ffc56e21",
 			HighlightColor = "#ff8a5116",
 			ControlPointerOverBackgroundColor = "#f8d9b8",
@@ -204,6 +219,11 @@ public sealed class ThemeProfileFile {
 			&& ThemeProfile.IsValidColor(Profile.RadioButtonPressedBorderColor)
 			&& ThemeProfile.IsValidColor(Profile.SliderTrackPointerOverColor)
 			&& ThemeProfile.IsValidColor(Profile.SliderTrackPressedColor)
+			&& ThemeProfile.IsValidColor(Profile.TextBoxSelectionColor)
+			&& ThemeProfile.IsValidColor(Profile.TextControlDisabledBackgroundColor)
+			&& ThemeProfile.IsValidColor(Profile.ToolTipBackgroundColor)
+			&& ThemeProfile.IsValidColor(Profile.MenuFlyoutBackgroundColor)
+			&& ThemeProfile.IsValidColor(Profile.MenuFlyoutBorderColor)
 			&& ThemeProfile.IsValidColor(Profile.ThemeAccentColor)
 			&& ThemeProfile.IsValidColor(Profile.HighlightColor)
 			&& ThemeProfile.IsValidColor(Profile.ControlPointerOverBackgroundColor)

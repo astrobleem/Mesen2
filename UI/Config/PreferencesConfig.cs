@@ -167,6 +167,11 @@ public sealed partial class PreferencesConfig : BaseConfig<PreferencesConfig> {
 			profile.RadioButtonPressedBorderColor = TryReadResourceColor("RadioButtonOuterEllipseStrokePressed", profile.RadioButtonPressedBorderColor);
 			profile.SliderTrackPointerOverColor = TryReadResourceColor("SliderTrackFillPointerOver", profile.SliderTrackPointerOverColor);
 			profile.SliderTrackPressedColor = TryReadResourceColor("SliderTrackFillPressed", profile.SliderTrackPressedColor);
+			profile.TextBoxSelectionColor = TryReadResourceBrushColor("TextBoxSelectionBrush", profile.TextBoxSelectionColor);
+			profile.TextControlDisabledBackgroundColor = TryReadResourceColor("TextControlBackgroundDisabled", profile.TextControlDisabledBackgroundColor);
+			profile.ToolTipBackgroundColor = TryReadResourceColor("ToolTipBackground", profile.ToolTipBackgroundColor);
+			profile.MenuFlyoutBackgroundColor = TryReadResourceColor("MenuFlyoutPresenterBackground", profile.MenuFlyoutBackgroundColor);
+			profile.MenuFlyoutBorderColor = TryReadResourceColor("MenuFlyoutPresenterBorderBrush", profile.MenuFlyoutBorderColor);
 			profile.ThemeAccentColor = TryReadResourceColor("ThemeAccentColor", profile.ThemeAccentColor);
 			profile.HighlightColor = TryReadResourceColor("HighlightColor", profile.HighlightColor);
 			profile.ControlPointerOverBackgroundColor = TryReadResourceColor("ButtonBackgroundPointerOver", profile.ControlPointerOverBackgroundColor);
@@ -235,6 +240,11 @@ public sealed partial class PreferencesConfig : BaseConfig<PreferencesConfig> {
 			existing.RadioButtonPressedBorderColor = profile.RadioButtonPressedBorderColor;
 			existing.SliderTrackPointerOverColor = profile.SliderTrackPointerOverColor;
 			existing.SliderTrackPressedColor = profile.SliderTrackPressedColor;
+			existing.TextBoxSelectionColor = profile.TextBoxSelectionColor;
+			existing.TextControlDisabledBackgroundColor = profile.TextControlDisabledBackgroundColor;
+			existing.ToolTipBackgroundColor = profile.ToolTipBackgroundColor;
+			existing.MenuFlyoutBackgroundColor = profile.MenuFlyoutBackgroundColor;
+			existing.MenuFlyoutBorderColor = profile.MenuFlyoutBorderColor;
 			existing.ThemeAccentColor = profile.ThemeAccentColor;
 			existing.HighlightColor = profile.HighlightColor;
 			existing.ControlPointerOverBackgroundColor = profile.ControlPointerOverBackgroundColor;
@@ -345,6 +355,11 @@ public sealed partial class PreferencesConfig : BaseConfig<PreferencesConfig> {
 			RadioButtonPressedBorderColor = source.RadioButtonPressedBorderColor,
 			SliderTrackPointerOverColor = source.SliderTrackPointerOverColor,
 			SliderTrackPressedColor = source.SliderTrackPressedColor,
+			TextBoxSelectionColor = source.TextBoxSelectionColor,
+			TextControlDisabledBackgroundColor = source.TextControlDisabledBackgroundColor,
+			ToolTipBackgroundColor = source.ToolTipBackgroundColor,
+			MenuFlyoutBackgroundColor = source.MenuFlyoutBackgroundColor,
+			MenuFlyoutBorderColor = source.MenuFlyoutBorderColor,
 			ThemeAccentColor = source.ThemeAccentColor,
 			HighlightColor = source.HighlightColor,
 			ControlPointerOverBackgroundColor = source.ControlPointerOverBackgroundColor,
@@ -400,6 +415,11 @@ public sealed partial class PreferencesConfig : BaseConfig<PreferencesConfig> {
 		profile.RadioButtonPressedBorderColor = defaults.RadioButtonPressedBorderColor;
 		profile.SliderTrackPointerOverColor = defaults.SliderTrackPointerOverColor;
 		profile.SliderTrackPressedColor = defaults.SliderTrackPressedColor;
+		profile.TextBoxSelectionColor = defaults.TextBoxSelectionColor;
+		profile.TextControlDisabledBackgroundColor = defaults.TextControlDisabledBackgroundColor;
+		profile.ToolTipBackgroundColor = defaults.ToolTipBackgroundColor;
+		profile.MenuFlyoutBackgroundColor = defaults.MenuFlyoutBackgroundColor;
+		profile.MenuFlyoutBorderColor = defaults.MenuFlyoutBorderColor;
 		profile.ThemeAccentColor = defaults.ThemeAccentColor;
 		profile.HighlightColor = defaults.HighlightColor;
 		profile.ControlPointerOverBackgroundColor = defaults.ControlPointerOverBackgroundColor;
@@ -458,6 +478,11 @@ public sealed partial class PreferencesConfig : BaseConfig<PreferencesConfig> {
 		profile.RadioButtonPressedBorderColor = preset.RadioButtonPressedBorderColor;
 		profile.SliderTrackPointerOverColor = preset.SliderTrackPointerOverColor;
 		profile.SliderTrackPressedColor = preset.SliderTrackPressedColor;
+		profile.TextBoxSelectionColor = preset.TextBoxSelectionColor;
+		profile.TextControlDisabledBackgroundColor = preset.TextControlDisabledBackgroundColor;
+		profile.ToolTipBackgroundColor = preset.ToolTipBackgroundColor;
+		profile.MenuFlyoutBackgroundColor = preset.MenuFlyoutBackgroundColor;
+		profile.MenuFlyoutBorderColor = preset.MenuFlyoutBorderColor;
 		profile.ThemeAccentColor = preset.ThemeAccentColor;
 		profile.HighlightColor = preset.HighlightColor;
 		profile.ControlPointerOverBackgroundColor = preset.ControlPointerOverBackgroundColor;
@@ -517,6 +542,11 @@ public sealed partial class PreferencesConfig : BaseConfig<PreferencesConfig> {
 		if (profile.RadioButtonPressedBorderColor != defaults.RadioButtonPressedBorderColor) divergenceCount++;
 		if (profile.SliderTrackPointerOverColor != defaults.SliderTrackPointerOverColor) divergenceCount++;
 		if (profile.SliderTrackPressedColor != defaults.SliderTrackPressedColor) divergenceCount++;
+		if (profile.TextBoxSelectionColor != defaults.TextBoxSelectionColor) divergenceCount++;
+		if (profile.TextControlDisabledBackgroundColor != defaults.TextControlDisabledBackgroundColor) divergenceCount++;
+		if (profile.ToolTipBackgroundColor != defaults.ToolTipBackgroundColor) divergenceCount++;
+		if (profile.MenuFlyoutBackgroundColor != defaults.MenuFlyoutBackgroundColor) divergenceCount++;
+		if (profile.MenuFlyoutBorderColor != defaults.MenuFlyoutBorderColor) divergenceCount++;
 		if (profile.ThemeAccentColor != defaults.ThemeAccentColor) divergenceCount++;
 		if (profile.HighlightColor != defaults.HighlightColor) divergenceCount++;
 		if (profile.ControlPointerOverBackgroundColor != defaults.ControlPointerOverBackgroundColor) divergenceCount++;
@@ -572,6 +602,11 @@ public sealed partial class PreferencesConfig : BaseConfig<PreferencesConfig> {
 		if (profile.RadioButtonPressedBorderColor != defaults.RadioButtonPressedBorderColor) customized.Add(nameof(ThemeProfile.RadioButtonPressedBorderColor));
 		if (profile.SliderTrackPointerOverColor != defaults.SliderTrackPointerOverColor) customized.Add(nameof(ThemeProfile.SliderTrackPointerOverColor));
 		if (profile.SliderTrackPressedColor != defaults.SliderTrackPressedColor) customized.Add(nameof(ThemeProfile.SliderTrackPressedColor));
+		if (profile.TextBoxSelectionColor != defaults.TextBoxSelectionColor) customized.Add(nameof(ThemeProfile.TextBoxSelectionColor));
+		if (profile.TextControlDisabledBackgroundColor != defaults.TextControlDisabledBackgroundColor) customized.Add(nameof(ThemeProfile.TextControlDisabledBackgroundColor));
+		if (profile.ToolTipBackgroundColor != defaults.ToolTipBackgroundColor) customized.Add(nameof(ThemeProfile.ToolTipBackgroundColor));
+		if (profile.MenuFlyoutBackgroundColor != defaults.MenuFlyoutBackgroundColor) customized.Add(nameof(ThemeProfile.MenuFlyoutBackgroundColor));
+		if (profile.MenuFlyoutBorderColor != defaults.MenuFlyoutBorderColor) customized.Add(nameof(ThemeProfile.MenuFlyoutBorderColor));
 		if (profile.ThemeAccentColor != defaults.ThemeAccentColor) customized.Add(nameof(ThemeProfile.ThemeAccentColor));
 		if (profile.HighlightColor != defaults.HighlightColor) customized.Add(nameof(ThemeProfile.HighlightColor));
 		if (profile.ControlPointerOverBackgroundColor != defaults.ControlPointerOverBackgroundColor) customized.Add(nameof(ThemeProfile.ControlPointerOverBackgroundColor));
@@ -689,6 +724,19 @@ public sealed partial class PreferencesConfig : BaseConfig<PreferencesConfig> {
 		}
 
 		if (Application.Current.Resources.TryGetValue(resourceKey, out object? resource) && resource is Color color) {
+			return "#" + color.A.ToString("x2") + color.R.ToString("x2") + color.G.ToString("x2") + color.B.ToString("x2");
+		}
+
+		return fallback;
+	}
+
+	private static string TryReadResourceBrushColor(string resourceKey, string fallback) {
+		if (Application.Current?.Resources is null) {
+			return fallback;
+		}
+
+		if (Application.Current.Resources.TryGetValue(resourceKey, out object? resource) && resource is ISolidColorBrush brush) {
+			Color color = brush.Color;
 			return "#" + color.A.ToString("x2") + color.R.ToString("x2") + color.G.ToString("x2") + color.B.ToString("x2");
 		}
 

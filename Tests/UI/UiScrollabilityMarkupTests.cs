@@ -225,6 +225,11 @@ public sealed class UiScrollabilityMarkupTests {
 		Assert.Contains("lblThemeRadioButtonPressedBorder", markup);
 		Assert.Contains("lblThemeSliderHoverTrack", markup);
 		Assert.Contains("lblThemeSliderPressedTrack", markup);
+		Assert.Contains("lblThemeTextSelection", markup);
+		Assert.Contains("lblThemeTextControlDisabledBackground", markup);
+		Assert.Contains("lblThemeToolTipBackground", markup);
+		Assert.Contains("lblThemeMenuFlyoutBackground", markup);
+		Assert.Contains("lblThemeMenuFlyoutBorder", markup);
 		Assert.Contains("btnPickThemeControlHoverBackgroundColor_OnClick", markup);
 		Assert.Contains("btnPickThemeControlPressedBackgroundColor_OnClick", markup);
 		Assert.Contains("btnPickThemeControlHoverBorderColor_OnClick", markup);
@@ -242,6 +247,11 @@ public sealed class UiScrollabilityMarkupTests {
 		Assert.Contains("btnPickThemeRadioButtonPressedBorderColor_OnClick", markup);
 		Assert.Contains("btnPickThemeSliderHoverTrackColor_OnClick", markup);
 		Assert.Contains("btnPickThemeSliderPressedTrackColor_OnClick", markup);
+		Assert.Contains("btnPickThemeTextSelectionColor_OnClick", markup);
+		Assert.Contains("btnPickThemeTextControlDisabledBackgroundColor_OnClick", markup);
+		Assert.Contains("btnPickThemeToolTipBackgroundColor_OnClick", markup);
+		Assert.Contains("btnPickThemeMenuFlyoutBackgroundColor_OnClick", markup);
+		Assert.Contains("btnPickThemeMenuFlyoutBorderColor_OnClick", markup);
 	}
 
 	[Fact]

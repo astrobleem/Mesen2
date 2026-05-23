@@ -725,6 +725,11 @@
 			<Control ID="lblThemeRadioButtonPressedBorder">ラジオボタンの押下枠線</Control>
 			<Control ID="lblThemeSliderHoverTrack">スライダーのホバートラック</Control>
 			<Control ID="lblThemeSliderPressedTrack">スライダーの押下トラック</Control>
+			<Control ID="lblThemeTextSelection">テキスト選択色</Control>
+			<Control ID="lblThemeTextControlDisabledBackground">無効テキスト背景</Control>
+			<Control ID="lblThemeToolTipBackground">ツールチップ背景</Control>
+			<Control ID="lblThemeMenuFlyoutBackground">メニューフライアウト背景</Control>
+			<Control ID="lblThemeMenuFlyoutBorder">メニューフライアウト枠線</Control>
 			<Control ID="btnThemePickColor">選択</Control>
 			<Control ID="lblThemeLivePreview">ライブプレビュー</Control>
 			<Control ID="lblThemePresetStatus">プリセット状態:</Control>
