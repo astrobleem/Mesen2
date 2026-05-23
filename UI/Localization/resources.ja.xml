@@ -708,6 +708,10 @@
 			<Control ID="lblThemeMenuBackground">メニュー背景</Control>
 			<Control ID="lblThemeMenuHighlight">メニューハイライト</Control>
 			<Control ID="lblThemeAccentColor">アクセントカラー</Control>
+			<Control ID="lblThemeControlHoverBackground">コントロールのホバー背景</Control>
+			<Control ID="lblThemeControlPressedBackground">コントロールの押下背景</Control>
+			<Control ID="lblThemeControlHoverBorder">コントロールのホバー枠線</Control>
+			<Control ID="lblThemeControlPressedBorder">コントロールの押下枠線</Control>
 			<Control ID="btnThemePickColor">選択</Control>
 			<Control ID="lblThemeLivePreview">ライブプレビュー</Control>
 			<Control ID="lblThemePresetStatus">プリセット状態:</Control>

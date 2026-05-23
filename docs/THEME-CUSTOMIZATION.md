@@ -105,6 +105,13 @@ Theme profile import/export now covers startup/setup tokens and key UI chrome to
 - Settings tab strip background
 - Accent and highlight colors
 
+Theme profiles also cover semantic control interaction tokens used across button/combo/repeat families:
+
+- Control hover background
+- Control pressed background
+- Control hover border
+- Control pressed border
+
 These tokens are centralized in `ThemeProfile` and applied through `NexenThemeManager` resource overrides so they are not duplicated as ad-hoc values across the UI runtime path.
 
 ## Settings UI Coverage
@@ -113,6 +120,7 @@ The Preferences theme section includes profile selection and import/export plus 
 
 - Startup background, startup text, startup primary action
 - Menu background, menu highlight, accent color
+- Control hover/pressed backgrounds and control hover/pressed borders
 
 This gives a settings-surface customization path while preserving JSON import/export for advanced profile editing and sharing.
 

@@ -832,6 +832,10 @@
 			<Control ID="lblThemeMenuBackground">Menu Background</Control>
 			<Control ID="lblThemeMenuHighlight">Menu Highlight</Control>
 			<Control ID="lblThemeAccentColor">Accent Color</Control>
+			<Control ID="lblThemeControlHoverBackground">Control Hover Background</Control>
+			<Control ID="lblThemeControlPressedBackground">Control Pressed Background</Control>
+			<Control ID="lblThemeControlHoverBorder">Control Hover Border</Control>
+			<Control ID="lblThemeControlPressedBorder">Control Pressed Border</Control>
 			<Control ID="btnThemePickColor">Pick</Control>
 			<Control ID="lblThemeLivePreview">Live Preview</Control>
 			<Control ID="lblThemePresetStatus">Preset Status:</Control>

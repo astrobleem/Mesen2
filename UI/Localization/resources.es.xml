@@ -708,6 +708,10 @@
 			<Control ID="lblThemeMenuBackground">Fondo del menu</Control>
 			<Control ID="lblThemeMenuHighlight">Resaltado del menu</Control>
 			<Control ID="lblThemeAccentColor">Color de acento</Control>
+			<Control ID="lblThemeControlHoverBackground">Fondo del control al pasar el cursor</Control>
+			<Control ID="lblThemeControlPressedBackground">Fondo del control al presionar</Control>
+			<Control ID="lblThemeControlHoverBorder">Borde del control al pasar el cursor</Control>
+			<Control ID="lblThemeControlPressedBorder">Borde del control al presionar</Control>
 			<Control ID="btnThemePickColor">Elegir</Control>
 			<Control ID="lblThemeLivePreview">Vista previa en vivo</Control>
 			<Control ID="lblThemePresetStatus">Estado del preajuste:</Control>

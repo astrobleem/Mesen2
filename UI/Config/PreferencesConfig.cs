@@ -156,6 +156,10 @@ public sealed partial class PreferencesConfig : BaseConfig<PreferencesConfig> {
 			profile.SettingsTabStripBackgroundColor = TryReadResourceColor("SettingsTabStripBackgroundColor", profile.SettingsTabStripBackgroundColor);
 			profile.ThemeAccentColor = TryReadResourceColor("ThemeAccentColor", profile.ThemeAccentColor);
 			profile.HighlightColor = TryReadResourceColor("HighlightColor", profile.HighlightColor);
+			profile.ControlPointerOverBackgroundColor = TryReadResourceColor("ButtonBackgroundPointerOver", profile.ControlPointerOverBackgroundColor);
+			profile.ControlPressedBackgroundColor = TryReadResourceColor("ButtonBackgroundPressed", profile.ControlPressedBackgroundColor);
+			profile.ControlPointerOverBorderColor = TryReadResourceColor("ButtonBorderBrushPointerOver", profile.ControlPointerOverBorderColor);
+			profile.ControlPressedBorderColor = TryReadResourceColor("ButtonBorderBrushPressed", profile.ControlPressedBorderColor);
 		}
 	}
 
@@ -207,6 +211,10 @@ public sealed partial class PreferencesConfig : BaseConfig<PreferencesConfig> {
 			existing.SettingsTabStripBackgroundColor = profile.SettingsTabStripBackgroundColor;
 			existing.ThemeAccentColor = profile.ThemeAccentColor;
 			existing.HighlightColor = profile.HighlightColor;
+			existing.ControlPointerOverBackgroundColor = profile.ControlPointerOverBackgroundColor;
+			existing.ControlPressedBackgroundColor = profile.ControlPressedBackgroundColor;
+			existing.ControlPointerOverBorderColor = profile.ControlPointerOverBorderColor;
+			existing.ControlPressedBorderColor = profile.ControlPressedBorderColor;
 			existing.SetupTitleFontSize = profile.SetupTitleFontSize;
 			existing.SetupSubtitleFontSize = profile.SetupSubtitleFontSize;
 			existing.SetupPrimaryActionFontSize = profile.SetupPrimaryActionFontSize;
@@ -300,6 +308,10 @@ public sealed partial class PreferencesConfig : BaseConfig<PreferencesConfig> {
 			SettingsTabStripBackgroundColor = source.SettingsTabStripBackgroundColor,
 			ThemeAccentColor = source.ThemeAccentColor,
 			HighlightColor = source.HighlightColor,
+			ControlPointerOverBackgroundColor = source.ControlPointerOverBackgroundColor,
+			ControlPressedBackgroundColor = source.ControlPressedBackgroundColor,
+			ControlPointerOverBorderColor = source.ControlPointerOverBorderColor,
+			ControlPressedBorderColor = source.ControlPressedBorderColor,
 			SetupTitleFontSize = source.SetupTitleFontSize,
 			SetupSubtitleFontSize = source.SetupSubtitleFontSize,
 			SetupPrimaryActionFontSize = source.SetupPrimaryActionFontSize
@@ -338,6 +350,10 @@ public sealed partial class PreferencesConfig : BaseConfig<PreferencesConfig> {
 		profile.SettingsTabStripBackgroundColor = defaults.SettingsTabStripBackgroundColor;
 		profile.ThemeAccentColor = defaults.ThemeAccentColor;
 		profile.HighlightColor = defaults.HighlightColor;
+		profile.ControlPointerOverBackgroundColor = defaults.ControlPointerOverBackgroundColor;
+		profile.ControlPressedBackgroundColor = defaults.ControlPressedBackgroundColor;
+		profile.ControlPointerOverBorderColor = defaults.ControlPointerOverBorderColor;
+		profile.ControlPressedBorderColor = defaults.ControlPressedBorderColor;
 		profile.SetupTitleFontSize = defaults.SetupTitleFontSize;
 		profile.SetupSubtitleFontSize = defaults.SetupSubtitleFontSize;
 		profile.SetupPrimaryActionFontSize = defaults.SetupPrimaryActionFontSize;
@@ -379,6 +395,10 @@ public sealed partial class PreferencesConfig : BaseConfig<PreferencesConfig> {
 		profile.SettingsTabStripBackgroundColor = preset.SettingsTabStripBackgroundColor;
 		profile.ThemeAccentColor = preset.ThemeAccentColor;
 		profile.HighlightColor = preset.HighlightColor;
+		profile.ControlPointerOverBackgroundColor = preset.ControlPointerOverBackgroundColor;
+		profile.ControlPressedBackgroundColor = preset.ControlPressedBackgroundColor;
+		profile.ControlPointerOverBorderColor = preset.ControlPointerOverBorderColor;
+		profile.ControlPressedBorderColor = preset.ControlPressedBorderColor;
 		profile.SetupTitleFontSize = preset.SetupTitleFontSize;
 		profile.SetupSubtitleFontSize = preset.SetupSubtitleFontSize;
 		profile.SetupPrimaryActionFontSize = preset.SetupPrimaryActionFontSize;
@@ -421,6 +441,10 @@ public sealed partial class PreferencesConfig : BaseConfig<PreferencesConfig> {
 		if (profile.SettingsTabStripBackgroundColor != defaults.SettingsTabStripBackgroundColor) divergenceCount++;
 		if (profile.ThemeAccentColor != defaults.ThemeAccentColor) divergenceCount++;
 		if (profile.HighlightColor != defaults.HighlightColor) divergenceCount++;
+		if (profile.ControlPointerOverBackgroundColor != defaults.ControlPointerOverBackgroundColor) divergenceCount++;
+		if (profile.ControlPressedBackgroundColor != defaults.ControlPressedBackgroundColor) divergenceCount++;
+		if (profile.ControlPointerOverBorderColor != defaults.ControlPointerOverBorderColor) divergenceCount++;
+		if (profile.ControlPressedBorderColor != defaults.ControlPressedBorderColor) divergenceCount++;
 		if (profile.SetupTitleFontSize != defaults.SetupTitleFontSize) divergenceCount++;
 		if (profile.SetupSubtitleFontSize != defaults.SetupSubtitleFontSize) divergenceCount++;
 		if (profile.SetupPrimaryActionFontSize != defaults.SetupPrimaryActionFontSize) divergenceCount++;
@@ -459,6 +483,10 @@ public sealed partial class PreferencesConfig : BaseConfig<PreferencesConfig> {
 		if (profile.SettingsTabStripBackgroundColor != defaults.SettingsTabStripBackgroundColor) customized.Add(nameof(ThemeProfile.SettingsTabStripBackgroundColor));
 		if (profile.ThemeAccentColor != defaults.ThemeAccentColor) customized.Add(nameof(ThemeProfile.ThemeAccentColor));
 		if (profile.HighlightColor != defaults.HighlightColor) customized.Add(nameof(ThemeProfile.HighlightColor));
+		if (profile.ControlPointerOverBackgroundColor != defaults.ControlPointerOverBackgroundColor) customized.Add(nameof(ThemeProfile.ControlPointerOverBackgroundColor));
+		if (profile.ControlPressedBackgroundColor != defaults.ControlPressedBackgroundColor) customized.Add(nameof(ThemeProfile.ControlPressedBackgroundColor));
+		if (profile.ControlPointerOverBorderColor != defaults.ControlPointerOverBorderColor) customized.Add(nameof(ThemeProfile.ControlPointerOverBorderColor));
+		if (profile.ControlPressedBorderColor != defaults.ControlPressedBorderColor) customized.Add(nameof(ThemeProfile.ControlPressedBorderColor));
 		if (profile.SetupTitleFontSize != defaults.SetupTitleFontSize) customized.Add(nameof(ThemeProfile.SetupTitleFontSize));
 		if (profile.SetupSubtitleFontSize != defaults.SetupSubtitleFontSize) customized.Add(nameof(ThemeProfile.SetupSubtitleFontSize));
 		if (profile.SetupPrimaryActionFontSize != defaults.SetupPrimaryActionFontSize) customized.Add(nameof(ThemeProfile.SetupPrimaryActionFontSize));

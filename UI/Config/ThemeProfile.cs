@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Avalonia.Media;
 
 namespace Nexen.Config;
@@ -28,6 +28,10 @@ public sealed class ThemeProfile {
 	public string SettingsTabStripBackgroundColor { get; set; } = "#2f2015";
 	public string ThemeAccentColor { get; set; } = "#ccc87423";
 	public string HighlightColor { get; set; } = "#ffc87423";
+	public string ControlPointerOverBackgroundColor { get; set; } = "#80573721";
+	public string ControlPressedBackgroundColor { get; set; } = "#9960382a";
+	public string ControlPointerOverBorderColor { get; set; } = "#e09a52";
+	public string ControlPressedBorderColor { get; set; } = "#c27b38";
 	public double SetupTitleFontSize { get; set; } = 34;
 	public double SetupSubtitleFontSize { get; set; } = 16;
 	public double SetupPrimaryActionFontSize { get; set; } = 34;
@@ -59,6 +63,10 @@ public sealed class ThemeProfile {
 				SettingsTabStripBackgroundColor = "#2f2015",
 				ThemeAccentColor = "#ccc87423",
 				HighlightColor = "#ffc87423",
+				ControlPointerOverBackgroundColor = "#80573721",
+				ControlPressedBackgroundColor = "#9960382a",
+				ControlPointerOverBorderColor = "#e09a52",
+				ControlPressedBorderColor = "#c27b38",
 				SetupTitleFontSize = 34,
 				SetupSubtitleFontSize = 16,
 				SetupPrimaryActionFontSize = 34
@@ -90,6 +98,10 @@ public sealed class ThemeProfile {
 			SettingsTabStripBackgroundColor = "#f5e8dc",
 			ThemeAccentColor = "#ffc56e21",
 			HighlightColor = "#ff8a5116",
+			ControlPointerOverBackgroundColor = "#f8d9b8",
+			ControlPressedBackgroundColor = "#e9c098",
+			ControlPointerOverBorderColor = "#9f5c22",
+			ControlPressedBorderColor = "#7b4517",
 			SetupTitleFontSize = 34,
 			SetupSubtitleFontSize = 16,
 			SetupPrimaryActionFontSize = 34
@@ -141,6 +153,10 @@ public sealed class ThemeProfileFile {
 			&& ThemeProfile.IsValidColor(Profile.MenuSeparatorBackgroundColor)
 			&& ThemeProfile.IsValidColor(Profile.SettingsTabStripBackgroundColor)
 			&& ThemeProfile.IsValidColor(Profile.ThemeAccentColor)
-			&& ThemeProfile.IsValidColor(Profile.HighlightColor);
+			&& ThemeProfile.IsValidColor(Profile.HighlightColor)
+			&& ThemeProfile.IsValidColor(Profile.ControlPointerOverBackgroundColor)
+			&& ThemeProfile.IsValidColor(Profile.ControlPressedBackgroundColor)
+			&& ThemeProfile.IsValidColor(Profile.ControlPointerOverBorderColor)
+			&& ThemeProfile.IsValidColor(Profile.ControlPressedBorderColor);
 	}
 }

@@ -50,6 +50,17 @@ public static class NexenThemeManager {
 		ApplyColorOverride(app, "SettingsTabStripBackgroundColor", profile.SettingsTabStripBackgroundColor);
 		ApplyColorOverride(app, "ThemeAccentColor", profile.ThemeAccentColor);
 		ApplyColorOverride(app, "HighlightColor", profile.HighlightColor);
+
+		ApplyColorOverride(app, "ButtonBackgroundPointerOver", profile.ControlPointerOverBackgroundColor);
+		ApplyColorOverride(app, "ButtonBackgroundPressed", profile.ControlPressedBackgroundColor);
+		ApplyColorOverride(app, "ButtonBorderBrushPointerOver", profile.ControlPointerOverBorderColor);
+		ApplyColorOverride(app, "ButtonBorderBrushPressed", profile.ControlPressedBorderColor);
+		ApplyColorOverride(app, "ComboBoxBackgroundPointerOver", profile.ControlPointerOverBackgroundColor);
+		ApplyColorOverride(app, "ComboBoxBorderBrushPointerOver", profile.ControlPointerOverBorderColor);
+		ApplyColorOverride(app, "RepeatButtonBackgroundPointerOver", profile.ControlPointerOverBackgroundColor);
+		ApplyColorOverride(app, "RepeatButtonBackgroundPressed", profile.ControlPressedBackgroundColor);
+		ApplyColorOverride(app, "RepeatButtonBorderBrushPointerOver", profile.ControlPointerOverBorderColor);
+		ApplyColorOverride(app, "RepeatButtonBorderBrushPressed", profile.ControlPressedBorderColor);
 		ApplyDerivedAccentVariants(app, profile.ThemeAccentColor);
 
 		app.Resources["NexenSetupTitleFontSize"] = profile.SetupTitleFontSize;

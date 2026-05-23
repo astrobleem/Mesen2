@@ -208,6 +208,14 @@ public sealed class UiScrollabilityMarkupTests {
 		Assert.Contains("btnPickThemeMenuBackgroundColor_OnClick", markup);
 		Assert.Contains("btnPickThemeMenuHighlightColor_OnClick", markup);
 		Assert.Contains("btnPickThemeAccentColor_OnClick", markup);
+		Assert.Contains("lblThemeControlHoverBackground", markup);
+		Assert.Contains("lblThemeControlPressedBackground", markup);
+		Assert.Contains("lblThemeControlHoverBorder", markup);
+		Assert.Contains("lblThemeControlPressedBorder", markup);
+		Assert.Contains("btnPickThemeControlHoverBackgroundColor_OnClick", markup);
+		Assert.Contains("btnPickThemeControlPressedBackgroundColor_OnClick", markup);
+		Assert.Contains("btnPickThemeControlHoverBorderColor_OnClick", markup);
+		Assert.Contains("btnPickThemeControlPressedBorderColor_OnClick", markup);
 	}
 
 	[Fact]

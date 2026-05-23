@@ -288,6 +288,30 @@ public partial class PreferencesConfigView : UserControl {
 		});
 	}
 
+	private async void btnPickThemeControlHoverBackgroundColor_OnClick(object sender, RoutedEventArgs e) {
+		await PickThemeProfileColor(profile => profile.ControlPointerOverBackgroundColor, (model, colorHex) => {
+			model.SetSelectedProfileControlChromeColors(colorHex, model.SelectedProfileControlPressedBackgroundColor, model.SelectedProfileControlHoverBorderColor, model.SelectedProfileControlPressedBorderColor);
+		});
+	}
+
+	private async void btnPickThemeControlPressedBackgroundColor_OnClick(object sender, RoutedEventArgs e) {
+		await PickThemeProfileColor(profile => profile.ControlPressedBackgroundColor, (model, colorHex) => {
+			model.SetSelectedProfileControlChromeColors(model.SelectedProfileControlHoverBackgroundColor, colorHex, model.SelectedProfileControlHoverBorderColor, model.SelectedProfileControlPressedBorderColor);
+		});
+	}
+
+	private async void btnPickThemeControlHoverBorderColor_OnClick(object sender, RoutedEventArgs e) {
+		await PickThemeProfileColor(profile => profile.ControlPointerOverBorderColor, (model, colorHex) => {
+			model.SetSelectedProfileControlChromeColors(model.SelectedProfileControlHoverBackgroundColor, model.SelectedProfileControlPressedBackgroundColor, colorHex, model.SelectedProfileControlPressedBorderColor);
+		});
+	}
+
+	private async void btnPickThemeControlPressedBorderColor_OnClick(object sender, RoutedEventArgs e) {
+		await PickThemeProfileColor(profile => profile.ControlPressedBorderColor, (model, colorHex) => {
+			model.SetSelectedProfileControlChromeColors(model.SelectedProfileControlHoverBackgroundColor, model.SelectedProfileControlPressedBackgroundColor, model.SelectedProfileControlHoverBorderColor, colorHex);
+		});
+	}
+
 	private async Task PickThemeProfileColor(Func<ThemeProfile, string> colorSelector, Action<PreferencesConfigViewModel, string> updateAction) {
 		PreferencesConfigViewModel? model = GetViewModel();
 		ThemeProfile? profile = model?.GetSelectedThemeProfile();

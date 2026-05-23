@@ -1,4 +1,4 @@
-# Issue 2290 UI Theme Chrome Token Centralization (2026-05-22)
+﻿# Issue 2290 UI Theme Chrome Token Centralization (2026-05-22)
 
 ## Context
 

@@ -18,7 +18,7 @@ public sealed class ThemeProfileTests {
 	[Fact]
 	public void ThemeProfileFile_IsValid_RejectsInvalidColor() {
 		ThemeProfile profile = ThemeProfile.CreateDefault("Test", NexenTheme.Dark);
-		profile.MenuBackgroundColor = "bad-color";
+		profile.ControlPressedBorderColor = "bad-color";
 
 		ThemeProfileFile file = new ThemeProfileFile {
 			Format = "nexen-theme-profile",
@@ -37,10 +37,14 @@ public sealed class ThemeProfileTests {
 		Assert.Equal("#55281a10", dark.MenuBackgroundColor);
 		Assert.Equal("#80573721", dark.MenuBackgroundHighlightColor);
 		Assert.Equal("#ccc87423", dark.ThemeAccentColor);
+		Assert.Equal("#80573721", dark.ControlPointerOverBackgroundColor);
+		Assert.Equal("#c27b38", dark.ControlPressedBorderColor);
 
 		Assert.Equal("#f3e5d7", light.MenuBackgroundColor);
 		Assert.Equal("#efb57b", light.MenuBackgroundHighlightColor);
 		Assert.Equal("#ffc56e21", light.ThemeAccentColor);
+		Assert.Equal("#f8d9b8", light.ControlPointerOverBackgroundColor);
+		Assert.Equal("#7b4517", light.ControlPressedBorderColor);
 	}
 
 	[Fact]

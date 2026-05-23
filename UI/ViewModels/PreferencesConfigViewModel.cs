@@ -78,6 +78,30 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 	/// <summary>Gets or sets selected profile accent preview brush.</summary>
 	[Reactive] public partial IBrush SelectedProfileAccentBrush { get; set; }
 
+	/// <summary>Gets or sets selected profile control hover background as ARGB hex.</summary>
+	[Reactive] public partial string SelectedProfileControlHoverBackgroundColor { get; set; }
+
+	/// <summary>Gets or sets selected profile control pressed background as ARGB hex.</summary>
+	[Reactive] public partial string SelectedProfileControlPressedBackgroundColor { get; set; }
+
+	/// <summary>Gets or sets selected profile control hover border as ARGB hex.</summary>
+	[Reactive] public partial string SelectedProfileControlHoverBorderColor { get; set; }
+
+	/// <summary>Gets or sets selected profile control pressed border as ARGB hex.</summary>
+	[Reactive] public partial string SelectedProfileControlPressedBorderColor { get; set; }
+
+	/// <summary>Gets or sets selected profile control hover background preview brush.</summary>
+	[Reactive] public partial IBrush SelectedProfileControlHoverBackgroundBrush { get; set; }
+
+	/// <summary>Gets or sets selected profile control pressed background preview brush.</summary>
+	[Reactive] public partial IBrush SelectedProfileControlPressedBackgroundBrush { get; set; }
+
+	/// <summary>Gets or sets selected profile control hover border preview brush.</summary>
+	[Reactive] public partial IBrush SelectedProfileControlHoverBorderBrush { get; set; }
+
+	/// <summary>Gets or sets selected profile control pressed border preview brush.</summary>
+	[Reactive] public partial IBrush SelectedProfileControlPressedBorderBrush { get; set; }
+
 	/// <summary>Gets or sets the number of tokens that differ from canonical defaults.</summary>
 	[Reactive] public partial int SelectedThemeProfileDivergenceCount { get; set; }
 
@@ -135,6 +159,14 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 		SelectedProfileMenuBackgroundBrush = Brushes.Transparent;
 		SelectedProfileMenuHighlightBrush = Brushes.Transparent;
 		SelectedProfileAccentBrush = Brushes.Transparent;
+		SelectedProfileControlHoverBackgroundColor = "";
+		SelectedProfileControlPressedBackgroundColor = "";
+		SelectedProfileControlHoverBorderColor = "";
+		SelectedProfileControlPressedBorderColor = "";
+		SelectedProfileControlHoverBackgroundBrush = Brushes.Transparent;
+		SelectedProfileControlPressedBackgroundBrush = Brushes.Transparent;
+		SelectedProfileControlHoverBorderBrush = Brushes.Transparent;
+		SelectedProfileControlPressedBorderBrush = Brushes.Transparent;
 		SelectedThemeProfileDivergenceCount = 0;
 		SelectedThemeProfileMatchesDefaults = true;
 		SelectedThemeProfileIsCustomized = false;
@@ -363,6 +395,20 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 		RefreshThemeProfiles();
 	}
 
+	public void SetSelectedProfileControlChromeColors(string hoverBackground, string pressedBackground, string hoverBorder, string pressedBorder) {
+		ThemeProfile? selectedProfile = GetSelectedThemeProfile();
+		if (selectedProfile is null) {
+			return;
+		}
+
+		selectedProfile.ControlPointerOverBackgroundColor = hoverBackground;
+		selectedProfile.ControlPressedBackgroundColor = pressedBackground;
+		selectedProfile.ControlPointerOverBorderColor = hoverBorder;
+		selectedProfile.ControlPressedBorderColor = pressedBorder;
+		Config.SetActiveThemeProfile(selectedProfile.Name);
+		RefreshThemeProfiles();
+	}
+
 	private void RefreshSelectedThemeProfileDetails() {
 		ThemeProfile? selectedProfile = GetSelectedThemeProfile();
 		if (selectedProfile is null) {
@@ -378,6 +424,14 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 			SelectedProfileMenuBackgroundBrush = Brushes.Transparent;
 			SelectedProfileMenuHighlightBrush = Brushes.Transparent;
 			SelectedProfileAccentBrush = Brushes.Transparent;
+			SelectedProfileControlHoverBackgroundColor = "";
+			SelectedProfileControlPressedBackgroundColor = "";
+			SelectedProfileControlHoverBorderColor = "";
+			SelectedProfileControlPressedBorderColor = "";
+			SelectedProfileControlHoverBackgroundBrush = Brushes.Transparent;
+			SelectedProfileControlPressedBackgroundBrush = Brushes.Transparent;
+			SelectedProfileControlHoverBorderBrush = Brushes.Transparent;
+			SelectedProfileControlPressedBorderBrush = Brushes.Transparent;
 			SelectedThemeProfileDivergenceCount = 0;
 			SelectedThemeProfileMatchesDefaults = true;
 			SelectedThemeProfileIsCustomized = false;
@@ -403,6 +457,14 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 		SelectedProfileMenuBackgroundBrush = CreatePreviewBrush(selectedProfile.MenuBackgroundColor);
 		SelectedProfileMenuHighlightBrush = CreatePreviewBrush(selectedProfile.MenuBackgroundHighlightColor);
 		SelectedProfileAccentBrush = CreatePreviewBrush(selectedProfile.ThemeAccentColor);
+		SelectedProfileControlHoverBackgroundColor = selectedProfile.ControlPointerOverBackgroundColor;
+		SelectedProfileControlPressedBackgroundColor = selectedProfile.ControlPressedBackgroundColor;
+		SelectedProfileControlHoverBorderColor = selectedProfile.ControlPointerOverBorderColor;
+		SelectedProfileControlPressedBorderColor = selectedProfile.ControlPressedBorderColor;
+		SelectedProfileControlHoverBackgroundBrush = CreatePreviewBrush(selectedProfile.ControlPointerOverBackgroundColor);
+		SelectedProfileControlPressedBackgroundBrush = CreatePreviewBrush(selectedProfile.ControlPressedBackgroundColor);
+		SelectedProfileControlHoverBorderBrush = CreatePreviewBrush(selectedProfile.ControlPointerOverBorderColor);
+		SelectedProfileControlPressedBorderBrush = CreatePreviewBrush(selectedProfile.ControlPressedBorderColor);
 		SelectedThemeProfileDivergenceCount = Config.GetThemeProfileDivergenceCount(selectedProfile.Name);
 		SelectedThemeProfileMatchesDefaults = SelectedThemeProfileDivergenceCount == 0;
 		SelectedThemeProfileIsCustomized = SelectedThemeProfileDivergenceCount > 0;
