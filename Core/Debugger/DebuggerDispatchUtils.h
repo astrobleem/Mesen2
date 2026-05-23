@@ -6,6 +6,7 @@
 #include <utility>
 #include "Shared/CpuType.h"
 #include "Shared/SettingTypes.h"
+#include "Debugger/DebugTypes.h"
 
 enum class CpuStateLayout : uint8_t {
 	SnesCpu,
@@ -129,4 +130,45 @@ enum class CpuStateLayout : uint8_t {
 	}
 
 	return 0;
+}
+
+[[nodiscard]] inline bool IsBreakOptionEnabledForSource(BreakSource src, const DebugConfig& cfg) {
+	switch (src) {
+		case BreakSource::GbDisableLcdOutsideVblank:
+			return cfg.GbBreakOnDisableLcdOutsideVblank;
+		case BreakSource::GbInvalidVramAccess:
+			return cfg.GbBreakOnInvalidVramAccess;
+		case BreakSource::GbInvalidOamAccess:
+			return cfg.GbBreakOnInvalidOamAccess;
+		case BreakSource::NesBreakOnDecayedOamRead:
+			return cfg.NesBreakOnDecayedOamRead;
+		case BreakSource::NesBreakOnPpuScrollGlitch:
+			return cfg.NesBreakOnPpuScrollGlitch;
+		case BreakSource::NesBusConflict:
+			return cfg.NesBreakOnBusConflict;
+		case BreakSource::NesBreakOnCpuCrash:
+			return cfg.NesBreakOnCpuCrash;
+		case BreakSource::NesBreakOnExtOutputMode:
+			return cfg.NesBreakOnExtOutputMode;
+		case BreakSource::NesInvalidVramAccess:
+			return cfg.NesBreakOnInvalidVramAccess;
+		case BreakSource::NesInvalidOamWrite:
+			return cfg.NesBreakOnInvalidOamWrite;
+		case BreakSource::NesDmaInputRead:
+			return cfg.NesBreakOnDmaInputRead;
+		case BreakSource::PceBreakOnInvalidVramAddress:
+			return cfg.PceBreakOnInvalidVramAddress;
+		case BreakSource::GbaInvalidOpCode:
+			return cfg.GbaBreakOnInvalidOpCode;
+		case BreakSource::GbaUnalignedMemoryAccess:
+			return cfg.GbaBreakOnUnalignedMemAccess;
+		case BreakSource::SnesInvalidPpuAccess:
+			return cfg.SnesBreakOnInvalidPpuAccess;
+		case BreakSource::SnesReadDuringAutoJoy:
+			return cfg.SnesBreakOnReadDuringAutoJoy;
+		default:
+			break;
+	}
+
+	return true;
 }

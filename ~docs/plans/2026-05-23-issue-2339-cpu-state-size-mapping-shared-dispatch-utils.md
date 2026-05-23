@@ -1,4 +1,4 @@
-# Issue #2339 CPU State-Size Mapping in Shared Dispatch Utils (2026-05-23)
+﻿# Issue #2339 CPU State-Size Mapping in Shared Dispatch Utils (2026-05-23)
 
 ## Scope
 

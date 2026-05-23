@@ -1,4 +1,4 @@
-# Issue #2341 Debug Window Flag Mapping in Shared Dispatch Utils (2026-05-23)
+﻿# Issue #2341 Debug Window Flag Mapping in Shared Dispatch Utils (2026-05-23)
 
 ## Scope
 

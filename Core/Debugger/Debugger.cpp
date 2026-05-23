@@ -1026,42 +1026,8 @@ bool Debugger::IsDebugWindowOpened(CpuType cpuType) {
 }
 
 bool Debugger::IsBreakOptionEnabled(BreakSource src) {
-	DebugConfig& cfg = _settings->GetDebugConfig();
-	switch (src) {
-		case BreakSource::GbDisableLcdOutsideVblank:
-			return cfg.GbBreakOnDisableLcdOutsideVblank;
-		case BreakSource::GbInvalidVramAccess:
-			return cfg.GbBreakOnInvalidVramAccess;
-		case BreakSource::GbInvalidOamAccess:
-			return cfg.GbBreakOnInvalidOamAccess;
-		case BreakSource::NesBreakOnDecayedOamRead:
-			return cfg.NesBreakOnDecayedOamRead;
-		case BreakSource::NesBreakOnPpuScrollGlitch:
-			return cfg.NesBreakOnPpuScrollGlitch;
-		case BreakSource::NesBusConflict:
-			return cfg.NesBreakOnBusConflict;
-		case BreakSource::NesBreakOnCpuCrash:
-			return cfg.NesBreakOnCpuCrash;
-		case BreakSource::NesBreakOnExtOutputMode:
-			return cfg.NesBreakOnExtOutputMode;
-		case BreakSource::NesInvalidVramAccess:
-			return cfg.NesBreakOnInvalidVramAccess;
-		case BreakSource::NesInvalidOamWrite:
-			return cfg.NesBreakOnInvalidOamWrite;
-		case BreakSource::NesDmaInputRead:
-			return cfg.NesBreakOnDmaInputRead;
-		case BreakSource::PceBreakOnInvalidVramAddress:
-			return cfg.PceBreakOnInvalidVramAddress;
-		case BreakSource::GbaInvalidOpCode:
-			return cfg.GbaBreakOnInvalidOpCode;
-		case BreakSource::GbaUnalignedMemoryAccess:
-			return cfg.GbaBreakOnUnalignedMemAccess;
-		case BreakSource::SnesInvalidPpuAccess:
-			return cfg.SnesBreakOnInvalidPpuAccess;
-		case BreakSource::SnesReadDuringAutoJoy:
-			return cfg.SnesBreakOnReadDuringAutoJoy;
-	}
-	return true;
+	const DebugConfig& cfg = _settings->GetDebugConfig();
+	return IsBreakOptionEnabledForSource(src, cfg);
 }
 
 static size_t GetCpuStateSize(CpuType cpuType) {
@@ -1130,7 +1096,8 @@ BaseState& Debugger::GetCpuStateRef(CpuType cpuType) {
 	return _debuggers[(int)cpuType].Debugger->GetState();
 }
 
-void Debugger::GetPpuState(BaseState& state, CpuType cpuType) {
+template<typename TAction>
+void Debugger::ProcessPpuStateAction(BaseState& state, CpuType cpuType, TAction&& action) {
 	switch (cpuType) {
 		case CpuType::Snes:
 		case CpuType::Spc:
@@ -1138,105 +1105,52 @@ void Debugger::GetPpuState(BaseState& state, CpuType cpuType) {
 		case CpuType::Sa1:
 		case CpuType::Gsu:
 		case CpuType::Cx4:
-		case CpuType::St018: {
-			GetDebugger<CpuType::Snes, SnesDebugger>()->GetPpuState(state);
+		case CpuType::St018:
+			action(GetDebugger<CpuType::Snes, SnesDebugger>(), state);
 			break;
-		}
-
-		case CpuType::Gameboy: {
-			GetDebugger<CpuType::Gameboy, GbDebugger>()->GetPpuState(state);
+		case CpuType::Gameboy:
+			action(GetDebugger<CpuType::Gameboy, GbDebugger>(), state);
 			break;
-		}
-
-		case CpuType::Nes: {
-			GetDebugger<CpuType::Nes, NesDebugger>()->GetPpuState(state);
+		case CpuType::Nes:
+			action(GetDebugger<CpuType::Nes, NesDebugger>(), state);
 			break;
-		}
-
-		case CpuType::Pce: {
-			GetDebugger<CpuType::Pce, PceDebugger>()->GetPpuState(state);
+		case CpuType::Pce:
+			action(GetDebugger<CpuType::Pce, PceDebugger>(), state);
 			break;
-		}
-
-		case CpuType::Sms: {
-			GetDebugger<CpuType::Sms, SmsDebugger>()->GetPpuState(state);
+		case CpuType::Sms:
+			action(GetDebugger<CpuType::Sms, SmsDebugger>(), state);
 			break;
-		}
-
-		case CpuType::Gba: {
-			GetDebugger<CpuType::Gba, GbaDebugger>()->GetPpuState(state);
+		case CpuType::Gba:
+			action(GetDebugger<CpuType::Gba, GbaDebugger>(), state);
 			break;
-		}
-
-		case CpuType::Ws: {
-			GetDebugger<CpuType::Ws, WsDebugger>()->GetPpuState(state);
+		case CpuType::Ws:
+			action(GetDebugger<CpuType::Ws, WsDebugger>(), state);
 			break;
-		}
 		case CpuType::Lynx:
-			GetDebugger<CpuType::Lynx, LynxDebugger>()->GetPpuState(state);
+			action(GetDebugger<CpuType::Lynx, LynxDebugger>(), state);
 			break;
 		case CpuType::Atari2600:
-			GetDebugger<CpuType::Atari2600, Atari2600Debugger>()->GetPpuState(state);
+			action(GetDebugger<CpuType::Atari2600, Atari2600Debugger>(), state);
 			break;
 		case CpuType::ChannelF:
-			GetDebugger<CpuType::ChannelF, ChannelFDebugger>()->GetPpuState(state);
+			action(GetDebugger<CpuType::ChannelF, ChannelFDebugger>(), state);
+			break;
+		default:
 			break;
 	}
 }
 
+void Debugger::GetPpuState(BaseState& state, CpuType cpuType) {
+	ProcessPpuStateAction(state, cpuType, [](auto* debugger, BaseState& targetState) {
+		debugger->GetPpuState(targetState);
+	});
+}
+
 void Debugger::SetPpuState(BaseState& state, CpuType cpuType) {
 	DebugBreakHelper helper(this);
-	switch (cpuType) {
-		case CpuType::Snes:
-		case CpuType::Spc:
-		case CpuType::NecDsp:
-		case CpuType::Sa1:
-		case CpuType::Gsu:
-		case CpuType::Cx4:
-		case CpuType::St018: {
-			GetDebugger<CpuType::Snes, SnesDebugger>()->SetPpuState(state);
-			break;
-		}
-
-		case CpuType::Gameboy: {
-			GetDebugger<CpuType::Gameboy, GbDebugger>()->SetPpuState(state);
-			break;
-		}
-
-		case CpuType::Nes: {
-			GetDebugger<CpuType::Nes, NesDebugger>()->SetPpuState(state);
-			break;
-		}
-
-		case CpuType::Pce: {
-			GetDebugger<CpuType::Pce, PceDebugger>()->SetPpuState(state);
-			break;
-		}
-
-		case CpuType::Sms: {
-			GetDebugger<CpuType::Sms, SmsDebugger>()->SetPpuState(state);
-			break;
-		}
-
-		case CpuType::Gba: {
-			GetDebugger<CpuType::Gba, GbaDebugger>()->SetPpuState(state);
-			break;
-		}
-
-		case CpuType::Ws: {
-			GetDebugger<CpuType::Ws, WsDebugger>()->SetPpuState(state);
-			break;
-		}
-		case CpuType::Lynx:
-			GetDebugger<CpuType::Lynx, LynxDebugger>()->SetPpuState(state);
-			break;
-		case CpuType::Atari2600:
-			GetDebugger<CpuType::Atari2600, Atari2600Debugger>()->SetPpuState(state);
-			break;
-		case CpuType::ChannelF:
-			GetDebugger<CpuType::ChannelF, ChannelFDebugger>()->SetPpuState(state);
-			break;
-	}
+	ProcessPpuStateAction(state, cpuType, [](auto* debugger, BaseState& targetState) {
+		debugger->SetPpuState(targetState);
+	});
 }
 
 void Debugger::GetConsoleState(BaseState& state, ConsoleType consoleType) {

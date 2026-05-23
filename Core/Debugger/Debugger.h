@@ -150,6 +150,8 @@ private:
 
 	[[nodiscard]] bool IsDebugWindowOpened(CpuType cpuType);
 	[[nodiscard]] bool IsBreakOptionEnabled(BreakSource src);
+	template<typename TAction>
+	void ProcessPpuStateAction(BaseState& state, CpuType cpuType, TAction&& action);
 	template <CpuType type>
 	void SleepOnBreakRequest();
 

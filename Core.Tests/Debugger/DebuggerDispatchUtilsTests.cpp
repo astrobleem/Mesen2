@@ -63,3 +63,26 @@ TEST(DebuggerDispatchUtilsTests, DebuggerFlagMappingMatchesExpectedCpuTargets) {
 	EXPECT_EQ(GetDebuggerFlagForCpu(CpuType::ChannelF), DebuggerFlags::ChannelFDebuggerEnabled);
 	EXPECT_EQ(GetDebuggerFlagForCpu(CpuType::Genesis), std::nullopt);
 }
+
+TEST(DebuggerDispatchUtilsTests, BreakSourceMappingUsesExpectedConfigFlags) {
+	DebugConfig cfg = {};
+	cfg.GbBreakOnDisableLcdOutsideVblank = true;
+	cfg.NesBreakOnBusConflict = true;
+	cfg.GbaBreakOnUnalignedMemAccess = true;
+	cfg.SnesBreakOnReadDuringAutoJoy = true;
+
+	EXPECT_TRUE(IsBreakOptionEnabledForSource(BreakSource::GbDisableLcdOutsideVblank, cfg));
+	EXPECT_TRUE(IsBreakOptionEnabledForSource(BreakSource::NesBusConflict, cfg));
+	EXPECT_TRUE(IsBreakOptionEnabledForSource(BreakSource::GbaUnalignedMemoryAccess, cfg));
+	EXPECT_TRUE(IsBreakOptionEnabledForSource(BreakSource::SnesReadDuringAutoJoy, cfg));
+
+	EXPECT_FALSE(IsBreakOptionEnabledForSource(BreakSource::NesInvalidVramAccess, cfg));
+}
+
+TEST(DebuggerDispatchUtilsTests, BreakSourceMappingDefaultsToTrueForUnmappedSources) {
+	DebugConfig cfg = {};
+
+	EXPECT_TRUE(IsBreakOptionEnabledForSource(BreakSource::Breakpoint, cfg));
+	EXPECT_TRUE(IsBreakOptionEnabledForSource(BreakSource::CpuStep, cfg));
+	EXPECT_TRUE(IsBreakOptionEnabledForSource(BreakSource::BreakOnBrk, cfg));
+}
