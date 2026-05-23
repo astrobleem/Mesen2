@@ -48,6 +48,11 @@ public static class NexenThemeManager {
 		ApplyColorOverride(app, "NexenMenuBorderHighlight", profile.MenuBorderHighlightColor);
 		ApplyColorOverride(app, "NexenMenuSeparatorBackground", profile.MenuSeparatorBackgroundColor);
 		ApplyColorOverride(app, "SettingsTabStripBackgroundColor", profile.SettingsTabStripBackgroundColor);
+		ApplyColorOverride(app, "SettingsTabStripBorderColor", profile.SettingsTabStripBorderColor);
+		ApplyColorOverride(app, "NexenDockTabStripBackgroundColor", profile.DockTabStripBackgroundColor);
+		ApplyColorOverride(app, "NexenDockTabPointerOverColor", profile.DockTabPointerOverColor);
+		ApplyColorOverride(app, "NexenDockTabActiveBackgroundColor", profile.DockTabActiveBackgroundColor);
+		ApplyColorOverride(app, "NexenDockTabActiveBorderColor", profile.DockTabActiveBorderColor);
 		ApplyColorOverride(app, "ThemeAccentColor", profile.ThemeAccentColor);
 		ApplyColorOverride(app, "HighlightColor", profile.HighlightColor);
 

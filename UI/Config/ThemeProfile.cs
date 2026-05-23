@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Avalonia.Media;
 
 namespace Nexen.Config;
@@ -26,6 +26,11 @@ public sealed class ThemeProfile {
 	public string MenuBorderHighlightColor { get; set; } = "#e09a52";
 	public string MenuSeparatorBackgroundColor { get; set; } = "#66c2864f";
 	public string SettingsTabStripBackgroundColor { get; set; } = "#2f2015";
+	public string SettingsTabStripBorderColor { get; set; } = "#80808080";
+	public string DockTabStripBackgroundColor { get; set; } = "#ff282828";
+	public string DockTabPointerOverColor { get; set; } = "#40808080";
+	public string DockTabActiveBackgroundColor { get; set; } = "#ff282828";
+	public string DockTabActiveBorderColor { get; set; } = "#ff505050";
 	public string ThemeAccentColor { get; set; } = "#ccc87423";
 	public string HighlightColor { get; set; } = "#ffc87423";
 	public string ControlPointerOverBackgroundColor { get; set; } = "#80573721";
@@ -61,6 +66,11 @@ public sealed class ThemeProfile {
 				MenuBorderHighlightColor = "#e09a52",
 				MenuSeparatorBackgroundColor = "#66c2864f",
 				SettingsTabStripBackgroundColor = "#2f2015",
+				SettingsTabStripBorderColor = "#80808080",
+				DockTabStripBackgroundColor = "#ff282828",
+				DockTabPointerOverColor = "#40808080",
+				DockTabActiveBackgroundColor = "#ff282828",
+				DockTabActiveBorderColor = "#ff505050",
 				ThemeAccentColor = "#ccc87423",
 				HighlightColor = "#ffc87423",
 				ControlPointerOverBackgroundColor = "#80573721",
@@ -96,6 +106,11 @@ public sealed class ThemeProfile {
 			MenuBorderHighlightColor = "#9f5c22",
 			MenuSeparatorBackgroundColor = "#c9a788",
 			SettingsTabStripBackgroundColor = "#f5e8dc",
+			SettingsTabStripBorderColor = "#80808080",
+			DockTabStripBackgroundColor = "#ffffffff",
+			DockTabPointerOverColor = "#40808080",
+			DockTabActiveBackgroundColor = "#ffffffff",
+			DockTabActiveBorderColor = "#ff808080",
 			ThemeAccentColor = "#ffc56e21",
 			HighlightColor = "#ff8a5116",
 			ControlPointerOverBackgroundColor = "#f8d9b8",
@@ -152,6 +167,11 @@ public sealed class ThemeProfileFile {
 			&& ThemeProfile.IsValidColor(Profile.MenuBorderHighlightColor)
 			&& ThemeProfile.IsValidColor(Profile.MenuSeparatorBackgroundColor)
 			&& ThemeProfile.IsValidColor(Profile.SettingsTabStripBackgroundColor)
+			&& ThemeProfile.IsValidColor(Profile.SettingsTabStripBorderColor)
+			&& ThemeProfile.IsValidColor(Profile.DockTabStripBackgroundColor)
+			&& ThemeProfile.IsValidColor(Profile.DockTabPointerOverColor)
+			&& ThemeProfile.IsValidColor(Profile.DockTabActiveBackgroundColor)
+			&& ThemeProfile.IsValidColor(Profile.DockTabActiveBorderColor)
 			&& ThemeProfile.IsValidColor(Profile.ThemeAccentColor)
 			&& ThemeProfile.IsValidColor(Profile.HighlightColor)
 			&& ThemeProfile.IsValidColor(Profile.ControlPointerOverBackgroundColor)

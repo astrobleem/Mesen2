@@ -212,10 +212,20 @@ public sealed class UiScrollabilityMarkupTests {
 		Assert.Contains("lblThemeControlPressedBackground", markup);
 		Assert.Contains("lblThemeControlHoverBorder", markup);
 		Assert.Contains("lblThemeControlPressedBorder", markup);
+		Assert.Contains("lblThemeSidebarBorderColor", markup);
+		Assert.Contains("lblThemeDockTabStripBackground", markup);
+		Assert.Contains("lblThemeDockTabHoverBackground", markup);
+		Assert.Contains("lblThemeDockTabActiveBackground", markup);
+		Assert.Contains("lblThemeDockTabActiveBorder", markup);
 		Assert.Contains("btnPickThemeControlHoverBackgroundColor_OnClick", markup);
 		Assert.Contains("btnPickThemeControlPressedBackgroundColor_OnClick", markup);
 		Assert.Contains("btnPickThemeControlHoverBorderColor_OnClick", markup);
 		Assert.Contains("btnPickThemeControlPressedBorderColor_OnClick", markup);
+		Assert.Contains("btnPickThemeSidebarBorderColor_OnClick", markup);
+		Assert.Contains("btnPickThemeDockTabStripBackgroundColor_OnClick", markup);
+		Assert.Contains("btnPickThemeDockTabHoverColor_OnClick", markup);
+		Assert.Contains("btnPickThemeDockTabActiveBackgroundColor_OnClick", markup);
+		Assert.Contains("btnPickThemeDockTabActiveBorderColor_OnClick", markup);
 	}
 
 	[Fact]
@@ -258,6 +268,10 @@ public sealed class UiScrollabilityMarkupTests {
 		Assert.Contains("<Color x:Key=\"NexenMenuBackground\">#55281a10</Color>", darkMarkup);
 		Assert.Contains("<Color x:Key=\"ThemeAccentColor\">#ccc87423</Color>", darkMarkup);
 		Assert.Contains("<Color x:Key=\"HighlightColor\">#ffc87423</Color>", darkMarkup);
+		Assert.Contains("<Color x:Key=\"SettingsTabStripBorderColor\">#80808080</Color>", lightMarkup);
+		Assert.Contains("<Color x:Key=\"NexenDockTabPointerOverColor\">#40808080</Color>", lightMarkup);
+		Assert.Contains("<Color x:Key=\"SettingsTabStripBorderColor\">#80808080</Color>", darkMarkup);
+		Assert.Contains("<Color x:Key=\"NexenDockTabActiveBorderColor\">#ff505050</Color>", darkMarkup);
 	}
 
 	[Fact]

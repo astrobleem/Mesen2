@@ -71,8 +71,14 @@
 					<Color x:Key="NexenMenuBackgroundHighlight">#80573721</Color>
 					<Color x:Key="NexenMenuBorderHighlight">#e09a52</Color>
 					<Color x:Key="SettingsTabStripBackgroundColor">#2f2015</Color>
+					<Color x:Key="SettingsTabStripBorderColor">#80808080</Color>
+					<Color x:Key="NexenDockTabStripBackgroundColor">#ff282828</Color>
+					<Color x:Key="NexenDockTabPointerOverColor">#40808080</Color>
+					<Color x:Key="NexenDockTabActiveBackgroundColor">#ff282828</Color>
+					<Color x:Key="NexenDockTabActiveBorderColor">#ff505050</Color>
 					<Color x:Key="MenuFlyoutSubItemChevron">#FFFFFF</Color>
 					<SolidColorBrush x:Key="SettingsTabStripBackgroundBrush" Color="{DynamicResource SettingsTabStripBackgroundColor}" />
+					<SolidColorBrush x:Key="SettingsTabStripBorderBrush" Color="{DynamicResource SettingsTabStripBorderColor}" />
 
 					<SolidColorBrush x:Key="TextBoxSelectionBrush" Color="#2A509F" />
 
@@ -90,7 +96,10 @@
 					<SolidColorBrush x:Key="DockThemeForegroundBrush" Color="{DynamicResource ThemeForegroundColor}" />
 					<SolidColorBrush x:Key="DockThemeAccentBrush" Color="Black" />
 					<SolidColorBrush x:Key="DockApplicationAccentBrushMed" Color="White" />
-					<SolidColorBrush x:Key="NexenDockTabPointerOverBrush" Color="#40808080" />
+					<SolidColorBrush x:Key="NexenDockTabStripBackgroundBrush" Color="{DynamicResource NexenDockTabStripBackgroundColor}" />
+					<SolidColorBrush x:Key="NexenDockTabPointerOverBrush" Color="{DynamicResource NexenDockTabPointerOverColor}" />
+					<SolidColorBrush x:Key="NexenDockTabActiveBackgroundBrush" Color="{DynamicResource NexenDockTabActiveBackgroundColor}" />
+					<SolidColorBrush x:Key="NexenDockTabActiveBorderBrush" Color="{DynamicResource NexenDockTabActiveBorderColor}" />
 
 					<!-- DataGrid colors -->
 					<SolidColorBrush x:Key="DataGridColumnHeaderForegroundBrush" Color="#FFDEDEDE" />

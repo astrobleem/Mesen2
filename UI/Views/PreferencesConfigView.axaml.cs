@@ -312,6 +312,36 @@ public partial class PreferencesConfigView : UserControl {
 		});
 	}
 
+	private async void btnPickThemeSidebarBorderColor_OnClick(object sender, RoutedEventArgs e) {
+		await PickThemeProfileColor(profile => profile.SettingsTabStripBorderColor, (model, colorHex) => {
+			model.SetSelectedProfileSidebarTabChromeColors(colorHex, model.SelectedProfileDockTabStripBackgroundColor, model.SelectedProfileDockTabHoverColor, model.SelectedProfileDockTabActiveBackgroundColor, model.SelectedProfileDockTabActiveBorderColor);
+		});
+	}
+
+	private async void btnPickThemeDockTabStripBackgroundColor_OnClick(object sender, RoutedEventArgs e) {
+		await PickThemeProfileColor(profile => profile.DockTabStripBackgroundColor, (model, colorHex) => {
+			model.SetSelectedProfileSidebarTabChromeColors(model.SelectedProfileSidebarBorderColor, colorHex, model.SelectedProfileDockTabHoverColor, model.SelectedProfileDockTabActiveBackgroundColor, model.SelectedProfileDockTabActiveBorderColor);
+		});
+	}
+
+	private async void btnPickThemeDockTabHoverColor_OnClick(object sender, RoutedEventArgs e) {
+		await PickThemeProfileColor(profile => profile.DockTabPointerOverColor, (model, colorHex) => {
+			model.SetSelectedProfileSidebarTabChromeColors(model.SelectedProfileSidebarBorderColor, model.SelectedProfileDockTabStripBackgroundColor, colorHex, model.SelectedProfileDockTabActiveBackgroundColor, model.SelectedProfileDockTabActiveBorderColor);
+		});
+	}
+
+	private async void btnPickThemeDockTabActiveBackgroundColor_OnClick(object sender, RoutedEventArgs e) {
+		await PickThemeProfileColor(profile => profile.DockTabActiveBackgroundColor, (model, colorHex) => {
+			model.SetSelectedProfileSidebarTabChromeColors(model.SelectedProfileSidebarBorderColor, model.SelectedProfileDockTabStripBackgroundColor, model.SelectedProfileDockTabHoverColor, colorHex, model.SelectedProfileDockTabActiveBorderColor);
+		});
+	}
+
+	private async void btnPickThemeDockTabActiveBorderColor_OnClick(object sender, RoutedEventArgs e) {
+		await PickThemeProfileColor(profile => profile.DockTabActiveBorderColor, (model, colorHex) => {
+			model.SetSelectedProfileSidebarTabChromeColors(model.SelectedProfileSidebarBorderColor, model.SelectedProfileDockTabStripBackgroundColor, model.SelectedProfileDockTabHoverColor, model.SelectedProfileDockTabActiveBackgroundColor, colorHex);
+		});
+	}
+
 	private async Task PickThemeProfileColor(Func<ThemeProfile, string> colorSelector, Action<PreferencesConfigViewModel, string> updateAction) {
 		PreferencesConfigViewModel? model = GetViewModel();
 		ThemeProfile? profile = model?.GetSelectedThemeProfile();

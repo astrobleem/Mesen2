@@ -102,6 +102,36 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 	/// <summary>Gets or sets selected profile control pressed border preview brush.</summary>
 	[Reactive] public partial IBrush SelectedProfileControlPressedBorderBrush { get; set; }
 
+	/// <summary>Gets or sets selected profile sidebar border color as ARGB hex.</summary>
+	[Reactive] public partial string SelectedProfileSidebarBorderColor { get; set; }
+
+	/// <summary>Gets or sets selected profile dock tab strip background color as ARGB hex.</summary>
+	[Reactive] public partial string SelectedProfileDockTabStripBackgroundColor { get; set; }
+
+	/// <summary>Gets or sets selected profile dock tab hover color as ARGB hex.</summary>
+	[Reactive] public partial string SelectedProfileDockTabHoverColor { get; set; }
+
+	/// <summary>Gets or sets selected profile dock tab active background color as ARGB hex.</summary>
+	[Reactive] public partial string SelectedProfileDockTabActiveBackgroundColor { get; set; }
+
+	/// <summary>Gets or sets selected profile dock tab active border color as ARGB hex.</summary>
+	[Reactive] public partial string SelectedProfileDockTabActiveBorderColor { get; set; }
+
+	/// <summary>Gets or sets selected profile sidebar border preview brush.</summary>
+	[Reactive] public partial IBrush SelectedProfileSidebarBorderBrush { get; set; }
+
+	/// <summary>Gets or sets selected profile dock tab strip background preview brush.</summary>
+	[Reactive] public partial IBrush SelectedProfileDockTabStripBackgroundBrush { get; set; }
+
+	/// <summary>Gets or sets selected profile dock tab hover preview brush.</summary>
+	[Reactive] public partial IBrush SelectedProfileDockTabHoverBrush { get; set; }
+
+	/// <summary>Gets or sets selected profile dock tab active background preview brush.</summary>
+	[Reactive] public partial IBrush SelectedProfileDockTabActiveBackgroundBrush { get; set; }
+
+	/// <summary>Gets or sets selected profile dock tab active border preview brush.</summary>
+	[Reactive] public partial IBrush SelectedProfileDockTabActiveBorderBrush { get; set; }
+
 	/// <summary>Gets or sets the number of tokens that differ from canonical defaults.</summary>
 	[Reactive] public partial int SelectedThemeProfileDivergenceCount { get; set; }
 
@@ -167,6 +197,16 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 		SelectedProfileControlPressedBackgroundBrush = Brushes.Transparent;
 		SelectedProfileControlHoverBorderBrush = Brushes.Transparent;
 		SelectedProfileControlPressedBorderBrush = Brushes.Transparent;
+		SelectedProfileSidebarBorderColor = "";
+		SelectedProfileDockTabStripBackgroundColor = "";
+		SelectedProfileDockTabHoverColor = "";
+		SelectedProfileDockTabActiveBackgroundColor = "";
+		SelectedProfileDockTabActiveBorderColor = "";
+		SelectedProfileSidebarBorderBrush = Brushes.Transparent;
+		SelectedProfileDockTabStripBackgroundBrush = Brushes.Transparent;
+		SelectedProfileDockTabHoverBrush = Brushes.Transparent;
+		SelectedProfileDockTabActiveBackgroundBrush = Brushes.Transparent;
+		SelectedProfileDockTabActiveBorderBrush = Brushes.Transparent;
 		SelectedThemeProfileDivergenceCount = 0;
 		SelectedThemeProfileMatchesDefaults = true;
 		SelectedThemeProfileIsCustomized = false;
@@ -409,6 +449,21 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 		RefreshThemeProfiles();
 	}
 
+	public void SetSelectedProfileSidebarTabChromeColors(string sidebarBorder, string tabStripBackground, string tabHover, string tabActiveBackground, string tabActiveBorder) {
+		ThemeProfile? selectedProfile = GetSelectedThemeProfile();
+		if (selectedProfile is null) {
+			return;
+		}
+
+		selectedProfile.SettingsTabStripBorderColor = sidebarBorder;
+		selectedProfile.DockTabStripBackgroundColor = tabStripBackground;
+		selectedProfile.DockTabPointerOverColor = tabHover;
+		selectedProfile.DockTabActiveBackgroundColor = tabActiveBackground;
+		selectedProfile.DockTabActiveBorderColor = tabActiveBorder;
+		Config.SetActiveThemeProfile(selectedProfile.Name);
+		RefreshThemeProfiles();
+	}
+
 	private void RefreshSelectedThemeProfileDetails() {
 		ThemeProfile? selectedProfile = GetSelectedThemeProfile();
 		if (selectedProfile is null) {
@@ -432,6 +487,16 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 			SelectedProfileControlPressedBackgroundBrush = Brushes.Transparent;
 			SelectedProfileControlHoverBorderBrush = Brushes.Transparent;
 			SelectedProfileControlPressedBorderBrush = Brushes.Transparent;
+			SelectedProfileSidebarBorderColor = "";
+			SelectedProfileDockTabStripBackgroundColor = "";
+			SelectedProfileDockTabHoverColor = "";
+			SelectedProfileDockTabActiveBackgroundColor = "";
+			SelectedProfileDockTabActiveBorderColor = "";
+			SelectedProfileSidebarBorderBrush = Brushes.Transparent;
+			SelectedProfileDockTabStripBackgroundBrush = Brushes.Transparent;
+			SelectedProfileDockTabHoverBrush = Brushes.Transparent;
+			SelectedProfileDockTabActiveBackgroundBrush = Brushes.Transparent;
+			SelectedProfileDockTabActiveBorderBrush = Brushes.Transparent;
 			SelectedThemeProfileDivergenceCount = 0;
 			SelectedThemeProfileMatchesDefaults = true;
 			SelectedThemeProfileIsCustomized = false;
@@ -465,6 +530,16 @@ public sealed partial class PreferencesConfigViewModel : DisposableViewModel {
 		SelectedProfileControlPressedBackgroundBrush = CreatePreviewBrush(selectedProfile.ControlPressedBackgroundColor);
 		SelectedProfileControlHoverBorderBrush = CreatePreviewBrush(selectedProfile.ControlPointerOverBorderColor);
 		SelectedProfileControlPressedBorderBrush = CreatePreviewBrush(selectedProfile.ControlPressedBorderColor);
+		SelectedProfileSidebarBorderColor = selectedProfile.SettingsTabStripBorderColor;
+		SelectedProfileDockTabStripBackgroundColor = selectedProfile.DockTabStripBackgroundColor;
+		SelectedProfileDockTabHoverColor = selectedProfile.DockTabPointerOverColor;
+		SelectedProfileDockTabActiveBackgroundColor = selectedProfile.DockTabActiveBackgroundColor;
+		SelectedProfileDockTabActiveBorderColor = selectedProfile.DockTabActiveBorderColor;
+		SelectedProfileSidebarBorderBrush = CreatePreviewBrush(selectedProfile.SettingsTabStripBorderColor);
+		SelectedProfileDockTabStripBackgroundBrush = CreatePreviewBrush(selectedProfile.DockTabStripBackgroundColor);
+		SelectedProfileDockTabHoverBrush = CreatePreviewBrush(selectedProfile.DockTabPointerOverColor);
+		SelectedProfileDockTabActiveBackgroundBrush = CreatePreviewBrush(selectedProfile.DockTabActiveBackgroundColor);
+		SelectedProfileDockTabActiveBorderBrush = CreatePreviewBrush(selectedProfile.DockTabActiveBorderColor);
 		SelectedThemeProfileDivergenceCount = Config.GetThemeProfileDivergenceCount(selectedProfile.Name);
 		SelectedThemeProfileMatchesDefaults = SelectedThemeProfileDivergenceCount == 0;
 		SelectedThemeProfileIsCustomized = SelectedThemeProfileDivergenceCount > 0;

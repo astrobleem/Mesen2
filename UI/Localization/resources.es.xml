@@ -712,6 +712,11 @@
 			<Control ID="lblThemeControlPressedBackground">Fondo del control al presionar</Control>
 			<Control ID="lblThemeControlHoverBorder">Borde del control al pasar el cursor</Control>
 			<Control ID="lblThemeControlPressedBorder">Borde del control al presionar</Control>
+			<Control ID="lblThemeSidebarBorderColor">Color del borde de la barra lateral</Control>
+			<Control ID="lblThemeDockTabStripBackground">Fondo de la tira de pestañas del dock</Control>
+			<Control ID="lblThemeDockTabHoverBackground">Fondo al pasar por pestaña del dock</Control>
+			<Control ID="lblThemeDockTabActiveBackground">Fondo de pestaña activa del dock</Control>
+			<Control ID="lblThemeDockTabActiveBorder">Borde de pestaña activa del dock</Control>
 			<Control ID="btnThemePickColor">Elegir</Control>
 			<Control ID="lblThemeLivePreview">Vista previa en vivo</Control>
 			<Control ID="lblThemePresetStatus">Estado del preajuste:</Control>

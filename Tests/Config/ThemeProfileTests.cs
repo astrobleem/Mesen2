@@ -18,7 +18,7 @@ public sealed class ThemeProfileTests {
 	[Fact]
 	public void ThemeProfileFile_IsValid_RejectsInvalidColor() {
 		ThemeProfile profile = ThemeProfile.CreateDefault("Test", NexenTheme.Dark);
-		profile.ControlPressedBorderColor = "bad-color";
+		profile.DockTabActiveBorderColor = "bad-color";
 
 		ThemeProfileFile file = new ThemeProfileFile {
 			Format = "nexen-theme-profile",
@@ -39,12 +39,22 @@ public sealed class ThemeProfileTests {
 		Assert.Equal("#ccc87423", dark.ThemeAccentColor);
 		Assert.Equal("#80573721", dark.ControlPointerOverBackgroundColor);
 		Assert.Equal("#c27b38", dark.ControlPressedBorderColor);
+		Assert.Equal("#80808080", dark.SettingsTabStripBorderColor);
+		Assert.Equal("#ff282828", dark.DockTabStripBackgroundColor);
+		Assert.Equal("#40808080", dark.DockTabPointerOverColor);
+		Assert.Equal("#ff282828", dark.DockTabActiveBackgroundColor);
+		Assert.Equal("#ff505050", dark.DockTabActiveBorderColor);
 
 		Assert.Equal("#f3e5d7", light.MenuBackgroundColor);
 		Assert.Equal("#efb57b", light.MenuBackgroundHighlightColor);
 		Assert.Equal("#ffc56e21", light.ThemeAccentColor);
 		Assert.Equal("#f8d9b8", light.ControlPointerOverBackgroundColor);
 		Assert.Equal("#7b4517", light.ControlPressedBorderColor);
+		Assert.Equal("#80808080", light.SettingsTabStripBorderColor);
+		Assert.Equal("#ffffffff", light.DockTabStripBackgroundColor);
+		Assert.Equal("#40808080", light.DockTabPointerOverColor);
+		Assert.Equal("#ffffffff", light.DockTabActiveBackgroundColor);
+		Assert.Equal("#ff808080", light.DockTabActiveBorderColor);
 	}
 
 	[Fact]

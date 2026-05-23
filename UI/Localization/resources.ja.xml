@@ -712,6 +712,11 @@
 			<Control ID="lblThemeControlPressedBackground">コントロールの押下背景</Control>
 			<Control ID="lblThemeControlHoverBorder">コントロールのホバー枠線</Control>
 			<Control ID="lblThemeControlPressedBorder">コントロールの押下枠線</Control>
+			<Control ID="lblThemeSidebarBorderColor">サイドバー枠線カラー</Control>
+			<Control ID="lblThemeDockTabStripBackground">ドックタブストリップ背景</Control>
+			<Control ID="lblThemeDockTabHoverBackground">ドックタブホバー背景</Control>
+			<Control ID="lblThemeDockTabActiveBackground">ドックアクティブタブ背景</Control>
+			<Control ID="lblThemeDockTabActiveBorder">ドックアクティブタブ枠線</Control>
 			<Control ID="btnThemePickColor">選択</Control>
 			<Control ID="lblThemeLivePreview">ライブプレビュー</Control>
 			<Control ID="lblThemePresetStatus">プリセット状態:</Control>

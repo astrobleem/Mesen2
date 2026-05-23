@@ -836,6 +836,11 @@
 			<Control ID="lblThemeControlPressedBackground">Control Pressed Background</Control>
 			<Control ID="lblThemeControlHoverBorder">Control Hover Border</Control>
 			<Control ID="lblThemeControlPressedBorder">Control Pressed Border</Control>
+			<Control ID="lblThemeSidebarBorderColor">Sidebar Border Color</Control>
+			<Control ID="lblThemeDockTabStripBackground">Dock Tab Strip Background</Control>
+			<Control ID="lblThemeDockTabHoverBackground">Dock Tab Hover Background</Control>
+			<Control ID="lblThemeDockTabActiveBackground">Dock Tab Active Background</Control>
+			<Control ID="lblThemeDockTabActiveBorder">Dock Tab Active Border</Control>
 			<Control ID="btnThemePickColor">Pick</Control>
 			<Control ID="lblThemeLivePreview">Live Preview</Control>
 			<Control ID="lblThemePresetStatus">Preset Status:</Control>

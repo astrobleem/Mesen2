@@ -1,4 +1,4 @@
-# Issue 2291 Control Semantic Theme Tokens (2026-05-23)
+﻿# Issue 2291 Control Semantic Theme Tokens (2026-05-23)
 
 ## Context
 
