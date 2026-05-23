@@ -19,6 +19,7 @@
 #include "Debugger/TraceLogFileSaver.h"
 #include "Debugger/CdlManager.h"
 #include "Debugger/ITraceLogger.h"
+#include "Debugger/DebuggerDispatchUtils.h"
 #include "SNES/SnesCpuTypes.h"
 #include "SNES/SpcTypes.h"
 #include "SNES/Coprocessors/SA1/Sa1Types.h"
@@ -69,33 +70,6 @@
 
 // Row ID counter for trace log entries (global across all trace loggers)
 uint64_t ITraceLogger::NextRowId = 0;
-
-namespace {
-
-[[nodiscard]] int32_t GetPauseScanlineForCpu(CpuType cpuType) {
-	static constexpr std::array<std::pair<CpuType, int32_t>, 10> kPauseScanlineByCpu = {{
-		{CpuType::Snes, 240},
-		{CpuType::Gameboy, 144},
-		{CpuType::Nes, 241},
-		{CpuType::Pce, 243},
-		{CpuType::Sms, 240},
-		{CpuType::Gba, 160},
-		{CpuType::Ws, 145},
-		{CpuType::Lynx, 102},
-		{CpuType::Atari2600, 262},
-		{CpuType::ChannelF, 64}
-	}};
-
-	for (const auto& entry : kPauseScanlineByCpu) {
-		if (entry.first == cpuType) {
-			return entry.second;
-		}
-	}
-
-	return 0;
-}
-
-} // namespace
 
 // Initialize debugger with all debugging subsystems
 Debugger::Debugger(Emulator* emu, IConsole* console) {
@@ -1120,6 +1094,46 @@ bool Debugger::IsBreakOptionEnabled(BreakSource src) {
 	return true;
 }
 
+static size_t GetCpuStateSize(CpuType cpuType) {
+	switch (cpuType) {
+		case CpuType::Snes:
+		case CpuType::Sa1:
+			return sizeof(SnesCpuState);
+		case CpuType::Spc:
+			return sizeof(SpcState);
+		case CpuType::NecDsp:
+			return sizeof(NecDspState);
+		case CpuType::Gsu:
+			return sizeof(GsuState);
+		case CpuType::Cx4:
+			return sizeof(Cx4State);
+		case CpuType::St018:
+			return sizeof(ArmV3CpuState);
+		case CpuType::Gameboy:
+			return sizeof(GbCpuState);
+		case CpuType::Nes:
+			return sizeof(NesCpuState);
+		case CpuType::Pce:
+			return sizeof(PceCpuState);
+		case CpuType::Sms:
+			return sizeof(SmsCpuState);
+		case CpuType::Gba:
+			return sizeof(GbaCpuState);
+		case CpuType::Ws:
+			return sizeof(WsCpuState);
+		case CpuType::Lynx:
+			return sizeof(LynxCpuState);
+		case CpuType::Atari2600:
+			return sizeof(Atari2600CpuState);
+		case CpuType::ChannelF:
+			return sizeof(ChannelFCpuState);
+		case CpuType::Genesis:
+			return sizeof(GenesisM68kState);
+	}
+
+	return sizeof(BaseState);
+}
+
 void Debugger::BreakImmediately(CpuType sourceCpu, BreakSource source) {
 	if (_debuggers[(int)sourceCpu].Debugger->IsStepBack()) {
 		return;
@@ -1132,117 +1146,13 @@ void Debugger::BreakImmediately(CpuType sourceCpu, BreakSource source) {
 
 void Debugger::GetCpuState(BaseState& dstState, CpuType cpuType) {
 	BaseState& srcState = GetCpuStateRef(cpuType);
-	switch (cpuType) {
-		case CpuType::Snes:
-			memcpy(&dstState, &srcState, sizeof(SnesCpuState));
-			break;
-		case CpuType::Spc:
-			memcpy(&dstState, &srcState, sizeof(SpcState));
-			break;
-		case CpuType::NecDsp:
-			memcpy(&dstState, &srcState, sizeof(NecDspState));
-			break;
-		case CpuType::Sa1:
-			memcpy(&dstState, &srcState, sizeof(SnesCpuState));
-			break;
-		case CpuType::Gsu:
-			memcpy(&dstState, &srcState, sizeof(GsuState));
-			break;
-		case CpuType::Cx4:
-			memcpy(&dstState, &srcState, sizeof(Cx4State));
-			break;
-		case CpuType::St018:
-			memcpy(&dstState, &srcState, sizeof(ArmV3CpuState));
-			break;
-		case CpuType::Gameboy:
-			memcpy(&dstState, &srcState, sizeof(GbCpuState));
-			break;
-		case CpuType::Nes:
-			memcpy(&dstState, &srcState, sizeof(NesCpuState));
-			break;
-		case CpuType::Pce:
-			memcpy(&dstState, &srcState, sizeof(PceCpuState));
-			break;
-		case CpuType::Sms:
-			memcpy(&dstState, &srcState, sizeof(SmsCpuState));
-			break;
-		case CpuType::Gba:
-			memcpy(&dstState, &srcState, sizeof(GbaCpuState));
-			break;
-		case CpuType::Ws:
-			memcpy(&dstState, &srcState, sizeof(WsCpuState));
-			break;
-		case CpuType::Lynx:
-			memcpy(&dstState, &srcState, sizeof(LynxCpuState));
-			break;
-		case CpuType::Atari2600:
-			memcpy(&dstState, &srcState, sizeof(Atari2600CpuState));
-			break;
-		case CpuType::ChannelF:
-			memcpy(&dstState, &srcState, sizeof(ChannelFCpuState));
-			break;
-		case CpuType::Genesis:
-			memcpy(&dstState, &srcState, sizeof(GenesisM68kState));
-			break;
-	}
+	memcpy(&dstState, &srcState, GetCpuStateSize(cpuType));
 }
 
 void Debugger::SetCpuState(BaseState& srcState, CpuType cpuType) {
 	DebugBreakHelper helper(this);
 	BaseState& dstState = GetCpuStateRef(cpuType);
-	switch (cpuType) {
-		case CpuType::Snes:
-			memcpy(&dstState, &srcState, sizeof(SnesCpuState));
-			break;
-		case CpuType::Spc:
-			memcpy(&dstState, &srcState, sizeof(SpcState));
-			break;
-		case CpuType::NecDsp:
-			memcpy(&dstState, &srcState, sizeof(NecDspState));
-			break;
-		case CpuType::Sa1:
-			memcpy(&dstState, &srcState, sizeof(SnesCpuState));
-			break;
-		case CpuType::Gsu:
-			memcpy(&dstState, &srcState, sizeof(GsuState));
-			break;
-		case CpuType::Cx4:
-			memcpy(&dstState, &srcState, sizeof(Cx4State));
-			break;
-		case CpuType::St018:
-			memcpy(&dstState, &srcState, sizeof(ArmV3CpuState));
-			break;
-		case CpuType::Gameboy:
-			memcpy(&dstState, &srcState, sizeof(GbCpuState));
-			break;
-		case CpuType::Nes:
-			memcpy(&dstState, &srcState, sizeof(NesCpuState));
-			break;
-		case CpuType::Pce:
-			memcpy(&dstState, &srcState, sizeof(PceCpuState));
-			break;
-		case CpuType::Sms:
-			memcpy(&dstState, &srcState, sizeof(SmsCpuState));
-			break;
-		case CpuType::Gba:
-			memcpy(&dstState, &srcState, sizeof(GbaCpuState));
-			break;
-		case CpuType::Ws:
-			memcpy(&dstState, &srcState, sizeof(WsCpuState));
-			break;
-		case CpuType::Lynx:
-			memcpy(&dstState, &srcState, sizeof(LynxCpuState));
-			break;
-		case CpuType::Atari2600:
-			memcpy(&dstState, &srcState, sizeof(Atari2600CpuState));
-			break;
-		case CpuType::ChannelF:
-			memcpy(&dstState, &srcState, sizeof(ChannelFCpuState));
-			break;
-		case CpuType::Genesis:
-			memcpy(&dstState, &srcState, sizeof(GenesisM68kState));
-			break;
-	}
+	memcpy(&dstState, &srcState, GetCpuStateSize(cpuType));
 }
 
 BaseState& Debugger::GetCpuStateRef(CpuType cpuType) {
