@@ -1,4 +1,4 @@
-# Issue #2382 Plan: SleepUntilResume Shared Notification Policy Refactor
+﻿# Issue #2382 Plan: SleepUntilResume Shared Notification Policy Refactor
 
 ## Objective
 

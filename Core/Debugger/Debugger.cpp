@@ -732,16 +732,24 @@ void Debugger::SleepUntilResume(CpuType sourceCpu, BreakSource source, MemoryOpe
 
 	_executionStopped = true;
 
+	bool shouldEmitBreakNotification = ShouldEmitSleepUntilResumeBreakNotification(source, _breakRequestCount > 0);
+	const DebugConfig& debugCfg = _settings->GetDebugConfig();
+	SleepUntilResumePreBreakContext preBreakContext = {};
+	preBreakContext.ShouldEmitBreakNotification = shouldEmitBreakNotification;
+	preBreakContext.SingleBreakpointPerInstruction = debugCfg.SingleBreakpointPerInstruction;
+	preBreakContext.DrawPartialFrame = debugCfg.DrawPartialFrame;
+	SleepUntilResumePreBreakOutcome preBreakOutcome = ResolveSleepUntilResumePreBreakOutcome(preBreakContext);
+
 	bool notificationSent = false;
-	if (ShouldEmitSleepUntilResumeBreakNotification(source, _breakRequestCount > 0)) {
+	if (shouldEmitBreakNotification) {
 		GetMainDebugger()->OnBeforeBreak(sourceCpu);
 		_emu->OnBeforePause(false);
 
-		if (_settings->GetDebugConfig().SingleBreakpointPerInstruction) {
+		if (preBreakOutcome.ShouldIgnoreBreakpoints) {
 			_debuggers[(int)sourceCpu].Debugger->IgnoreBreakpoints = true;
 		}
 
-		if (_settings->GetDebugConfig().DrawPartialFrame) {
+		if (preBreakOutcome.ShouldDrawPartialFrame) {
 			_debuggers[(int)sourceCpu].Debugger->DrawPartialFrame();
 		}
 

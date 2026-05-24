@@ -1,4 +1,4 @@
-# Debugger SleepUntilResume Notification Policy Audit (2026-05-23)
+﻿# Debugger SleepUntilResume Notification Policy Audit (2026-05-23)
 
 ## Scope
 

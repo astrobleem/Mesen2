@@ -227,6 +227,28 @@ struct SleepUntilResumeGuardContext {
 	return hasBreakRequest ? 1 : 10;
 }
 
+struct SleepUntilResumePreBreakContext {
+	bool ShouldEmitBreakNotification = false;
+	bool SingleBreakpointPerInstruction = false;
+	bool DrawPartialFrame = false;
+};
+
+struct SleepUntilResumePreBreakOutcome {
+	bool ShouldIgnoreBreakpoints = false;
+	bool ShouldDrawPartialFrame = false;
+};
+
+[[nodiscard]] inline SleepUntilResumePreBreakOutcome ResolveSleepUntilResumePreBreakOutcome(const SleepUntilResumePreBreakContext& context) {
+	SleepUntilResumePreBreakOutcome outcome = {};
+	if (!context.ShouldEmitBreakNotification) {
+		return outcome;
+	}
+
+	outcome.ShouldIgnoreBreakpoints = context.SingleBreakpointPerInstruction;
+	outcome.ShouldDrawPartialFrame = context.DrawPartialFrame;
+	return outcome;
+}
+
 [[nodiscard]] inline bool ShouldDispatchScriptEvent(bool debuggerOwnsInstance) {
 	return debuggerOwnsInstance;
 }

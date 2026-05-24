@@ -1,4 +1,4 @@
-# Issue #2381 Plan: SleepUntilResume Notification/Loop Policy Regression Tests
+﻿# Issue #2381 Plan: SleepUntilResume Notification/Loop Policy Regression Tests
 
 ## Objective
 

@@ -238,3 +238,34 @@ TEST(DebuggerDispatchUtilsTests, SleepUntilResumeWaitDelayPolicyUsesExpectedMill
 	EXPECT_EQ(GetSleepUntilResumeWaitDelayMs(true), 1);
 	EXPECT_EQ(GetSleepUntilResumeWaitDelayMs(false), 10);
 }
+
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumePreBreakOutcomeIsDisabledWhenNotificationNotEmitted) {
+	SleepUntilResumePreBreakContext context = {};
+	context.ShouldEmitBreakNotification = false;
+	context.SingleBreakpointPerInstruction = true;
+	context.DrawPartialFrame = true;
+
+	SleepUntilResumePreBreakOutcome outcome = ResolveSleepUntilResumePreBreakOutcome(context);
+	EXPECT_FALSE(outcome.ShouldIgnoreBreakpoints);
+	EXPECT_FALSE(outcome.ShouldDrawPartialFrame);
+}
+
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumePreBreakOutcomeTracksConfiguredSideEffectsWhenNotificationEmitted) {
+	SleepUntilResumePreBreakContext fullContext = {};
+	fullContext.ShouldEmitBreakNotification = true;
+	fullContext.SingleBreakpointPerInstruction = true;
+	fullContext.DrawPartialFrame = true;
+
+	SleepUntilResumePreBreakOutcome fullOutcome = ResolveSleepUntilResumePreBreakOutcome(fullContext);
+	EXPECT_TRUE(fullOutcome.ShouldIgnoreBreakpoints);
+	EXPECT_TRUE(fullOutcome.ShouldDrawPartialFrame);
+
+	SleepUntilResumePreBreakContext partialContext = {};
+	partialContext.ShouldEmitBreakNotification = true;
+	partialContext.SingleBreakpointPerInstruction = false;
+	partialContext.DrawPartialFrame = true;
+
+	SleepUntilResumePreBreakOutcome partialOutcome = ResolveSleepUntilResumePreBreakOutcome(partialContext);
+	EXPECT_FALSE(partialOutcome.ShouldIgnoreBreakpoints);
+	EXPECT_TRUE(partialOutcome.ShouldDrawPartialFrame);
+}

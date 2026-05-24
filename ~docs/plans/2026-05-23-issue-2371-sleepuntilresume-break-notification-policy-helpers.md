@@ -1,4 +1,4 @@
-# Issue #2371 Plan: SleepUntilResume Break-Notification Policy Helpers
+﻿# Issue #2371 Plan: SleepUntilResume Break-Notification Policy Helpers
 
 ## Objective
 
