@@ -1,4 +1,4 @@
-# Issue #2428 Plan: SleepUntilResume Runtime Bundle Regression Tests
+﻿# Issue #2428 Plan: SleepUntilResume Runtime Bundle Regression Tests
 
 ## Objective
 

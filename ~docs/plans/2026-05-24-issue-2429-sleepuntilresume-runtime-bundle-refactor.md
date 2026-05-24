@@ -1,4 +1,4 @@
-# Issue #2429 Plan: SleepUntilResume Runtime Bundle Refactor
+﻿# Issue #2429 Plan: SleepUntilResume Runtime Bundle Refactor
 
 ## Objective
 

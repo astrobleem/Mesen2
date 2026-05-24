@@ -1,6 +1,36 @@
 ﻿#include "pch.h"
 #include "Debugger/DebuggerDispatchUtils.h"
 
+namespace {
+	SleepUntilResumePhaseContext CreateSleepUntilResumeContinuePhaseContext(BreakSource source, bool hasBreakRequest) {
+		SleepUntilResumePhaseContext context = {};
+		context.Guard.HasSuspendRequest = false;
+		context.Guard.ExecutionAlreadyStopped = false;
+		context.Guard.HasBreakRequest = hasBreakRequest;
+		context.Guard.SourceCpuIsMainCpu = true;
+		context.Guard.AllowChangeProgramCounter = true;
+		context.Guard.BreakpointForbidden = false;
+		context.Source = source;
+		context.HasBreakRequest = hasBreakRequest;
+		context.SingleBreakpointPerInstruction = true;
+		context.DrawPartialFrame = true;
+		return context;
+	}
+
+	SleepUntilResumeRuntimeBundleContext CreateRuntimeBundleContext(const SleepUntilResumePhaseOutcome& phaseOutcome, CpuType sourceCpu, BreakSource source, int32_t breakpointId, const MemoryOperationInfo* operation, bool notificationSent) {
+		SleepUntilResumeRuntimeBundleContext context = {};
+		context.ShouldRunPreBreakSequence = phaseOutcome.PreLoopBundle.PreLoop.ShouldRunPreBreakSequence;
+		context.SourceCpu = sourceCpu;
+		context.Source = source;
+		context.BreakpointId = breakpointId;
+		context.Operation = operation;
+		context.ShouldArmWaitForBreakResume = phaseOutcome.PreLoopBundle.PreLoop.ShouldArmWaitForBreakResume;
+		context.ShouldEnableScreensaver = phaseOutcome.PreLoopBundle.PreLoop.ShouldEnableScreensaver;
+		context.NotificationSent = notificationSent;
+		return context;
+	}
+}
+
 TEST(DebuggerDispatchUtilsTests, PauseScanlineMappingMatchesExpectedSystems) {
 	EXPECT_EQ(GetPauseScanlineForCpu(CpuType::Snes), 240);
 	EXPECT_EQ(GetPauseScanlineForCpu(CpuType::Gameboy), 144);
@@ -620,4 +650,68 @@ TEST(DebuggerDispatchUtilsTests, SleepUntilResumeRuntimeBundleOutcomeComposesDis
 	EXPECT_TRUE(outcome.SideEffect.ShouldSetWaitForBreakResume);
 	EXPECT_TRUE(outcome.SideEffect.ShouldEnableScreensaver);
 	EXPECT_TRUE(outcome.SideEffect.NotificationSent);
+}
+
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumeComposedFlowIntegrationEmittedPathTransitionsAcrossPhaseRuntimeAndPostLoop) {
+	MemoryOperationInfo operation = {};
+	operation.Address = 0x3456;
+	operation.Value = 0x78;
+
+	SleepUntilResumePhaseContext phaseContext = CreateSleepUntilResumeContinuePhaseContext(BreakSource::Breakpoint, true);
+	SleepUntilResumePhaseOutcome phaseOutcome = ResolveSleepUntilResumePhaseOutcome(phaseContext);
+	EXPECT_EQ(phaseOutcome.Decision, SleepUntilResumeDecision::Continue);
+	EXPECT_TRUE(phaseOutcome.ShouldEmitBreakNotification);
+	EXPECT_TRUE(phaseOutcome.PreLoopBundle.PreLoop.ShouldRunPreBreakSequence);
+
+	SleepUntilResumeRuntimeBundleContext runtimeBundleContext = CreateRuntimeBundleContext(phaseOutcome, CpuType::Nes, BreakSource::Breakpoint, 99, &operation, false);
+	SleepUntilResumeRuntimeBundleOutcome runtimeBundleOutcome = ResolveSleepUntilResumeRuntimeBundleOutcome(runtimeBundleContext);
+	EXPECT_TRUE(runtimeBundleOutcome.Dispatch.Dispatch.ShouldDispatchCodeBreakNotification);
+	EXPECT_TRUE(runtimeBundleOutcome.Dispatch.BreakEvent.HasOperation);
+	EXPECT_TRUE(runtimeBundleOutcome.SideEffect.ShouldSetWaitForBreakResume);
+	EXPECT_TRUE(runtimeBundleOutcome.SideEffect.ShouldEnableScreensaver);
+	EXPECT_TRUE(runtimeBundleOutcome.SideEffect.NotificationSent);
+
+	SleepUntilResumeLoopContext loopContext = {};
+	loopContext.WaitForBreakResume = runtimeBundleOutcome.SideEffect.ShouldSetWaitForBreakResume;
+	loopContext.HasSuspendRequest = false;
+	loopContext.HasBreakRequest = true;
+	SleepUntilResumeLoopOutcome loopOutcome = ResolveSleepUntilResumeLoopOutcome(loopContext);
+	EXPECT_TRUE(loopOutcome.ShouldContinueWaiting);
+	EXPECT_EQ(loopOutcome.WaitDelayMs, 1);
+
+	SleepUntilResumePostLoopContext postLoopContext = {};
+	postLoopContext.NotificationSent = runtimeBundleOutcome.SideEffect.NotificationSent;
+	SleepUntilResumePostLoopOutcome postLoopOutcome = ResolveSleepUntilResumePostLoopOutcome(postLoopContext);
+	EXPECT_TRUE(postLoopOutcome.ShouldDisableScreensaver);
+	EXPECT_TRUE(postLoopOutcome.ShouldSendDebuggerResumedNotification);
+}
+
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumeComposedFlowIntegrationNonEmittedPathSkipsRuntimeDispatchAndPostLoopSideEffects) {
+	SleepUntilResumePhaseContext phaseContext = CreateSleepUntilResumeContinuePhaseContext(BreakSource::Unspecified, true);
+	SleepUntilResumePhaseOutcome phaseOutcome = ResolveSleepUntilResumePhaseOutcome(phaseContext);
+	EXPECT_EQ(phaseOutcome.Decision, SleepUntilResumeDecision::Continue);
+	EXPECT_FALSE(phaseOutcome.ShouldEmitBreakNotification);
+	EXPECT_FALSE(phaseOutcome.PreLoopBundle.PreLoop.ShouldRunPreBreakSequence);
+
+	SleepUntilResumeRuntimeBundleContext runtimeBundleContext = CreateRuntimeBundleContext(phaseOutcome, CpuType::Nes, BreakSource::Unspecified, -1, nullptr, false);
+	SleepUntilResumeRuntimeBundleOutcome runtimeBundleOutcome = ResolveSleepUntilResumeRuntimeBundleOutcome(runtimeBundleContext);
+	EXPECT_FALSE(runtimeBundleOutcome.Dispatch.Dispatch.ShouldDispatchCodeBreakNotification);
+	EXPECT_FALSE(runtimeBundleOutcome.Dispatch.Dispatch.ShouldProcessCodeBreakEvent);
+	EXPECT_FALSE(runtimeBundleOutcome.SideEffect.ShouldSetWaitForBreakResume);
+	EXPECT_FALSE(runtimeBundleOutcome.SideEffect.ShouldEnableScreensaver);
+	EXPECT_FALSE(runtimeBundleOutcome.SideEffect.NotificationSent);
+
+	SleepUntilResumeLoopContext loopContext = {};
+	loopContext.WaitForBreakResume = runtimeBundleOutcome.SideEffect.ShouldSetWaitForBreakResume;
+	loopContext.HasSuspendRequest = false;
+	loopContext.HasBreakRequest = true;
+	SleepUntilResumeLoopOutcome loopOutcome = ResolveSleepUntilResumeLoopOutcome(loopContext);
+	EXPECT_TRUE(loopOutcome.ShouldContinueWaiting);
+	EXPECT_EQ(loopOutcome.WaitDelayMs, 1);
+
+	SleepUntilResumePostLoopContext postLoopContext = {};
+	postLoopContext.NotificationSent = runtimeBundleOutcome.SideEffect.NotificationSent;
+	SleepUntilResumePostLoopOutcome postLoopOutcome = ResolveSleepUntilResumePostLoopOutcome(postLoopContext);
+	EXPECT_FALSE(postLoopOutcome.ShouldDisableScreensaver);
+	EXPECT_FALSE(postLoopOutcome.ShouldSendDebuggerResumedNotification);
 }

@@ -1,4 +1,4 @@
-# Issue #2427 Plan: SleepUntilResume Runtime Bundle Helper
+﻿# Issue #2427 Plan: SleepUntilResume Runtime Bundle Helper
 
 ## Objective
 
