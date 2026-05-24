@@ -249,6 +249,24 @@ struct SleepUntilResumePreBreakOutcome {
 	return outcome;
 }
 
+struct SleepUntilResumeLoopContext {
+	bool WaitForBreakResume = false;
+	bool HasSuspendRequest = false;
+	bool HasBreakRequest = false;
+};
+
+struct SleepUntilResumeLoopOutcome {
+	bool ShouldContinueWaiting = false;
+	int32_t WaitDelayMs = 10;
+};
+
+[[nodiscard]] inline SleepUntilResumeLoopOutcome ResolveSleepUntilResumeLoopOutcome(const SleepUntilResumeLoopContext& context) {
+	SleepUntilResumeLoopOutcome outcome = {};
+	outcome.ShouldContinueWaiting = (context.WaitForBreakResume && !context.HasSuspendRequest) || context.HasBreakRequest;
+	outcome.WaitDelayMs = GetSleepUntilResumeWaitDelayMs(context.HasBreakRequest);
+	return outcome;
+}
+
 [[nodiscard]] inline bool ShouldDispatchScriptEvent(bool debuggerOwnsInstance) {
 	return debuggerOwnsInstance;
 }

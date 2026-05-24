@@ -1,4 +1,4 @@
-# Issue #2385 Plan: SleepUntilResume Shared Pre-Break Side-Effect Refactor
+﻿# Issue #2385 Plan: SleepUntilResume Shared Pre-Break Side-Effect Refactor
 
 ## Objective
 

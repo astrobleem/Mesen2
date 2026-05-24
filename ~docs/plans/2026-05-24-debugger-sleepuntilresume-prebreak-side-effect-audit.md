@@ -1,4 +1,4 @@
-# Debugger SleepUntilResume Pre-Break Side-Effect Audit (2026-05-24)
+﻿# Debugger SleepUntilResume Pre-Break Side-Effect Audit (2026-05-24)
 
 ## Scope
 

@@ -1,4 +1,4 @@
-# Issue #2384 Plan: SleepUntilResume Pre-Break Side-Effect Regression Tests
+﻿# Issue #2384 Plan: SleepUntilResume Pre-Break Side-Effect Regression Tests
 
 ## Objective
 

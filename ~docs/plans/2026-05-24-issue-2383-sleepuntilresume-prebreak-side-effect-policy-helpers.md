@@ -1,4 +1,4 @@
-# Issue #2383 Plan: SleepUntilResume Pre-Break Side-Effect Policy Helpers
+﻿# Issue #2383 Plan: SleepUntilResume Pre-Break Side-Effect Policy Helpers
 
 ## Objective
 

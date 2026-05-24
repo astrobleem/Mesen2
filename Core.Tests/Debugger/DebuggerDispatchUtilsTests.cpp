@@ -269,3 +269,45 @@ TEST(DebuggerDispatchUtilsTests, SleepUntilResumePreBreakOutcomeTracksConfigured
 	EXPECT_FALSE(partialOutcome.ShouldIgnoreBreakpoints);
 	EXPECT_TRUE(partialOutcome.ShouldDrawPartialFrame);
 }
+
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumeLoopOutcomeContinuesForWaitOrBreakRequestStates) {
+	SleepUntilResumeLoopContext waitContext = {};
+	waitContext.WaitForBreakResume = true;
+	waitContext.HasSuspendRequest = false;
+	waitContext.HasBreakRequest = false;
+
+	SleepUntilResumeLoopOutcome waitOutcome = ResolveSleepUntilResumeLoopOutcome(waitContext);
+	EXPECT_TRUE(waitOutcome.ShouldContinueWaiting);
+	EXPECT_EQ(waitOutcome.WaitDelayMs, 10);
+
+	SleepUntilResumeLoopContext breakContext = {};
+	breakContext.WaitForBreakResume = false;
+	breakContext.HasSuspendRequest = true;
+	breakContext.HasBreakRequest = true;
+
+	SleepUntilResumeLoopOutcome breakOutcome = ResolveSleepUntilResumeLoopOutcome(breakContext);
+	EXPECT_TRUE(breakOutcome.ShouldContinueWaiting);
+	EXPECT_EQ(breakOutcome.WaitDelayMs, 1);
+}
+
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumeLoopOutcomeStopsWhenNoWaitAndNoBreakRequest) {
+	SleepUntilResumeLoopContext context = {};
+	context.WaitForBreakResume = false;
+	context.HasSuspendRequest = false;
+	context.HasBreakRequest = false;
+
+	SleepUntilResumeLoopOutcome outcome = ResolveSleepUntilResumeLoopOutcome(context);
+	EXPECT_FALSE(outcome.ShouldContinueWaiting);
+	EXPECT_EQ(outcome.WaitDelayMs, 10);
+}
+
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumeLoopOutcomeStopsWaitPathWhenSuspendRequestedWithoutBreakRequest) {
+	SleepUntilResumeLoopContext context = {};
+	context.WaitForBreakResume = true;
+	context.HasSuspendRequest = true;
+	context.HasBreakRequest = false;
+
+	SleepUntilResumeLoopOutcome outcome = ResolveSleepUntilResumeLoopOutcome(context);
+	EXPECT_FALSE(outcome.ShouldContinueWaiting);
+	EXPECT_EQ(outcome.WaitDelayMs, 10);
+}

@@ -769,8 +769,18 @@ void Debugger::SleepUntilResume(CpuType sourceCpu, BreakSource source, MemoryOpe
 		PlatformUtilities::EnableScreensaver();
 	}
 
-	while ((_waitForBreakResume && !_suspendRequestCount) || _breakRequestCount) {
-		std::this_thread::sleep_for(std::chrono::duration<int, std::milli>(GetSleepUntilResumeWaitDelayMs(_breakRequestCount > 0)));
+	while (true) {
+		SleepUntilResumeLoopContext loopContext = {};
+		loopContext.WaitForBreakResume = _waitForBreakResume;
+		loopContext.HasSuspendRequest = _suspendRequestCount > 0;
+		loopContext.HasBreakRequest = _breakRequestCount > 0;
+
+		SleepUntilResumeLoopOutcome loopOutcome = ResolveSleepUntilResumeLoopOutcome(loopContext);
+		if (!loopOutcome.ShouldContinueWaiting) {
+			break;
+		}
+
+		std::this_thread::sleep_for(std::chrono::duration<int, std::milli>(loopOutcome.WaitDelayMs));
 	}
 
 	if (notificationSent) {
