@@ -330,6 +330,38 @@ TEST(DebuggerDispatchUtilsTests, SleepUntilResumeLoopPostContextBuilderSupportsN
 	EXPECT_FALSE(outcome.PostLoop.ShouldSendDebuggerResumedNotification);
 }
 
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumeCoordinatorEntryOutcomeResolvesContinueWithEmittedPolicyInputs) {
+	SleepUntilResumeCoordinatorEntryContext context = {};
+	context.Guard = BuildSleepUntilResumeGuardContext(false, false, true, true, true, false);
+	context.Source = BreakSource::Breakpoint;
+	context.HasBreakRequest = true;
+	context.SingleBreakpointPerInstruction = true;
+	context.DrawPartialFrame = true;
+
+	SleepUntilResumeCoordinatorEntryOutcome outcome = ResolveSleepUntilResumeCoordinatorEntryOutcome(context);
+	EXPECT_EQ(outcome.PhaseOutcome.Decision, SleepUntilResumeDecision::Continue);
+	EXPECT_TRUE(outcome.PhaseOutcome.ShouldEmitBreakNotification);
+	EXPECT_TRUE(outcome.PhaseOutcome.PreLoopBundle.PreLoop.ShouldRunPreBreakSequence);
+	EXPECT_TRUE(outcome.PhaseContext.SingleBreakpointPerInstruction);
+	EXPECT_TRUE(outcome.PhaseContext.DrawPartialFrame);
+}
+
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumeCoordinatorEntryOutcomePreservesSkipDecisionWithoutEmittedPath) {
+	SleepUntilResumeCoordinatorEntryContext context = {};
+	context.Guard = BuildSleepUntilResumeGuardContext(true, false, true, true, true, false);
+	context.Source = BreakSource::Unspecified;
+	context.HasBreakRequest = true;
+	context.SingleBreakpointPerInstruction = false;
+	context.DrawPartialFrame = false;
+
+	SleepUntilResumeCoordinatorEntryOutcome outcome = ResolveSleepUntilResumeCoordinatorEntryOutcome(context);
+	EXPECT_EQ(outcome.PhaseOutcome.Decision, SleepUntilResumeDecision::SkipForSuspendRequest);
+	EXPECT_FALSE(outcome.PhaseOutcome.ShouldEmitBreakNotification);
+	EXPECT_FALSE(outcome.PhaseOutcome.PreLoopBundle.PreLoop.ShouldRunPreBreakSequence);
+	EXPECT_FALSE(outcome.PhaseContext.SingleBreakpointPerInstruction);
+	EXPECT_FALSE(outcome.PhaseContext.DrawPartialFrame);
+}
+
 TEST(DebuggerDispatchUtilsTests, SleepUntilResumeBreakNotificationPolicyUsesSourceAndBreakRequestState) {
 	EXPECT_TRUE(ShouldEmitSleepUntilResumeBreakNotification(BreakSource::Breakpoint, false));
 	EXPECT_TRUE(ShouldEmitSleepUntilResumeBreakNotification(BreakSource::Breakpoint, true));

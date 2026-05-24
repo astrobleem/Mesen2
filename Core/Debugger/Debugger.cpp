@@ -704,8 +704,13 @@ void Debugger::ProcessPpuCycle() {
 void Debugger::SleepUntilResume(CpuType sourceCpu, BreakSource source, MemoryOperationInfo* operation, int breakpointId) {
 	SleepUntilResumeGuardContext guardContext = BuildSleepUntilResumeGuardContext(_suspendRequestCount > 0, _executionStopped, _breakRequestCount > 0, sourceCpu == _mainCpuType, _debuggers[(int)sourceCpu].Debugger->AllowChangeProgramCounter, IsBreakpointForbidden(source, sourceCpu, operation));
 
-	SleepUntilResumePhaseContext phaseContext = BuildSleepUntilResumePhaseContext(guardContext, source, _breakRequestCount > 0, false, false);
-	SleepUntilResumePhaseOutcome phaseOutcome = ResolveSleepUntilResumePhaseOutcome(phaseContext);
+	SleepUntilResumeCoordinatorEntryContext entryContext = {};
+	entryContext.Guard = guardContext;
+	entryContext.Source = source;
+	entryContext.HasBreakRequest = _breakRequestCount > 0;
+	SleepUntilResumeCoordinatorEntryOutcome entryOutcome = ResolveSleepUntilResumeCoordinatorEntryOutcome(entryContext);
+	SleepUntilResumePhaseContext phaseContext = entryOutcome.PhaseContext;
+	SleepUntilResumePhaseOutcome phaseOutcome = entryOutcome.PhaseOutcome;
 
 	switch (phaseOutcome.Decision) {
 		case SleepUntilResumeDecision::SkipForSuspendRequest:
@@ -729,8 +734,12 @@ void Debugger::SleepUntilResume(CpuType sourceCpu, BreakSource source, MemoryOpe
 	_executionStopped = true;
 
 	const DebugConfig& debugCfg = _settings->GetDebugConfig();
-	phaseContext = BuildSleepUntilResumePhaseContext(guardContext, source, _breakRequestCount > 0, debugCfg.SingleBreakpointPerInstruction, debugCfg.DrawPartialFrame);
-	phaseOutcome = ResolveSleepUntilResumePhaseOutcome(phaseContext);
+	entryContext.SingleBreakpointPerInstruction = debugCfg.SingleBreakpointPerInstruction;
+	entryContext.DrawPartialFrame = debugCfg.DrawPartialFrame;
+	entryContext.HasBreakRequest = _breakRequestCount > 0;
+	entryOutcome = ResolveSleepUntilResumeCoordinatorEntryOutcome(entryContext);
+	phaseContext = entryOutcome.PhaseContext;
+	phaseOutcome = entryOutcome.PhaseOutcome;
 
 	bool notificationSent = false;
 	if (phaseOutcome.PreLoopBundle.PreLoop.ShouldRunPreBreakSequence) {

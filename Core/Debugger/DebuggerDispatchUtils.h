@@ -523,6 +523,19 @@ struct SleepUntilResumePhaseOutcome {
 	SleepUntilResumePostLoopOutcome PostLoop = {};
 };
 
+struct SleepUntilResumeCoordinatorEntryContext {
+	SleepUntilResumeGuardContext Guard = {};
+	BreakSource Source = BreakSource::Unspecified;
+	bool HasBreakRequest = false;
+	bool SingleBreakpointPerInstruction = false;
+	bool DrawPartialFrame = false;
+};
+
+struct SleepUntilResumeCoordinatorEntryOutcome {
+	SleepUntilResumePhaseContext PhaseContext = {};
+	SleepUntilResumePhaseOutcome PhaseOutcome = {};
+};
+
 [[nodiscard]] inline SleepUntilResumePhaseOutcome ResolveSleepUntilResumePhaseOutcome(const SleepUntilResumePhaseContext& context) {
 	SleepUntilResumePhaseOutcome outcome = {};
 	outcome.Decision = EvaluateSleepUntilResumeDecision(context.Guard);
@@ -547,6 +560,17 @@ struct SleepUntilResumePhaseOutcome {
 	postLoopContext.NotificationSent = context.NotificationSent;
 	outcome.PostLoop = ResolveSleepUntilResumePostLoopOutcome(postLoopContext);
 
+	return outcome;
+}
+
+[[nodiscard]] inline SleepUntilResumeCoordinatorEntryOutcome ResolveSleepUntilResumeCoordinatorEntryOutcome(const SleepUntilResumeCoordinatorEntryContext& context) {
+	SleepUntilResumeCoordinatorEntryOutcome outcome = {};
+	outcome.PhaseContext.Guard = context.Guard;
+	outcome.PhaseContext.Source = context.Source;
+	outcome.PhaseContext.HasBreakRequest = context.HasBreakRequest;
+	outcome.PhaseContext.SingleBreakpointPerInstruction = context.SingleBreakpointPerInstruction;
+	outcome.PhaseContext.DrawPartialFrame = context.DrawPartialFrame;
+	outcome.PhaseOutcome = ResolveSleepUntilResumePhaseOutcome(outcome.PhaseContext);
 	return outcome;
 }
 
