@@ -1,4 +1,4 @@
-# Issue #2440 Plan: SleepUntilResume Loop/Post-Loop Bundle Helper
+﻿# Issue #2440 Plan: SleepUntilResume Loop/Post-Loop Bundle Helper
 
 ## Objective
 

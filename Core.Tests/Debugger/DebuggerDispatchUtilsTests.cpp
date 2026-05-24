@@ -18,16 +18,7 @@ namespace {
 	}
 
 	SleepUntilResumeRuntimeBundleContext CreateRuntimeBundleContext(const SleepUntilResumePhaseOutcome& phaseOutcome, CpuType sourceCpu, BreakSource source, int32_t breakpointId, const MemoryOperationInfo* operation, bool notificationSent) {
-		SleepUntilResumeRuntimeBundleContext context = {};
-		context.ShouldRunPreBreakSequence = phaseOutcome.PreLoopBundle.PreLoop.ShouldRunPreBreakSequence;
-		context.SourceCpu = sourceCpu;
-		context.Source = source;
-		context.BreakpointId = breakpointId;
-		context.Operation = operation;
-		context.ShouldArmWaitForBreakResume = phaseOutcome.PreLoopBundle.PreLoop.ShouldArmWaitForBreakResume;
-		context.ShouldEnableScreensaver = phaseOutcome.PreLoopBundle.PreLoop.ShouldEnableScreensaver;
-		context.NotificationSent = notificationSent;
-		return context;
+		return BuildSleepUntilResumeRuntimeBundleContext(phaseOutcome, sourceCpu, source, breakpointId, operation, notificationSent);
 	}
 }
 
@@ -604,6 +595,39 @@ TEST(DebuggerDispatchUtilsTests, SleepUntilResumeRuntimeSideEffectOutcomeApplies
 	EXPECT_TRUE(outcome.ShouldSetWaitForBreakResume);
 	EXPECT_TRUE(outcome.ShouldEnableScreensaver);
 	EXPECT_TRUE(outcome.NotificationSent);
+}
+
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumeRuntimeBundleContextBuilderComposesPhasePreLoopFlagsAndRuntimePayloadForEmittedFlow) {
+	MemoryOperationInfo operation = {};
+	operation.Address = 0x2468;
+
+	SleepUntilResumePhaseContext phaseContext = CreateSleepUntilResumeContinuePhaseContext(BreakSource::Breakpoint, true);
+	SleepUntilResumePhaseOutcome phaseOutcome = ResolveSleepUntilResumePhaseOutcome(phaseContext);
+
+	SleepUntilResumeRuntimeBundleContext context = BuildSleepUntilResumeRuntimeBundleContext(phaseOutcome, CpuType::Nes, BreakSource::Breakpoint, 41, &operation, false);
+	EXPECT_TRUE(context.ShouldRunPreBreakSequence);
+	EXPECT_EQ(context.SourceCpu, CpuType::Nes);
+	EXPECT_EQ(context.Source, BreakSource::Breakpoint);
+	EXPECT_EQ(context.BreakpointId, 41);
+	EXPECT_EQ(context.Operation, &operation);
+	EXPECT_TRUE(context.ShouldArmWaitForBreakResume);
+	EXPECT_TRUE(context.ShouldEnableScreensaver);
+	EXPECT_FALSE(context.NotificationSent);
+}
+
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumeRuntimeBundleContextBuilderDisablesPreBreakFlagsForNonEmittedFlowAndPreservesPayload) {
+	SleepUntilResumePhaseContext phaseContext = CreateSleepUntilResumeContinuePhaseContext(BreakSource::Unspecified, true);
+	SleepUntilResumePhaseOutcome phaseOutcome = ResolveSleepUntilResumePhaseOutcome(phaseContext);
+
+	SleepUntilResumeRuntimeBundleContext context = BuildSleepUntilResumeRuntimeBundleContext(phaseOutcome, CpuType::Gba, BreakSource::Unspecified, -1, nullptr, true);
+	EXPECT_FALSE(context.ShouldRunPreBreakSequence);
+	EXPECT_EQ(context.SourceCpu, CpuType::Gba);
+	EXPECT_EQ(context.Source, BreakSource::Unspecified);
+	EXPECT_EQ(context.BreakpointId, -1);
+	EXPECT_EQ(context.Operation, nullptr);
+	EXPECT_FALSE(context.ShouldArmWaitForBreakResume);
+	EXPECT_FALSE(context.ShouldEnableScreensaver);
+	EXPECT_TRUE(context.NotificationSent);
 }
 
 TEST(DebuggerDispatchUtilsTests, SleepUntilResumeRuntimeBundleOutcomeDisablesDispatchAndSideEffectsWhenPreBreakSequenceDoesNotRun) {

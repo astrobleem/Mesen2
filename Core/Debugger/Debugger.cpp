@@ -755,15 +755,7 @@ void Debugger::SleepUntilResume(CpuType sourceCpu, BreakSource source, MemoryOpe
 			_debuggers[(int)sourceCpu].Debugger->DrawPartialFrame();
 		}
 
-		SleepUntilResumeRuntimeBundleContext runtimeBundleContext = {};
-		runtimeBundleContext.ShouldRunPreBreakSequence = phaseOutcome.PreLoopBundle.PreLoop.ShouldRunPreBreakSequence;
-		runtimeBundleContext.SourceCpu = sourceCpu;
-		runtimeBundleContext.Source = source;
-		runtimeBundleContext.BreakpointId = breakpointId;
-		runtimeBundleContext.Operation = operation;
-		runtimeBundleContext.ShouldArmWaitForBreakResume = phaseOutcome.PreLoopBundle.PreLoop.ShouldArmWaitForBreakResume;
-		runtimeBundleContext.ShouldEnableScreensaver = phaseOutcome.PreLoopBundle.PreLoop.ShouldEnableScreensaver;
-		runtimeBundleContext.NotificationSent = notificationSent;
+		SleepUntilResumeRuntimeBundleContext runtimeBundleContext = BuildSleepUntilResumeRuntimeBundleContext(phaseOutcome, sourceCpu, source, breakpointId, operation, notificationSent);
 		SleepUntilResumeRuntimeBundleOutcome runtimeBundleOutcome = ResolveSleepUntilResumeRuntimeBundleOutcome(runtimeBundleContext);
 
 		if (runtimeBundleOutcome.SideEffect.ShouldSetWaitForBreakResume) {

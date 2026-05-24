@@ -539,6 +539,19 @@ struct SleepUntilResumePhaseOutcome {
 	return outcome;
 }
 
+[[nodiscard]] inline SleepUntilResumeRuntimeBundleContext BuildSleepUntilResumeRuntimeBundleContext(const SleepUntilResumePhaseOutcome& phaseOutcome, CpuType sourceCpu, BreakSource source, int32_t breakpointId, const MemoryOperationInfo* operation, bool notificationSent) {
+	SleepUntilResumeRuntimeBundleContext context = {};
+	context.ShouldRunPreBreakSequence = phaseOutcome.PreLoopBundle.PreLoop.ShouldRunPreBreakSequence;
+	context.SourceCpu = sourceCpu;
+	context.Source = source;
+	context.BreakpointId = breakpointId;
+	context.Operation = operation;
+	context.ShouldArmWaitForBreakResume = phaseOutcome.PreLoopBundle.PreLoop.ShouldArmWaitForBreakResume;
+	context.ShouldEnableScreensaver = phaseOutcome.PreLoopBundle.PreLoop.ShouldEnableScreensaver;
+	context.NotificationSent = notificationSent;
+	return context;
+}
+
 [[nodiscard]] inline bool ShouldDispatchScriptEvent(bool debuggerOwnsInstance) {
 	return debuggerOwnsInstance;
 }

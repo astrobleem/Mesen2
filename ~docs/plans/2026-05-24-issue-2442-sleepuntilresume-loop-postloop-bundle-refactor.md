@@ -1,4 +1,4 @@
-# Issue #2442 Plan: SleepUntilResume Loop/Post-Loop Bundle Refactor
+﻿# Issue #2442 Plan: SleepUntilResume Loop/Post-Loop Bundle Refactor
 
 ## Objective
 
