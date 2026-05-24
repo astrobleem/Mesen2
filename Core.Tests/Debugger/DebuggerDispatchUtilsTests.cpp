@@ -403,3 +403,37 @@ TEST(DebuggerDispatchUtilsTests, SleepUntilResumeDispatchOutcomeEnablesDispatchA
 	EXPECT_TRUE(outcome.ShouldProcessCodeBreakEvent);
 	EXPECT_TRUE(outcome.ShouldMarkNotificationSent);
 }
+
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumePreLoopBundleOutcomeDisablesPreLoopAndDispatchPoliciesWhenNotificationNotEmitted) {
+	SleepUntilResumePreLoopBundleContext context = {};
+	context.ShouldEmitBreakNotification = false;
+	context.SingleBreakpointPerInstruction = true;
+	context.DrawPartialFrame = true;
+
+	SleepUntilResumePreLoopBundleOutcome outcome = ResolveSleepUntilResumePreLoopBundleOutcome(context);
+	EXPECT_FALSE(outcome.PreBreak.ShouldIgnoreBreakpoints);
+	EXPECT_FALSE(outcome.PreBreak.ShouldDrawPartialFrame);
+	EXPECT_FALSE(outcome.PreLoop.ShouldRunPreBreakSequence);
+	EXPECT_FALSE(outcome.PreLoop.ShouldArmWaitForBreakResume);
+	EXPECT_FALSE(outcome.PreLoop.ShouldEnableScreensaver);
+	EXPECT_FALSE(outcome.Dispatch.ShouldDispatchCodeBreakNotification);
+	EXPECT_FALSE(outcome.Dispatch.ShouldProcessCodeBreakEvent);
+	EXPECT_FALSE(outcome.Dispatch.ShouldMarkNotificationSent);
+}
+
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumePreLoopBundleOutcomeEnablesPreLoopAndDispatchPoliciesWhenNotificationEmitted) {
+	SleepUntilResumePreLoopBundleContext context = {};
+	context.ShouldEmitBreakNotification = true;
+	context.SingleBreakpointPerInstruction = true;
+	context.DrawPartialFrame = true;
+
+	SleepUntilResumePreLoopBundleOutcome outcome = ResolveSleepUntilResumePreLoopBundleOutcome(context);
+	EXPECT_TRUE(outcome.PreBreak.ShouldIgnoreBreakpoints);
+	EXPECT_TRUE(outcome.PreBreak.ShouldDrawPartialFrame);
+	EXPECT_TRUE(outcome.PreLoop.ShouldRunPreBreakSequence);
+	EXPECT_TRUE(outcome.PreLoop.ShouldArmWaitForBreakResume);
+	EXPECT_TRUE(outcome.PreLoop.ShouldEnableScreensaver);
+	EXPECT_TRUE(outcome.Dispatch.ShouldDispatchCodeBreakNotification);
+	EXPECT_TRUE(outcome.Dispatch.ShouldProcessCodeBreakEvent);
+	EXPECT_TRUE(outcome.Dispatch.ShouldMarkNotificationSent);
+}

@@ -345,6 +345,38 @@ struct SleepUntilResumeDispatchOutcome {
 	return outcome;
 }
 
+struct SleepUntilResumePreLoopBundleContext {
+	bool ShouldEmitBreakNotification = false;
+	bool SingleBreakpointPerInstruction = false;
+	bool DrawPartialFrame = false;
+};
+
+struct SleepUntilResumePreLoopBundleOutcome {
+	SleepUntilResumePreBreakOutcome PreBreak = {};
+	SleepUntilResumePreLoopOutcome PreLoop = {};
+	SleepUntilResumeDispatchOutcome Dispatch = {};
+};
+
+[[nodiscard]] inline SleepUntilResumePreLoopBundleOutcome ResolveSleepUntilResumePreLoopBundleOutcome(const SleepUntilResumePreLoopBundleContext& context) {
+	SleepUntilResumePreLoopBundleOutcome outcome = {};
+
+	SleepUntilResumePreBreakContext preBreakContext = {};
+	preBreakContext.ShouldEmitBreakNotification = context.ShouldEmitBreakNotification;
+	preBreakContext.SingleBreakpointPerInstruction = context.SingleBreakpointPerInstruction;
+	preBreakContext.DrawPartialFrame = context.DrawPartialFrame;
+	outcome.PreBreak = ResolveSleepUntilResumePreBreakOutcome(preBreakContext);
+
+	SleepUntilResumePreLoopContext preLoopContext = {};
+	preLoopContext.ShouldEmitBreakNotification = context.ShouldEmitBreakNotification;
+	outcome.PreLoop = ResolveSleepUntilResumePreLoopOutcome(preLoopContext);
+
+	SleepUntilResumeDispatchContext dispatchContext = {};
+	dispatchContext.ShouldRunPreBreakSequence = outcome.PreLoop.ShouldRunPreBreakSequence;
+	outcome.Dispatch = ResolveSleepUntilResumeDispatchOutcome(dispatchContext);
+
+	return outcome;
+}
+
 [[nodiscard]] inline bool ShouldDispatchScriptEvent(bool debuggerOwnsInstance) {
 	return debuggerOwnsInstance;
 }
