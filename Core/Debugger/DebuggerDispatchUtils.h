@@ -283,6 +283,32 @@ struct SleepUntilResumePostLoopOutcome {
 	return outcome;
 }
 
+struct SleepUntilResumeBreakEventContext {
+	CpuType SourceCpu = CpuType::Snes;
+	BreakSource Source = BreakSource::Unspecified;
+	int32_t BreakpointId = -1;
+	const MemoryOperationInfo* Operation = nullptr;
+};
+
+struct SleepUntilResumeBreakEventOutcome {
+	BreakEvent Event = {};
+	bool HasOperation = false;
+};
+
+[[nodiscard]] inline SleepUntilResumeBreakEventOutcome ResolveSleepUntilResumeBreakEventOutcome(const SleepUntilResumeBreakEventContext& context) {
+	SleepUntilResumeBreakEventOutcome outcome = {};
+	outcome.Event.SourceCpu = context.SourceCpu;
+	outcome.Event.Source = context.Source;
+	outcome.Event.BreakpointId = context.BreakpointId;
+
+	if (context.Operation) {
+		outcome.Event.Operation = *context.Operation;
+		outcome.HasOperation = true;
+	}
+
+	return outcome;
+}
+
 [[nodiscard]] inline bool ShouldDispatchScriptEvent(bool debuggerOwnsInstance) {
 	return debuggerOwnsInstance;
 }

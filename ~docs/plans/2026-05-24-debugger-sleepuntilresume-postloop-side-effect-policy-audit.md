@@ -1,4 +1,4 @@
-# Debugger SleepUntilResume Post-Loop Side-Effect Policy Audit (2026-05-24)
+﻿# Debugger SleepUntilResume Post-Loop Side-Effect Policy Audit (2026-05-24)
 
 ## Scope
 

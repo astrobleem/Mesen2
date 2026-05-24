@@ -1,4 +1,4 @@
-# Issue #2392 Plan: SleepUntilResume Post-Loop Side-Effect Regression Tests
+﻿# Issue #2392 Plan: SleepUntilResume Post-Loop Side-Effect Regression Tests
 
 ## Objective
 

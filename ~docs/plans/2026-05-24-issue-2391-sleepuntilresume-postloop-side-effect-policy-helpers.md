@@ -1,4 +1,4 @@
-# Issue #2391 Plan: SleepUntilResume Post-Loop Side-Effect Policy Helpers
+﻿# Issue #2391 Plan: SleepUntilResume Post-Loop Side-Effect Policy Helpers
 
 ## Objective
 

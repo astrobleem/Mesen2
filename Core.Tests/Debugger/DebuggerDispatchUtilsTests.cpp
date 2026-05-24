@@ -329,3 +329,37 @@ TEST(DebuggerDispatchUtilsTests, SleepUntilResumePostLoopOutcomeEnablesSideEffec
 	EXPECT_TRUE(outcome.ShouldDisableScreensaver);
 	EXPECT_TRUE(outcome.ShouldSendDebuggerResumedNotification);
 }
+
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumeBreakEventOutcomeIncludesCorePayloadFields) {
+	SleepUntilResumeBreakEventContext context = {};
+	context.SourceCpu = CpuType::Nes;
+	context.Source = BreakSource::Breakpoint;
+	context.BreakpointId = 77;
+
+	SleepUntilResumeBreakEventOutcome outcome = ResolveSleepUntilResumeBreakEventOutcome(context);
+	EXPECT_EQ(outcome.Event.SourceCpu, CpuType::Nes);
+	EXPECT_EQ(outcome.Event.Source, BreakSource::Breakpoint);
+	EXPECT_EQ(outcome.Event.BreakpointId, 77);
+	EXPECT_FALSE(outcome.HasOperation);
+}
+
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumeBreakEventOutcomeCopiesOperationWhenProvided) {
+	MemoryOperationInfo operation = {};
+	operation.Address = 0x1234;
+	operation.Value = 0x56;
+	operation.Type = (MemoryOperationType)2;
+	operation.MemType = (MemoryType)3;
+
+	SleepUntilResumeBreakEventContext context = {};
+	context.SourceCpu = CpuType::Snes;
+	context.Source = BreakSource::CpuStep;
+	context.BreakpointId = -1;
+	context.Operation = &operation;
+
+	SleepUntilResumeBreakEventOutcome outcome = ResolveSleepUntilResumeBreakEventOutcome(context);
+	EXPECT_TRUE(outcome.HasOperation);
+	EXPECT_EQ(outcome.Event.Operation.Address, 0x1234u);
+	EXPECT_EQ(outcome.Event.Operation.Value, 0x56);
+	EXPECT_EQ((int)outcome.Event.Operation.Type, 2);
+	EXPECT_EQ((int)outcome.Event.Operation.MemType, 3);
+}

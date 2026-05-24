@@ -754,16 +754,15 @@ void Debugger::SleepUntilResume(CpuType sourceCpu, BreakSource source, MemoryOpe
 		}
 
 		// Only trigger code break event if the pause was caused by user action
-		BreakEvent evt = {};
-		evt.SourceCpu = sourceCpu;
-		evt.BreakpointId = breakpointId;
-		evt.Source = source;
-		if (operation) {
-			evt.Operation = *operation;
-		}
+		SleepUntilResumeBreakEventContext breakEventContext = {};
+		breakEventContext.SourceCpu = sourceCpu;
+		breakEventContext.Source = source;
+		breakEventContext.BreakpointId = breakpointId;
+		breakEventContext.Operation = operation;
+		SleepUntilResumeBreakEventOutcome breakEventOutcome = ResolveSleepUntilResumeBreakEventOutcome(breakEventContext);
 
 		_waitForBreakResume = true;
-		_emu->GetNotificationManager()->SendNotification(ConsoleNotificationType::CodeBreak, &evt);
+		_emu->GetNotificationManager()->SendNotification(ConsoleNotificationType::CodeBreak, &breakEventOutcome.Event);
 		ProcessEvent(EventType::CodeBreak, sourceCpu);
 		notificationSent = true;
 		PlatformUtilities::EnableScreensaver();

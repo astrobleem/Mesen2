@@ -1,4 +1,4 @@
-# Issue #2393 Plan: SleepUntilResume Shared Post-Loop Side-Effect Refactor
+﻿# Issue #2393 Plan: SleepUntilResume Shared Post-Loop Side-Effect Refactor
 
 ## Objective
 
