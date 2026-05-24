@@ -575,3 +575,49 @@ TEST(DebuggerDispatchUtilsTests, SleepUntilResumeRuntimeSideEffectOutcomeApplies
 	EXPECT_TRUE(outcome.ShouldEnableScreensaver);
 	EXPECT_TRUE(outcome.NotificationSent);
 }
+
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumeRuntimeBundleOutcomeDisablesDispatchAndSideEffectsWhenPreBreakSequenceDoesNotRun) {
+	SleepUntilResumeRuntimeBundleContext context = {};
+	context.ShouldRunPreBreakSequence = false;
+	context.SourceCpu = CpuType::Nes;
+	context.Source = BreakSource::Unspecified;
+	context.BreakpointId = -1;
+	context.ShouldArmWaitForBreakResume = false;
+	context.ShouldEnableScreensaver = false;
+	context.NotificationSent = false;
+
+	SleepUntilResumeRuntimeBundleOutcome outcome = ResolveSleepUntilResumeRuntimeBundleOutcome(context);
+	EXPECT_FALSE(outcome.Dispatch.Dispatch.ShouldDispatchCodeBreakNotification);
+	EXPECT_FALSE(outcome.Dispatch.Dispatch.ShouldProcessCodeBreakEvent);
+	EXPECT_FALSE(outcome.Dispatch.Dispatch.ShouldMarkNotificationSent);
+	EXPECT_FALSE(outcome.SideEffect.ShouldSetWaitForBreakResume);
+	EXPECT_FALSE(outcome.SideEffect.ShouldEnableScreensaver);
+	EXPECT_FALSE(outcome.SideEffect.NotificationSent);
+}
+
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumeRuntimeBundleOutcomeComposesDispatchPayloadAndSideEffectStateTransitions) {
+	MemoryOperationInfo operation = {};
+	operation.Address = 0x6789;
+	operation.Value = 0xab;
+
+	SleepUntilResumeRuntimeBundleContext context = {};
+	context.ShouldRunPreBreakSequence = true;
+	context.SourceCpu = CpuType::Snes;
+	context.Source = BreakSource::Breakpoint;
+	context.BreakpointId = 12;
+	context.Operation = &operation;
+	context.ShouldArmWaitForBreakResume = true;
+	context.ShouldEnableScreensaver = true;
+	context.NotificationSent = false;
+
+	SleepUntilResumeRuntimeBundleOutcome outcome = ResolveSleepUntilResumeRuntimeBundleOutcome(context);
+	EXPECT_TRUE(outcome.Dispatch.Dispatch.ShouldDispatchCodeBreakNotification);
+	EXPECT_TRUE(outcome.Dispatch.Dispatch.ShouldProcessCodeBreakEvent);
+	EXPECT_TRUE(outcome.Dispatch.Dispatch.ShouldMarkNotificationSent);
+	EXPECT_TRUE(outcome.Dispatch.BreakEvent.HasOperation);
+	EXPECT_EQ(outcome.Dispatch.BreakEvent.Event.BreakpointId, 12);
+	EXPECT_EQ(outcome.Dispatch.BreakEvent.Event.Operation.Address, 0x6789u);
+	EXPECT_TRUE(outcome.SideEffect.ShouldSetWaitForBreakResume);
+	EXPECT_TRUE(outcome.SideEffect.ShouldEnableScreensaver);
+	EXPECT_TRUE(outcome.SideEffect.NotificationSent);
+}

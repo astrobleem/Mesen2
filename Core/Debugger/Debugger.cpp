@@ -755,32 +755,28 @@ void Debugger::SleepUntilResume(CpuType sourceCpu, BreakSource source, MemoryOpe
 			_debuggers[(int)sourceCpu].Debugger->DrawPartialFrame();
 		}
 
-		SleepUntilResumeRuntimeDispatchContext runtimeDispatchContext = {};
-		runtimeDispatchContext.ShouldRunPreBreakSequence = phaseOutcome.PreLoopBundle.PreLoop.ShouldRunPreBreakSequence;
-		runtimeDispatchContext.SourceCpu = sourceCpu;
-		runtimeDispatchContext.Source = source;
-		runtimeDispatchContext.BreakpointId = breakpointId;
-		runtimeDispatchContext.Operation = operation;
-		SleepUntilResumeRuntimeDispatchOutcome runtimeDispatchOutcome = ResolveSleepUntilResumeRuntimeDispatchOutcome(runtimeDispatchContext);
+		SleepUntilResumeRuntimeBundleContext runtimeBundleContext = {};
+		runtimeBundleContext.ShouldRunPreBreakSequence = phaseOutcome.PreLoopBundle.PreLoop.ShouldRunPreBreakSequence;
+		runtimeBundleContext.SourceCpu = sourceCpu;
+		runtimeBundleContext.Source = source;
+		runtimeBundleContext.BreakpointId = breakpointId;
+		runtimeBundleContext.Operation = operation;
+		runtimeBundleContext.ShouldArmWaitForBreakResume = phaseOutcome.PreLoopBundle.PreLoop.ShouldArmWaitForBreakResume;
+		runtimeBundleContext.ShouldEnableScreensaver = phaseOutcome.PreLoopBundle.PreLoop.ShouldEnableScreensaver;
+		runtimeBundleContext.NotificationSent = notificationSent;
+		SleepUntilResumeRuntimeBundleOutcome runtimeBundleOutcome = ResolveSleepUntilResumeRuntimeBundleOutcome(runtimeBundleContext);
 
-		SleepUntilResumeRuntimeSideEffectContext runtimeSideEffectContext = {};
-		runtimeSideEffectContext.ShouldArmWaitForBreakResume = phaseOutcome.PreLoopBundle.PreLoop.ShouldArmWaitForBreakResume;
-		runtimeSideEffectContext.ShouldEnableScreensaver = phaseOutcome.PreLoopBundle.PreLoop.ShouldEnableScreensaver;
-		runtimeSideEffectContext.ShouldMarkNotificationSent = runtimeDispatchOutcome.Dispatch.ShouldMarkNotificationSent;
-		runtimeSideEffectContext.NotificationSent = notificationSent;
-		SleepUntilResumeRuntimeSideEffectOutcome runtimeSideEffectOutcome = ResolveSleepUntilResumeRuntimeSideEffectOutcome(runtimeSideEffectContext);
-
-		if (runtimeSideEffectOutcome.ShouldSetWaitForBreakResume) {
+		if (runtimeBundleOutcome.SideEffect.ShouldSetWaitForBreakResume) {
 			_waitForBreakResume = true;
 		}
-		if (runtimeDispatchOutcome.Dispatch.ShouldDispatchCodeBreakNotification) {
-			_emu->GetNotificationManager()->SendNotification(ConsoleNotificationType::CodeBreak, &runtimeDispatchOutcome.BreakEvent.Event);
+		if (runtimeBundleOutcome.Dispatch.Dispatch.ShouldDispatchCodeBreakNotification) {
+			_emu->GetNotificationManager()->SendNotification(ConsoleNotificationType::CodeBreak, &runtimeBundleOutcome.Dispatch.BreakEvent.Event);
 		}
-		if (runtimeDispatchOutcome.Dispatch.ShouldProcessCodeBreakEvent) {
+		if (runtimeBundleOutcome.Dispatch.Dispatch.ShouldProcessCodeBreakEvent) {
 			ProcessEvent(EventType::CodeBreak, sourceCpu);
 		}
-		notificationSent = runtimeSideEffectOutcome.NotificationSent;
-		if (runtimeSideEffectOutcome.ShouldEnableScreensaver) {
+		notificationSent = runtimeBundleOutcome.SideEffect.NotificationSent;
+		if (runtimeBundleOutcome.SideEffect.ShouldEnableScreensaver) {
 			PlatformUtilities::EnableScreensaver();
 		}
 	}

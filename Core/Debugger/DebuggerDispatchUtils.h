@@ -396,6 +396,43 @@ struct SleepUntilResumeRuntimeSideEffectOutcome {
 	return outcome;
 }
 
+struct SleepUntilResumeRuntimeBundleContext {
+	bool ShouldRunPreBreakSequence = false;
+	CpuType SourceCpu = CpuType::Snes;
+	BreakSource Source = BreakSource::Unspecified;
+	int32_t BreakpointId = -1;
+	const MemoryOperationInfo* Operation = nullptr;
+	bool ShouldArmWaitForBreakResume = false;
+	bool ShouldEnableScreensaver = false;
+	bool NotificationSent = false;
+};
+
+struct SleepUntilResumeRuntimeBundleOutcome {
+	SleepUntilResumeRuntimeDispatchOutcome Dispatch = {};
+	SleepUntilResumeRuntimeSideEffectOutcome SideEffect = {};
+};
+
+[[nodiscard]] inline SleepUntilResumeRuntimeBundleOutcome ResolveSleepUntilResumeRuntimeBundleOutcome(const SleepUntilResumeRuntimeBundleContext& context) {
+	SleepUntilResumeRuntimeBundleOutcome outcome = {};
+
+	SleepUntilResumeRuntimeDispatchContext dispatchContext = {};
+	dispatchContext.ShouldRunPreBreakSequence = context.ShouldRunPreBreakSequence;
+	dispatchContext.SourceCpu = context.SourceCpu;
+	dispatchContext.Source = context.Source;
+	dispatchContext.BreakpointId = context.BreakpointId;
+	dispatchContext.Operation = context.Operation;
+	outcome.Dispatch = ResolveSleepUntilResumeRuntimeDispatchOutcome(dispatchContext);
+
+	SleepUntilResumeRuntimeSideEffectContext sideEffectContext = {};
+	sideEffectContext.ShouldArmWaitForBreakResume = context.ShouldArmWaitForBreakResume;
+	sideEffectContext.ShouldEnableScreensaver = context.ShouldEnableScreensaver;
+	sideEffectContext.ShouldMarkNotificationSent = outcome.Dispatch.Dispatch.ShouldMarkNotificationSent;
+	sideEffectContext.NotificationSent = context.NotificationSent;
+	outcome.SideEffect = ResolveSleepUntilResumeRuntimeSideEffectOutcome(sideEffectContext);
+
+	return outcome;
+}
+
 struct SleepUntilResumePreLoopBundleContext {
 	bool ShouldEmitBreakNotification = false;
 	bool SingleBreakpointPerInstruction = false;
