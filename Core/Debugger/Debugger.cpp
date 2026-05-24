@@ -764,10 +764,7 @@ void Debugger::SleepUntilResume(CpuType sourceCpu, BreakSource source, MemoryOpe
 	}
 
 	while (true) {
-		SleepUntilResumeLoopPostBundleContext loopPostBundleContext = {};
-		loopPostBundleContext.WaitForBreakResume = _waitForBreakResume;
-		loopPostBundleContext.HasSuspendRequest = _suspendRequestCount > 0;
-		loopPostBundleContext.HasBreakRequest = _breakRequestCount > 0;
+		SleepUntilResumeLoopPostBundleContext loopPostBundleContext = BuildSleepUntilResumeLoopPostBundleContext(_waitForBreakResume, _suspendRequestCount > 0, _breakRequestCount > 0, false);
 		SleepUntilResumeLoopPostBundleOutcome loopPostBundleOutcome = ResolveSleepUntilResumeLoopPostBundleOutcome(loopPostBundleContext);
 
 		if (!loopPostBundleOutcome.Loop.ShouldContinueWaiting) {
@@ -777,8 +774,7 @@ void Debugger::SleepUntilResume(CpuType sourceCpu, BreakSource source, MemoryOpe
 		std::this_thread::sleep_for(std::chrono::duration<int, std::milli>(loopPostBundleOutcome.Loop.WaitDelayMs));
 	}
 
-	SleepUntilResumeLoopPostBundleContext postLoopBundleContext = {};
-	postLoopBundleContext.NotificationSent = notificationSent;
+	SleepUntilResumeLoopPostBundleContext postLoopBundleContext = BuildSleepUntilResumeLoopPostBundleContext(false, false, false, notificationSent);
 	SleepUntilResumeLoopPostBundleOutcome postLoopBundleOutcome = ResolveSleepUntilResumeLoopPostBundleOutcome(postLoopBundleContext);
 
 	if (postLoopBundleOutcome.PostLoop.ShouldDisableScreensaver) {

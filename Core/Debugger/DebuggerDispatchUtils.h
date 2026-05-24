@@ -573,6 +573,15 @@ struct SleepUntilResumePhaseOutcome {
 	return context;
 }
 
+[[nodiscard]] inline SleepUntilResumeLoopPostBundleContext BuildSleepUntilResumeLoopPostBundleContext(bool waitForBreakResume, bool hasSuspendRequest, bool hasBreakRequest, bool notificationSent) {
+	SleepUntilResumeLoopPostBundleContext context = {};
+	context.WaitForBreakResume = waitForBreakResume;
+	context.HasSuspendRequest = hasSuspendRequest;
+	context.HasBreakRequest = hasBreakRequest;
+	context.NotificationSent = notificationSent;
+	return context;
+}
+
 [[nodiscard]] inline bool ShouldDispatchScriptEvent(bool debuggerOwnsInstance) {
 	return debuggerOwnsInstance;
 }

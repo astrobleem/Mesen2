@@ -308,6 +308,28 @@ TEST(DebuggerDispatchUtilsTests, SleepUntilResumePhaseContextBuilderSupportsNonE
 	EXPECT_FALSE(context.NotificationSent);
 }
 
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumeLoopPostContextBuilderMapsAllLoopAndPostFields) {
+	SleepUntilResumeLoopPostBundleContext context = BuildSleepUntilResumeLoopPostBundleContext(true, false, true, true);
+	EXPECT_TRUE(context.WaitForBreakResume);
+	EXPECT_FALSE(context.HasSuspendRequest);
+	EXPECT_TRUE(context.HasBreakRequest);
+	EXPECT_TRUE(context.NotificationSent);
+}
+
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumeLoopPostContextBuilderSupportsNonEmittedIdleCombination) {
+	SleepUntilResumeLoopPostBundleContext context = BuildSleepUntilResumeLoopPostBundleContext(false, false, false, false);
+	EXPECT_FALSE(context.WaitForBreakResume);
+	EXPECT_FALSE(context.HasSuspendRequest);
+	EXPECT_FALSE(context.HasBreakRequest);
+	EXPECT_FALSE(context.NotificationSent);
+
+	SleepUntilResumeLoopPostBundleOutcome outcome = ResolveSleepUntilResumeLoopPostBundleOutcome(context);
+	EXPECT_FALSE(outcome.Loop.ShouldContinueWaiting);
+	EXPECT_EQ(outcome.Loop.WaitDelayMs, 10);
+	EXPECT_FALSE(outcome.PostLoop.ShouldDisableScreensaver);
+	EXPECT_FALSE(outcome.PostLoop.ShouldSendDebuggerResumedNotification);
+}
+
 TEST(DebuggerDispatchUtilsTests, SleepUntilResumeBreakNotificationPolicyUsesSourceAndBreakRequestState) {
 	EXPECT_TRUE(ShouldEmitSleepUntilResumeBreakNotification(BreakSource::Breakpoint, false));
 	EXPECT_TRUE(ShouldEmitSleepUntilResumeBreakNotification(BreakSource::Breakpoint, true));
