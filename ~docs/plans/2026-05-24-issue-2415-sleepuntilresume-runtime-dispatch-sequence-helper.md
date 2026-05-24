@@ -1,4 +1,4 @@
-# Issue #2415 Plan: SleepUntilResume Runtime Dispatch Sequence Helper
+﻿# Issue #2415 Plan: SleepUntilResume Runtime Dispatch Sequence Helper
 
 ## Objective
 

@@ -1,4 +1,4 @@
-# Issue #2416 Plan: SleepUntilResume Runtime Dispatch Sequence Regression Tests
+﻿# Issue #2416 Plan: SleepUntilResume Runtime Dispatch Sequence Regression Tests
 
 ## Objective
 

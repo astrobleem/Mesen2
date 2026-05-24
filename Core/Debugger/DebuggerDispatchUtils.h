@@ -375,6 +375,27 @@ struct SleepUntilResumeRuntimeDispatchOutcome {
 	return outcome;
 }
 
+struct SleepUntilResumeRuntimeSideEffectContext {
+	bool ShouldArmWaitForBreakResume = false;
+	bool ShouldEnableScreensaver = false;
+	bool ShouldMarkNotificationSent = false;
+	bool NotificationSent = false;
+};
+
+struct SleepUntilResumeRuntimeSideEffectOutcome {
+	bool ShouldSetWaitForBreakResume = false;
+	bool ShouldEnableScreensaver = false;
+	bool NotificationSent = false;
+};
+
+[[nodiscard]] inline SleepUntilResumeRuntimeSideEffectOutcome ResolveSleepUntilResumeRuntimeSideEffectOutcome(const SleepUntilResumeRuntimeSideEffectContext& context) {
+	SleepUntilResumeRuntimeSideEffectOutcome outcome = {};
+	outcome.ShouldSetWaitForBreakResume = context.ShouldArmWaitForBreakResume;
+	outcome.ShouldEnableScreensaver = context.ShouldEnableScreensaver;
+	outcome.NotificationSent = context.NotificationSent || context.ShouldMarkNotificationSent;
+	return outcome;
+}
+
 struct SleepUntilResumePreLoopBundleContext {
 	bool ShouldEmitBreakNotification = false;
 	bool SingleBreakpointPerInstruction = false;

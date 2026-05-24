@@ -763,7 +763,14 @@ void Debugger::SleepUntilResume(CpuType sourceCpu, BreakSource source, MemoryOpe
 		runtimeDispatchContext.Operation = operation;
 		SleepUntilResumeRuntimeDispatchOutcome runtimeDispatchOutcome = ResolveSleepUntilResumeRuntimeDispatchOutcome(runtimeDispatchContext);
 
-		if (phaseOutcome.PreLoopBundle.PreLoop.ShouldArmWaitForBreakResume) {
+		SleepUntilResumeRuntimeSideEffectContext runtimeSideEffectContext = {};
+		runtimeSideEffectContext.ShouldArmWaitForBreakResume = phaseOutcome.PreLoopBundle.PreLoop.ShouldArmWaitForBreakResume;
+		runtimeSideEffectContext.ShouldEnableScreensaver = phaseOutcome.PreLoopBundle.PreLoop.ShouldEnableScreensaver;
+		runtimeSideEffectContext.ShouldMarkNotificationSent = runtimeDispatchOutcome.Dispatch.ShouldMarkNotificationSent;
+		runtimeSideEffectContext.NotificationSent = notificationSent;
+		SleepUntilResumeRuntimeSideEffectOutcome runtimeSideEffectOutcome = ResolveSleepUntilResumeRuntimeSideEffectOutcome(runtimeSideEffectContext);
+
+		if (runtimeSideEffectOutcome.ShouldSetWaitForBreakResume) {
 			_waitForBreakResume = true;
 		}
 		if (runtimeDispatchOutcome.Dispatch.ShouldDispatchCodeBreakNotification) {
@@ -772,10 +779,8 @@ void Debugger::SleepUntilResume(CpuType sourceCpu, BreakSource source, MemoryOpe
 		if (runtimeDispatchOutcome.Dispatch.ShouldProcessCodeBreakEvent) {
 			ProcessEvent(EventType::CodeBreak, sourceCpu);
 		}
-		if (runtimeDispatchOutcome.Dispatch.ShouldMarkNotificationSent) {
-			notificationSent = true;
-		}
-		if (phaseOutcome.PreLoopBundle.PreLoop.ShouldEnableScreensaver) {
+		notificationSent = runtimeSideEffectOutcome.NotificationSent;
+		if (runtimeSideEffectOutcome.ShouldEnableScreensaver) {
 			PlatformUtilities::EnableScreensaver();
 		}
 	}

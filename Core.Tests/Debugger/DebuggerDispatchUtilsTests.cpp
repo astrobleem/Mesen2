@@ -549,3 +549,29 @@ TEST(DebuggerDispatchUtilsTests, SleepUntilResumeRuntimeDispatchOutcomeEnablesDi
 	EXPECT_TRUE(outcome.Dispatch.ShouldProcessCodeBreakEvent);
 	EXPECT_TRUE(outcome.Dispatch.ShouldMarkNotificationSent);
 }
+
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumeRuntimeSideEffectOutcomeKeepsNotificationStateWhenDispatchDoesNotMarkSent) {
+	SleepUntilResumeRuntimeSideEffectContext context = {};
+	context.ShouldArmWaitForBreakResume = false;
+	context.ShouldEnableScreensaver = false;
+	context.ShouldMarkNotificationSent = false;
+	context.NotificationSent = false;
+
+	SleepUntilResumeRuntimeSideEffectOutcome outcome = ResolveSleepUntilResumeRuntimeSideEffectOutcome(context);
+	EXPECT_FALSE(outcome.ShouldSetWaitForBreakResume);
+	EXPECT_FALSE(outcome.ShouldEnableScreensaver);
+	EXPECT_FALSE(outcome.NotificationSent);
+}
+
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumeRuntimeSideEffectOutcomeAppliesWaitAndScreenAndPromotesNotificationSent) {
+	SleepUntilResumeRuntimeSideEffectContext context = {};
+	context.ShouldArmWaitForBreakResume = true;
+	context.ShouldEnableScreensaver = true;
+	context.ShouldMarkNotificationSent = true;
+	context.NotificationSent = false;
+
+	SleepUntilResumeRuntimeSideEffectOutcome outcome = ResolveSleepUntilResumeRuntimeSideEffectOutcome(context);
+	EXPECT_TRUE(outcome.ShouldSetWaitForBreakResume);
+	EXPECT_TRUE(outcome.ShouldEnableScreensaver);
+	EXPECT_TRUE(outcome.NotificationSent);
+}

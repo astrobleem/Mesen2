@@ -1,4 +1,4 @@
-# Issue #2417 Plan: SleepUntilResume Runtime Dispatch Sequence Refactor
+﻿# Issue #2417 Plan: SleepUntilResume Runtime Dispatch Sequence Refactor
 
 ## Objective
 
