@@ -1,4 +1,4 @@
-# Issue #2411 Plan: SleepUntilResume Phase Outcome Model Refactor
+﻿# Issue #2411 Plan: SleepUntilResume Phase Outcome Model Refactor
 
 ## Objective
 

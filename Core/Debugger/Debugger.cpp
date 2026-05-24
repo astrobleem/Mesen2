@@ -755,24 +755,24 @@ void Debugger::SleepUntilResume(CpuType sourceCpu, BreakSource source, MemoryOpe
 			_debuggers[(int)sourceCpu].Debugger->DrawPartialFrame();
 		}
 
-		// Only trigger code break event if the pause was caused by user action
-		SleepUntilResumeBreakEventContext breakEventContext = {};
-		breakEventContext.SourceCpu = sourceCpu;
-		breakEventContext.Source = source;
-		breakEventContext.BreakpointId = breakpointId;
-		breakEventContext.Operation = operation;
-		SleepUntilResumeBreakEventOutcome breakEventOutcome = ResolveSleepUntilResumeBreakEventOutcome(breakEventContext);
+		SleepUntilResumeRuntimeDispatchContext runtimeDispatchContext = {};
+		runtimeDispatchContext.ShouldRunPreBreakSequence = phaseOutcome.PreLoopBundle.PreLoop.ShouldRunPreBreakSequence;
+		runtimeDispatchContext.SourceCpu = sourceCpu;
+		runtimeDispatchContext.Source = source;
+		runtimeDispatchContext.BreakpointId = breakpointId;
+		runtimeDispatchContext.Operation = operation;
+		SleepUntilResumeRuntimeDispatchOutcome runtimeDispatchOutcome = ResolveSleepUntilResumeRuntimeDispatchOutcome(runtimeDispatchContext);
 
 		if (phaseOutcome.PreLoopBundle.PreLoop.ShouldArmWaitForBreakResume) {
 			_waitForBreakResume = true;
 		}
-		if (phaseOutcome.PreLoopBundle.Dispatch.ShouldDispatchCodeBreakNotification) {
-			_emu->GetNotificationManager()->SendNotification(ConsoleNotificationType::CodeBreak, &breakEventOutcome.Event);
+		if (runtimeDispatchOutcome.Dispatch.ShouldDispatchCodeBreakNotification) {
+			_emu->GetNotificationManager()->SendNotification(ConsoleNotificationType::CodeBreak, &runtimeDispatchOutcome.BreakEvent.Event);
 		}
-		if (phaseOutcome.PreLoopBundle.Dispatch.ShouldProcessCodeBreakEvent) {
+		if (runtimeDispatchOutcome.Dispatch.ShouldProcessCodeBreakEvent) {
 			ProcessEvent(EventType::CodeBreak, sourceCpu);
 		}
-		if (phaseOutcome.PreLoopBundle.Dispatch.ShouldMarkNotificationSent) {
+		if (runtimeDispatchOutcome.Dispatch.ShouldMarkNotificationSent) {
 			notificationSent = true;
 		}
 		if (phaseOutcome.PreLoopBundle.PreLoop.ShouldEnableScreensaver) {

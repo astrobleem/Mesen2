@@ -1,4 +1,4 @@
-# Debugger SleepUntilResume Phase Outcome Model Audit (2026-05-24)
+﻿# Debugger SleepUntilResume Phase Outcome Model Audit (2026-05-24)
 
 ## Scope
 

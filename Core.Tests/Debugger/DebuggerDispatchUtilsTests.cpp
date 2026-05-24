@@ -510,3 +510,42 @@ TEST(DebuggerDispatchUtilsTests, SleepUntilResumePhaseOutcomeComposesLoopAndPost
 	EXPECT_TRUE(outcome.PostLoop.ShouldDisableScreensaver);
 	EXPECT_TRUE(outcome.PostLoop.ShouldSendDebuggerResumedNotification);
 }
+
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumeRuntimeDispatchOutcomeDisablesDispatchSequenceWhenNotRunningPreBreakSequence) {
+	SleepUntilResumeRuntimeDispatchContext context = {};
+	context.ShouldRunPreBreakSequence = false;
+	context.SourceCpu = CpuType::Nes;
+	context.Source = BreakSource::Breakpoint;
+	context.BreakpointId = 42;
+
+	SleepUntilResumeRuntimeDispatchOutcome outcome = ResolveSleepUntilResumeRuntimeDispatchOutcome(context);
+	EXPECT_EQ(outcome.BreakEvent.Event.SourceCpu, CpuType::Nes);
+	EXPECT_EQ(outcome.BreakEvent.Event.Source, BreakSource::Breakpoint);
+	EXPECT_EQ(outcome.BreakEvent.Event.BreakpointId, 42);
+	EXPECT_FALSE(outcome.Dispatch.ShouldDispatchCodeBreakNotification);
+	EXPECT_FALSE(outcome.Dispatch.ShouldProcessCodeBreakEvent);
+	EXPECT_FALSE(outcome.Dispatch.ShouldMarkNotificationSent);
+}
+
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumeRuntimeDispatchOutcomeEnablesDispatchSequenceAndCopiesOperationWhenPreBreakSequenceRuns) {
+	MemoryOperationInfo operation = {};
+	operation.Address = 0x4567;
+	operation.Value = 0x89;
+	operation.Type = (MemoryOperationType)2;
+	operation.MemType = (MemoryType)3;
+
+	SleepUntilResumeRuntimeDispatchContext context = {};
+	context.ShouldRunPreBreakSequence = true;
+	context.SourceCpu = CpuType::Snes;
+	context.Source = BreakSource::CpuStep;
+	context.BreakpointId = 7;
+	context.Operation = &operation;
+
+	SleepUntilResumeRuntimeDispatchOutcome outcome = ResolveSleepUntilResumeRuntimeDispatchOutcome(context);
+	EXPECT_TRUE(outcome.BreakEvent.HasOperation);
+	EXPECT_EQ(outcome.BreakEvent.Event.Operation.Address, 0x4567u);
+	EXPECT_EQ(outcome.BreakEvent.Event.Operation.Value, 0x89);
+	EXPECT_TRUE(outcome.Dispatch.ShouldDispatchCodeBreakNotification);
+	EXPECT_TRUE(outcome.Dispatch.ShouldProcessCodeBreakEvent);
+	EXPECT_TRUE(outcome.Dispatch.ShouldMarkNotificationSent);
+}

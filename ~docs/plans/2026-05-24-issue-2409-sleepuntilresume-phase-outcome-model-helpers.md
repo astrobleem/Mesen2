@@ -1,4 +1,4 @@
-# Issue #2409 Plan: SleepUntilResume Phase Outcome Model Helpers
+﻿# Issue #2409 Plan: SleepUntilResume Phase Outcome Model Helpers
 
 ## Objective
 

@@ -345,6 +345,36 @@ struct SleepUntilResumeDispatchOutcome {
 	return outcome;
 }
 
+struct SleepUntilResumeRuntimeDispatchContext {
+	bool ShouldRunPreBreakSequence = false;
+	CpuType SourceCpu = CpuType::Snes;
+	BreakSource Source = BreakSource::Unspecified;
+	int32_t BreakpointId = -1;
+	const MemoryOperationInfo* Operation = nullptr;
+};
+
+struct SleepUntilResumeRuntimeDispatchOutcome {
+	SleepUntilResumeBreakEventOutcome BreakEvent = {};
+	SleepUntilResumeDispatchOutcome Dispatch = {};
+};
+
+[[nodiscard]] inline SleepUntilResumeRuntimeDispatchOutcome ResolveSleepUntilResumeRuntimeDispatchOutcome(const SleepUntilResumeRuntimeDispatchContext& context) {
+	SleepUntilResumeRuntimeDispatchOutcome outcome = {};
+
+	SleepUntilResumeBreakEventContext breakEventContext = {};
+	breakEventContext.SourceCpu = context.SourceCpu;
+	breakEventContext.Source = context.Source;
+	breakEventContext.BreakpointId = context.BreakpointId;
+	breakEventContext.Operation = context.Operation;
+	outcome.BreakEvent = ResolveSleepUntilResumeBreakEventOutcome(breakEventContext);
+
+	SleepUntilResumeDispatchContext dispatchContext = {};
+	dispatchContext.ShouldRunPreBreakSequence = context.ShouldRunPreBreakSequence;
+	outcome.Dispatch = ResolveSleepUntilResumeDispatchOutcome(dispatchContext);
+
+	return outcome;
+}
+
 struct SleepUntilResumePreLoopBundleContext {
 	bool ShouldEmitBreakNotification = false;
 	bool SingleBreakpointPerInstruction = false;
