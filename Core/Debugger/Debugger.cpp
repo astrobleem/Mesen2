@@ -783,8 +783,15 @@ void Debugger::SleepUntilResume(CpuType sourceCpu, BreakSource source, MemoryOpe
 		std::this_thread::sleep_for(std::chrono::duration<int, std::milli>(loopOutcome.WaitDelayMs));
 	}
 
-	if (notificationSent) {
+	SleepUntilResumePostLoopContext postLoopContext = {};
+	postLoopContext.NotificationSent = notificationSent;
+	SleepUntilResumePostLoopOutcome postLoopOutcome = ResolveSleepUntilResumePostLoopOutcome(postLoopContext);
+
+	if (postLoopOutcome.ShouldDisableScreensaver) {
 		PlatformUtilities::DisableScreensaver();
+	}
+
+	if (postLoopOutcome.ShouldSendDebuggerResumedNotification) {
 		_emu->GetNotificationManager()->SendNotification(ConsoleNotificationType::DebuggerResumed);
 	}
 

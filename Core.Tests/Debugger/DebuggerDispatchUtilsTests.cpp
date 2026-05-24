@@ -311,3 +311,21 @@ TEST(DebuggerDispatchUtilsTests, SleepUntilResumeLoopOutcomeStopsWaitPathWhenSus
 	EXPECT_FALSE(outcome.ShouldContinueWaiting);
 	EXPECT_EQ(outcome.WaitDelayMs, 10);
 }
+
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumePostLoopOutcomeDisablesSideEffectsWhenNoNotificationWasSent) {
+	SleepUntilResumePostLoopContext context = {};
+	context.NotificationSent = false;
+
+	SleepUntilResumePostLoopOutcome outcome = ResolveSleepUntilResumePostLoopOutcome(context);
+	EXPECT_FALSE(outcome.ShouldDisableScreensaver);
+	EXPECT_FALSE(outcome.ShouldSendDebuggerResumedNotification);
+}
+
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumePostLoopOutcomeEnablesSideEffectsWhenNotificationWasSent) {
+	SleepUntilResumePostLoopContext context = {};
+	context.NotificationSent = true;
+
+	SleepUntilResumePostLoopOutcome outcome = ResolveSleepUntilResumePostLoopOutcome(context);
+	EXPECT_TRUE(outcome.ShouldDisableScreensaver);
+	EXPECT_TRUE(outcome.ShouldSendDebuggerResumedNotification);
+}

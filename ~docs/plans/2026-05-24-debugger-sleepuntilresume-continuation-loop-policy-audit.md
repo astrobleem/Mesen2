@@ -1,4 +1,4 @@
-# Debugger SleepUntilResume Continuation-Loop Policy Audit (2026-05-24)
+﻿# Debugger SleepUntilResume Continuation-Loop Policy Audit (2026-05-24)
 
 ## Scope
 

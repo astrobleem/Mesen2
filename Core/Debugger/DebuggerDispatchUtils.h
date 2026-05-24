@@ -267,6 +267,22 @@ struct SleepUntilResumeLoopOutcome {
 	return outcome;
 }
 
+struct SleepUntilResumePostLoopContext {
+	bool NotificationSent = false;
+};
+
+struct SleepUntilResumePostLoopOutcome {
+	bool ShouldDisableScreensaver = false;
+	bool ShouldSendDebuggerResumedNotification = false;
+};
+
+[[nodiscard]] inline SleepUntilResumePostLoopOutcome ResolveSleepUntilResumePostLoopOutcome(const SleepUntilResumePostLoopContext& context) {
+	SleepUntilResumePostLoopOutcome outcome = {};
+	outcome.ShouldDisableScreensaver = context.NotificationSent;
+	outcome.ShouldSendDebuggerResumedNotification = context.NotificationSent;
+	return outcome;
+}
+
 [[nodiscard]] inline bool ShouldDispatchScriptEvent(bool debuggerOwnsInstance) {
 	return debuggerOwnsInstance;
 }

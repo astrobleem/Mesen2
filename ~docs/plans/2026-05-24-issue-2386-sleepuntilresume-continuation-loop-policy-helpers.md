@@ -1,4 +1,4 @@
-# Issue #2386 Plan: SleepUntilResume Continuation-Loop Policy Helpers
+﻿# Issue #2386 Plan: SleepUntilResume Continuation-Loop Policy Helpers
 
 ## Objective
 

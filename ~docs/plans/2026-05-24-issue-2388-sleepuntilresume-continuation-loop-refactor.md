@@ -1,4 +1,4 @@
-# Issue #2388 Plan: SleepUntilResume Shared Continuation-Loop Policy Refactor
+﻿# Issue #2388 Plan: SleepUntilResume Shared Continuation-Loop Policy Refactor
 
 ## Objective
 

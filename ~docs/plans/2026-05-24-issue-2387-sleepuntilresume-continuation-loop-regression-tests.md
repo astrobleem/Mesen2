@@ -1,4 +1,4 @@
-# Issue #2387 Plan: SleepUntilResume Continuation-Loop Regression Tests
+﻿# Issue #2387 Plan: SleepUntilResume Continuation-Loop Regression Tests
 
 ## Objective
 
