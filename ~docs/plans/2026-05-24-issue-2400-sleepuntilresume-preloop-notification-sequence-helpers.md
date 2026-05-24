@@ -1,4 +1,4 @@
-# Issue #2400 Plan: SleepUntilResume Pre-Loop Notification Sequence Helpers
+﻿# Issue #2400 Plan: SleepUntilResume Pre-Loop Notification Sequence Helpers
 
 ## Objective
 

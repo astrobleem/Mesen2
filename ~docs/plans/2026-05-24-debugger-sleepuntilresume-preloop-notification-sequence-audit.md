@@ -1,4 +1,4 @@
-# Debugger SleepUntilResume Pre-Loop Notification Sequence Audit (2026-05-24)
+﻿# Debugger SleepUntilResume Pre-Loop Notification Sequence Audit (2026-05-24)
 
 ## Scope
 

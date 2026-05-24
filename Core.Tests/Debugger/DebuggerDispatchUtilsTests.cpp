@@ -383,3 +383,23 @@ TEST(DebuggerDispatchUtilsTests, SleepUntilResumeBreakEventOutcomeCopiesOperatio
 	EXPECT_EQ((int)outcome.Event.Operation.Type, 2);
 	EXPECT_EQ((int)outcome.Event.Operation.MemType, 3);
 }
+
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumeDispatchOutcomeDisablesDispatchAndSentStateWhenSequenceIsDisabled) {
+	SleepUntilResumeDispatchContext context = {};
+	context.ShouldRunPreBreakSequence = false;
+
+	SleepUntilResumeDispatchOutcome outcome = ResolveSleepUntilResumeDispatchOutcome(context);
+	EXPECT_FALSE(outcome.ShouldDispatchCodeBreakNotification);
+	EXPECT_FALSE(outcome.ShouldProcessCodeBreakEvent);
+	EXPECT_FALSE(outcome.ShouldMarkNotificationSent);
+}
+
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumeDispatchOutcomeEnablesDispatchAndSentStateWhenSequenceIsEnabled) {
+	SleepUntilResumeDispatchContext context = {};
+	context.ShouldRunPreBreakSequence = true;
+
+	SleepUntilResumeDispatchOutcome outcome = ResolveSleepUntilResumeDispatchOutcome(context);
+	EXPECT_TRUE(outcome.ShouldDispatchCodeBreakNotification);
+	EXPECT_TRUE(outcome.ShouldProcessCodeBreakEvent);
+	EXPECT_TRUE(outcome.ShouldMarkNotificationSent);
+}

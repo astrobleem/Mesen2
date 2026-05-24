@@ -327,6 +327,24 @@ struct SleepUntilResumeBreakEventOutcome {
 	return outcome;
 }
 
+struct SleepUntilResumeDispatchContext {
+	bool ShouldRunPreBreakSequence = false;
+};
+
+struct SleepUntilResumeDispatchOutcome {
+	bool ShouldDispatchCodeBreakNotification = false;
+	bool ShouldProcessCodeBreakEvent = false;
+	bool ShouldMarkNotificationSent = false;
+};
+
+[[nodiscard]] inline SleepUntilResumeDispatchOutcome ResolveSleepUntilResumeDispatchOutcome(const SleepUntilResumeDispatchContext& context) {
+	SleepUntilResumeDispatchOutcome outcome = {};
+	outcome.ShouldDispatchCodeBreakNotification = context.ShouldRunPreBreakSequence;
+	outcome.ShouldProcessCodeBreakEvent = context.ShouldRunPreBreakSequence;
+	outcome.ShouldMarkNotificationSent = context.ShouldRunPreBreakSequence;
+	return outcome;
+}
+
 [[nodiscard]] inline bool ShouldDispatchScriptEvent(bool debuggerOwnsInstance) {
 	return debuggerOwnsInstance;
 }

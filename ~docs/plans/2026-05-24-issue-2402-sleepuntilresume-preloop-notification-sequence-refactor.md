@@ -1,4 +1,4 @@
-# Issue #2402 Plan: SleepUntilResume Shared Pre-Loop Notification Sequence Refactor
+﻿# Issue #2402 Plan: SleepUntilResume Shared Pre-Loop Notification Sequence Refactor
 
 ## Objective
 

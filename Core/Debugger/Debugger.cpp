@@ -742,6 +742,9 @@ void Debugger::SleepUntilResume(CpuType sourceCpu, BreakSource source, MemoryOpe
 	SleepUntilResumePreLoopContext preLoopContext = {};
 	preLoopContext.ShouldEmitBreakNotification = shouldEmitBreakNotification;
 	SleepUntilResumePreLoopOutcome preLoopOutcome = ResolveSleepUntilResumePreLoopOutcome(preLoopContext);
+	SleepUntilResumeDispatchContext dispatchContext = {};
+	dispatchContext.ShouldRunPreBreakSequence = preLoopOutcome.ShouldRunPreBreakSequence;
+	SleepUntilResumeDispatchOutcome dispatchOutcome = ResolveSleepUntilResumeDispatchOutcome(dispatchContext);
 
 	bool notificationSent = false;
 	if (preLoopOutcome.ShouldRunPreBreakSequence) {
@@ -767,9 +770,15 @@ void Debugger::SleepUntilResume(CpuType sourceCpu, BreakSource source, MemoryOpe
 		if (preLoopOutcome.ShouldArmWaitForBreakResume) {
 			_waitForBreakResume = true;
 		}
-		_emu->GetNotificationManager()->SendNotification(ConsoleNotificationType::CodeBreak, &breakEventOutcome.Event);
-		ProcessEvent(EventType::CodeBreak, sourceCpu);
-		notificationSent = true;
+		if (dispatchOutcome.ShouldDispatchCodeBreakNotification) {
+			_emu->GetNotificationManager()->SendNotification(ConsoleNotificationType::CodeBreak, &breakEventOutcome.Event);
+		}
+		if (dispatchOutcome.ShouldProcessCodeBreakEvent) {
+			ProcessEvent(EventType::CodeBreak, sourceCpu);
+		}
+		if (dispatchOutcome.ShouldMarkNotificationSent) {
+			notificationSent = true;
+		}
 		if (preLoopOutcome.ShouldEnableScreensaver) {
 			PlatformUtilities::EnableScreensaver();
 		}

@@ -1,4 +1,4 @@
-# Issue #2401 Plan: SleepUntilResume Pre-Loop Notification Sequence Regression Tests
+﻿# Issue #2401 Plan: SleepUntilResume Pre-Loop Notification Sequence Regression Tests
 
 ## Objective
 
