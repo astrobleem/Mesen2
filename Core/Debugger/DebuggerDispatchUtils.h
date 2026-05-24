@@ -199,6 +199,17 @@ struct SleepUntilResumeGuardContext {
 	bool BreakpointForbidden = false;
 };
 
+[[nodiscard]] inline SleepUntilResumeGuardContext BuildSleepUntilResumeGuardContext(bool hasSuspendRequest, bool executionAlreadyStopped, bool hasBreakRequest, bool sourceCpuIsMainCpu, bool allowChangeProgramCounter, bool breakpointForbidden) {
+	SleepUntilResumeGuardContext context = {};
+	context.HasSuspendRequest = hasSuspendRequest;
+	context.ExecutionAlreadyStopped = executionAlreadyStopped;
+	context.HasBreakRequest = hasBreakRequest;
+	context.SourceCpuIsMainCpu = sourceCpuIsMainCpu;
+	context.AllowChangeProgramCounter = allowChangeProgramCounter;
+	context.BreakpointForbidden = breakpointForbidden;
+	return context;
+}
+
 [[nodiscard]] inline SleepUntilResumeDecision EvaluateSleepUntilResumeDecision(const SleepUntilResumeGuardContext& context) {
 	if (context.HasSuspendRequest) {
 		return SleepUntilResumeDecision::SkipForSuspendRequest;

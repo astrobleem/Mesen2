@@ -702,13 +702,7 @@ void Debugger::ProcessPpuCycle() {
 }
 
 void Debugger::SleepUntilResume(CpuType sourceCpu, BreakSource source, MemoryOperationInfo* operation, int breakpointId) {
-	SleepUntilResumeGuardContext guardContext = {};
-	guardContext.HasSuspendRequest = _suspendRequestCount > 0;
-	guardContext.ExecutionAlreadyStopped = _executionStopped;
-	guardContext.HasBreakRequest = _breakRequestCount > 0;
-	guardContext.SourceCpuIsMainCpu = sourceCpu == _mainCpuType;
-	guardContext.AllowChangeProgramCounter = _debuggers[(int)sourceCpu].Debugger->AllowChangeProgramCounter;
-	guardContext.BreakpointForbidden = IsBreakpointForbidden(source, sourceCpu, operation);
+	SleepUntilResumeGuardContext guardContext = BuildSleepUntilResumeGuardContext(_suspendRequestCount > 0, _executionStopped, _breakRequestCount > 0, sourceCpu == _mainCpuType, _debuggers[(int)sourceCpu].Debugger->AllowChangeProgramCounter, IsBreakpointForbidden(source, sourceCpu, operation));
 
 	SleepUntilResumePhaseContext phaseContext = BuildSleepUntilResumePhaseContext(guardContext, source, _breakRequestCount > 0, false, false);
 	SleepUntilResumePhaseOutcome phaseOutcome = ResolveSleepUntilResumePhaseOutcome(phaseContext);

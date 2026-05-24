@@ -246,6 +246,27 @@ TEST(DebuggerDispatchUtilsTests, SleepUntilResumeDecisionContinuesWhenNoGuardTri
 	EXPECT_EQ(EvaluateSleepUntilResumeDecision(context), SleepUntilResumeDecision::Continue);
 }
 
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumeGuardContextBuilderMapsAllRuntimeGuardFields) {
+	SleepUntilResumeGuardContext context = BuildSleepUntilResumeGuardContext(true, false, true, true, false, true);
+	EXPECT_TRUE(context.HasSuspendRequest);
+	EXPECT_FALSE(context.ExecutionAlreadyStopped);
+	EXPECT_TRUE(context.HasBreakRequest);
+	EXPECT_TRUE(context.SourceCpuIsMainCpu);
+	EXPECT_FALSE(context.AllowChangeProgramCounter);
+	EXPECT_TRUE(context.BreakpointForbidden);
+}
+
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumeGuardContextBuilderSupportsContinuationBoundaryCombination) {
+	SleepUntilResumeGuardContext context = BuildSleepUntilResumeGuardContext(false, false, false, true, true, false);
+	EXPECT_FALSE(context.HasSuspendRequest);
+	EXPECT_FALSE(context.ExecutionAlreadyStopped);
+	EXPECT_FALSE(context.HasBreakRequest);
+	EXPECT_TRUE(context.SourceCpuIsMainCpu);
+	EXPECT_TRUE(context.AllowChangeProgramCounter);
+	EXPECT_FALSE(context.BreakpointForbidden);
+	EXPECT_EQ(EvaluateSleepUntilResumeDecision(context), SleepUntilResumeDecision::Continue);
+}
+
 TEST(DebuggerDispatchUtilsTests, SleepUntilResumePhaseContextBuilderMapsGuardSourceBreakAndConfigFields) {
 	SleepUntilResumeGuardContext guardContext = {};
 	guardContext.HasSuspendRequest = true;
