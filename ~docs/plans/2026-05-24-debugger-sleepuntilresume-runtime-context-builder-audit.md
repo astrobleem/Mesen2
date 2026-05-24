@@ -1,4 +1,4 @@
-# Debugger SleepUntilResume Runtime Context Builder Audit (2026-05-24)
+﻿# Debugger SleepUntilResume Runtime Context Builder Audit (2026-05-24)
 
 ## Scope
 

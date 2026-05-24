@@ -710,10 +710,7 @@ void Debugger::SleepUntilResume(CpuType sourceCpu, BreakSource source, MemoryOpe
 	guardContext.AllowChangeProgramCounter = _debuggers[(int)sourceCpu].Debugger->AllowChangeProgramCounter;
 	guardContext.BreakpointForbidden = IsBreakpointForbidden(source, sourceCpu, operation);
 
-	SleepUntilResumePhaseContext phaseContext = {};
-	phaseContext.Guard = guardContext;
-	phaseContext.Source = source;
-	phaseContext.HasBreakRequest = _breakRequestCount > 0;
+	SleepUntilResumePhaseContext phaseContext = BuildSleepUntilResumePhaseContext(guardContext, source, _breakRequestCount > 0, false, false);
 	SleepUntilResumePhaseOutcome phaseOutcome = ResolveSleepUntilResumePhaseOutcome(phaseContext);
 
 	switch (phaseOutcome.Decision) {
@@ -738,8 +735,7 @@ void Debugger::SleepUntilResume(CpuType sourceCpu, BreakSource source, MemoryOpe
 	_executionStopped = true;
 
 	const DebugConfig& debugCfg = _settings->GetDebugConfig();
-	phaseContext.SingleBreakpointPerInstruction = debugCfg.SingleBreakpointPerInstruction;
-	phaseContext.DrawPartialFrame = debugCfg.DrawPartialFrame;
+	phaseContext = BuildSleepUntilResumePhaseContext(guardContext, source, _breakRequestCount > 0, debugCfg.SingleBreakpointPerInstruction, debugCfg.DrawPartialFrame);
 	phaseOutcome = ResolveSleepUntilResumePhaseOutcome(phaseContext);
 
 	bool notificationSent = false;

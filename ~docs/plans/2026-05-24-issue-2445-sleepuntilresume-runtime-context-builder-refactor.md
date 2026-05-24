@@ -1,4 +1,4 @@
-# Issue #2445 Plan - SleepUntilResume Runtime Context Builder Refactor
+﻿# Issue #2445 Plan - SleepUntilResume Runtime Context Builder Refactor
 
 ## Goal
 

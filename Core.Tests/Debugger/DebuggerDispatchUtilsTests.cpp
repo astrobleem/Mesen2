@@ -246,6 +246,47 @@ TEST(DebuggerDispatchUtilsTests, SleepUntilResumeDecisionContinuesWhenNoGuardTri
 	EXPECT_EQ(EvaluateSleepUntilResumeDecision(context), SleepUntilResumeDecision::Continue);
 }
 
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumePhaseContextBuilderMapsGuardSourceBreakAndConfigFields) {
+	SleepUntilResumeGuardContext guardContext = {};
+	guardContext.HasSuspendRequest = true;
+	guardContext.ExecutionAlreadyStopped = false;
+	guardContext.HasBreakRequest = true;
+	guardContext.SourceCpuIsMainCpu = true;
+	guardContext.AllowChangeProgramCounter = false;
+	guardContext.BreakpointForbidden = true;
+
+	SleepUntilResumePhaseContext context = BuildSleepUntilResumePhaseContext(guardContext, BreakSource::Breakpoint, true, true, false);
+	EXPECT_TRUE(context.Guard.HasSuspendRequest);
+	EXPECT_FALSE(context.Guard.ExecutionAlreadyStopped);
+	EXPECT_TRUE(context.Guard.HasBreakRequest);
+	EXPECT_TRUE(context.Guard.SourceCpuIsMainCpu);
+	EXPECT_FALSE(context.Guard.AllowChangeProgramCounter);
+	EXPECT_TRUE(context.Guard.BreakpointForbidden);
+	EXPECT_EQ(context.Source, BreakSource::Breakpoint);
+	EXPECT_TRUE(context.HasBreakRequest);
+	EXPECT_TRUE(context.SingleBreakpointPerInstruction);
+	EXPECT_FALSE(context.DrawPartialFrame);
+}
+
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumePhaseContextBuilderSupportsNonEmittedConfigurationInputs) {
+	SleepUntilResumeGuardContext guardContext = {};
+	guardContext.HasSuspendRequest = false;
+	guardContext.ExecutionAlreadyStopped = false;
+	guardContext.HasBreakRequest = true;
+	guardContext.SourceCpuIsMainCpu = true;
+	guardContext.AllowChangeProgramCounter = true;
+	guardContext.BreakpointForbidden = false;
+
+	SleepUntilResumePhaseContext context = BuildSleepUntilResumePhaseContext(guardContext, BreakSource::Unspecified, true, false, true);
+	EXPECT_EQ(context.Source, BreakSource::Unspecified);
+	EXPECT_TRUE(context.HasBreakRequest);
+	EXPECT_FALSE(context.SingleBreakpointPerInstruction);
+	EXPECT_TRUE(context.DrawPartialFrame);
+	EXPECT_FALSE(context.WaitForBreakResume);
+	EXPECT_FALSE(context.HasSuspendRequest);
+	EXPECT_FALSE(context.NotificationSent);
+}
+
 TEST(DebuggerDispatchUtilsTests, SleepUntilResumeBreakNotificationPolicyUsesSourceAndBreakRequestState) {
 	EXPECT_TRUE(ShouldEmitSleepUntilResumeBreakNotification(BreakSource::Breakpoint, false));
 	EXPECT_TRUE(ShouldEmitSleepUntilResumeBreakNotification(BreakSource::Breakpoint, true));
@@ -681,7 +722,15 @@ TEST(DebuggerDispatchUtilsTests, SleepUntilResumeComposedFlowIntegrationEmittedP
 	operation.Address = 0x3456;
 	operation.Value = 0x78;
 
-	SleepUntilResumePhaseContext phaseContext = CreateSleepUntilResumeContinuePhaseContext(BreakSource::Breakpoint, true);
+	SleepUntilResumeGuardContext guardContext = {};
+	guardContext.HasSuspendRequest = false;
+	guardContext.ExecutionAlreadyStopped = false;
+	guardContext.HasBreakRequest = true;
+	guardContext.SourceCpuIsMainCpu = true;
+	guardContext.AllowChangeProgramCounter = true;
+	guardContext.BreakpointForbidden = false;
+
+	SleepUntilResumePhaseContext phaseContext = BuildSleepUntilResumePhaseContext(guardContext, BreakSource::Breakpoint, true, true, true);
 	SleepUntilResumePhaseOutcome phaseOutcome = ResolveSleepUntilResumePhaseOutcome(phaseContext);
 	EXPECT_EQ(phaseOutcome.Decision, SleepUntilResumeDecision::Continue);
 	EXPECT_TRUE(phaseOutcome.ShouldEmitBreakNotification);

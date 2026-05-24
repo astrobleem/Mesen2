@@ -552,6 +552,16 @@ struct SleepUntilResumePhaseOutcome {
 	return context;
 }
 
+[[nodiscard]] inline SleepUntilResumePhaseContext BuildSleepUntilResumePhaseContext(const SleepUntilResumeGuardContext& guardContext, BreakSource source, bool hasBreakRequest, bool singleBreakpointPerInstruction, bool drawPartialFrame) {
+	SleepUntilResumePhaseContext context = {};
+	context.Guard = guardContext;
+	context.Source = source;
+	context.HasBreakRequest = hasBreakRequest;
+	context.SingleBreakpointPerInstruction = singleBreakpointPerInstruction;
+	context.DrawPartialFrame = drawPartialFrame;
+	return context;
+}
+
 [[nodiscard]] inline bool ShouldDispatchScriptEvent(bool debuggerOwnsInstance) {
 	return debuggerOwnsInstance;
 }

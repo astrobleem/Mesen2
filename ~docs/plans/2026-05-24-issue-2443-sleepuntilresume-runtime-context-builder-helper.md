@@ -1,4 +1,4 @@
-# Issue #2443 Plan - SleepUntilResume Runtime Context Builder Helper
+﻿# Issue #2443 Plan - SleepUntilResume Runtime Context Builder Helper
 
 ## Goal
 
