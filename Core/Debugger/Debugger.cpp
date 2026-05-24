@@ -782,28 +782,28 @@ void Debugger::SleepUntilResume(CpuType sourceCpu, BreakSource source, MemoryOpe
 	}
 
 	while (true) {
-		SleepUntilResumePhaseContext loopPhaseContext = {};
-		loopPhaseContext.WaitForBreakResume = _waitForBreakResume;
-		loopPhaseContext.HasSuspendRequest = _suspendRequestCount > 0;
-		loopPhaseContext.HasBreakRequest = _breakRequestCount > 0;
-		SleepUntilResumePhaseOutcome loopPhaseOutcome = ResolveSleepUntilResumePhaseOutcome(loopPhaseContext);
+		SleepUntilResumeLoopPostBundleContext loopPostBundleContext = {};
+		loopPostBundleContext.WaitForBreakResume = _waitForBreakResume;
+		loopPostBundleContext.HasSuspendRequest = _suspendRequestCount > 0;
+		loopPostBundleContext.HasBreakRequest = _breakRequestCount > 0;
+		SleepUntilResumeLoopPostBundleOutcome loopPostBundleOutcome = ResolveSleepUntilResumeLoopPostBundleOutcome(loopPostBundleContext);
 
-		if (!loopPhaseOutcome.Loop.ShouldContinueWaiting) {
+		if (!loopPostBundleOutcome.Loop.ShouldContinueWaiting) {
 			break;
 		}
 
-		std::this_thread::sleep_for(std::chrono::duration<int, std::milli>(loopPhaseOutcome.Loop.WaitDelayMs));
+		std::this_thread::sleep_for(std::chrono::duration<int, std::milli>(loopPostBundleOutcome.Loop.WaitDelayMs));
 	}
 
-	SleepUntilResumePhaseContext postLoopPhaseContext = {};
-	postLoopPhaseContext.NotificationSent = notificationSent;
-	SleepUntilResumePhaseOutcome postLoopPhaseOutcome = ResolveSleepUntilResumePhaseOutcome(postLoopPhaseContext);
+	SleepUntilResumeLoopPostBundleContext postLoopBundleContext = {};
+	postLoopBundleContext.NotificationSent = notificationSent;
+	SleepUntilResumeLoopPostBundleOutcome postLoopBundleOutcome = ResolveSleepUntilResumeLoopPostBundleOutcome(postLoopBundleContext);
 
-	if (postLoopPhaseOutcome.PostLoop.ShouldDisableScreensaver) {
+	if (postLoopBundleOutcome.PostLoop.ShouldDisableScreensaver) {
 		PlatformUtilities::DisableScreensaver();
 	}
 
-	if (postLoopPhaseOutcome.PostLoop.ShouldSendDebuggerResumedNotification) {
+	if (postLoopBundleOutcome.PostLoop.ShouldSendDebuggerResumedNotification) {
 		_emu->GetNotificationManager()->SendNotification(ConsoleNotificationType::DebuggerResumed);
 	}
 

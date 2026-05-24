@@ -433,6 +433,34 @@ struct SleepUntilResumeRuntimeBundleOutcome {
 	return outcome;
 }
 
+struct SleepUntilResumeLoopPostBundleContext {
+	bool WaitForBreakResume = false;
+	bool HasSuspendRequest = false;
+	bool HasBreakRequest = false;
+	bool NotificationSent = false;
+};
+
+struct SleepUntilResumeLoopPostBundleOutcome {
+	SleepUntilResumeLoopOutcome Loop = {};
+	SleepUntilResumePostLoopOutcome PostLoop = {};
+};
+
+[[nodiscard]] inline SleepUntilResumeLoopPostBundleOutcome ResolveSleepUntilResumeLoopPostBundleOutcome(const SleepUntilResumeLoopPostBundleContext& context) {
+	SleepUntilResumeLoopPostBundleOutcome outcome = {};
+
+	SleepUntilResumeLoopContext loopContext = {};
+	loopContext.WaitForBreakResume = context.WaitForBreakResume;
+	loopContext.HasSuspendRequest = context.HasSuspendRequest;
+	loopContext.HasBreakRequest = context.HasBreakRequest;
+	outcome.Loop = ResolveSleepUntilResumeLoopOutcome(loopContext);
+
+	SleepUntilResumePostLoopContext postLoopContext = {};
+	postLoopContext.NotificationSent = context.NotificationSent;
+	outcome.PostLoop = ResolveSleepUntilResumePostLoopOutcome(postLoopContext);
+
+	return outcome;
+}
+
 struct SleepUntilResumePreLoopBundleContext {
 	bool ShouldEmitBreakNotification = false;
 	bool SingleBreakpointPerInstruction = false;

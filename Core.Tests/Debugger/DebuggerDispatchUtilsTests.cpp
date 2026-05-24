@@ -715,3 +715,31 @@ TEST(DebuggerDispatchUtilsTests, SleepUntilResumeComposedFlowIntegrationNonEmitt
 	EXPECT_FALSE(postLoopOutcome.ShouldDisableScreensaver);
 	EXPECT_FALSE(postLoopOutcome.ShouldSendDebuggerResumedNotification);
 }
+
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumeLoopPostBundleOutcomeComposesWaitingLoopWithBreakRequestDelayPolicy) {
+	SleepUntilResumeLoopPostBundleContext context = {};
+	context.WaitForBreakResume = true;
+	context.HasSuspendRequest = false;
+	context.HasBreakRequest = true;
+	context.NotificationSent = false;
+
+	SleepUntilResumeLoopPostBundleOutcome outcome = ResolveSleepUntilResumeLoopPostBundleOutcome(context);
+	EXPECT_TRUE(outcome.Loop.ShouldContinueWaiting);
+	EXPECT_EQ(outcome.Loop.WaitDelayMs, 1);
+	EXPECT_FALSE(outcome.PostLoop.ShouldDisableScreensaver);
+	EXPECT_FALSE(outcome.PostLoop.ShouldSendDebuggerResumedNotification);
+}
+
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumeLoopPostBundleOutcomeComposesNonWaitingLoopWithNotificationDrivenPostLoopSideEffects) {
+	SleepUntilResumeLoopPostBundleContext context = {};
+	context.WaitForBreakResume = false;
+	context.HasSuspendRequest = false;
+	context.HasBreakRequest = false;
+	context.NotificationSent = true;
+
+	SleepUntilResumeLoopPostBundleOutcome outcome = ResolveSleepUntilResumeLoopPostBundleOutcome(context);
+	EXPECT_FALSE(outcome.Loop.ShouldContinueWaiting);
+	EXPECT_EQ(outcome.Loop.WaitDelayMs, 10);
+	EXPECT_TRUE(outcome.PostLoop.ShouldDisableScreensaver);
+	EXPECT_TRUE(outcome.PostLoop.ShouldSendDebuggerResumedNotification);
+}
