@@ -739,9 +739,12 @@ void Debugger::SleepUntilResume(CpuType sourceCpu, BreakSource source, MemoryOpe
 	preBreakContext.SingleBreakpointPerInstruction = debugCfg.SingleBreakpointPerInstruction;
 	preBreakContext.DrawPartialFrame = debugCfg.DrawPartialFrame;
 	SleepUntilResumePreBreakOutcome preBreakOutcome = ResolveSleepUntilResumePreBreakOutcome(preBreakContext);
+	SleepUntilResumePreLoopContext preLoopContext = {};
+	preLoopContext.ShouldEmitBreakNotification = shouldEmitBreakNotification;
+	SleepUntilResumePreLoopOutcome preLoopOutcome = ResolveSleepUntilResumePreLoopOutcome(preLoopContext);
 
 	bool notificationSent = false;
-	if (shouldEmitBreakNotification) {
+	if (preLoopOutcome.ShouldRunPreBreakSequence) {
 		GetMainDebugger()->OnBeforeBreak(sourceCpu);
 		_emu->OnBeforePause(false);
 
@@ -761,11 +764,15 @@ void Debugger::SleepUntilResume(CpuType sourceCpu, BreakSource source, MemoryOpe
 		breakEventContext.Operation = operation;
 		SleepUntilResumeBreakEventOutcome breakEventOutcome = ResolveSleepUntilResumeBreakEventOutcome(breakEventContext);
 
-		_waitForBreakResume = true;
+		if (preLoopOutcome.ShouldArmWaitForBreakResume) {
+			_waitForBreakResume = true;
+		}
 		_emu->GetNotificationManager()->SendNotification(ConsoleNotificationType::CodeBreak, &breakEventOutcome.Event);
 		ProcessEvent(EventType::CodeBreak, sourceCpu);
 		notificationSent = true;
-		PlatformUtilities::EnableScreensaver();
+		if (preLoopOutcome.ShouldEnableScreensaver) {
+			PlatformUtilities::EnableScreensaver();
+		}
 	}
 
 	while (true) {

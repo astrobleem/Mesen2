@@ -1,4 +1,4 @@
-# Issue #2398 Plan: SleepUntilResume Break-Event Payload Regression Tests
+﻿# Issue #2398 Plan: SleepUntilResume Break-Event Payload Regression Tests
 
 ## Objective
 

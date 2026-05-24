@@ -1,4 +1,4 @@
-# Debugger SleepUntilResume Break-Event Payload Policy Audit (2026-05-24)
+﻿# Debugger SleepUntilResume Break-Event Payload Policy Audit (2026-05-24)
 
 ## Scope
 

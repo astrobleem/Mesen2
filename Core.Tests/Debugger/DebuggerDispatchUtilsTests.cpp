@@ -270,6 +270,26 @@ TEST(DebuggerDispatchUtilsTests, SleepUntilResumePreBreakOutcomeTracksConfigured
 	EXPECT_TRUE(partialOutcome.ShouldDrawPartialFrame);
 }
 
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumePreLoopOutcomeDisablesSequenceWhenNotificationNotEmitted) {
+	SleepUntilResumePreLoopContext context = {};
+	context.ShouldEmitBreakNotification = false;
+
+	SleepUntilResumePreLoopOutcome outcome = ResolveSleepUntilResumePreLoopOutcome(context);
+	EXPECT_FALSE(outcome.ShouldRunPreBreakSequence);
+	EXPECT_FALSE(outcome.ShouldArmWaitForBreakResume);
+	EXPECT_FALSE(outcome.ShouldEnableScreensaver);
+}
+
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumePreLoopOutcomeEnablesSequenceWhenNotificationEmitted) {
+	SleepUntilResumePreLoopContext context = {};
+	context.ShouldEmitBreakNotification = true;
+
+	SleepUntilResumePreLoopOutcome outcome = ResolveSleepUntilResumePreLoopOutcome(context);
+	EXPECT_TRUE(outcome.ShouldRunPreBreakSequence);
+	EXPECT_TRUE(outcome.ShouldArmWaitForBreakResume);
+	EXPECT_TRUE(outcome.ShouldEnableScreensaver);
+}
+
 TEST(DebuggerDispatchUtilsTests, SleepUntilResumeLoopOutcomeContinuesForWaitOrBreakRequestStates) {
 	SleepUntilResumeLoopContext waitContext = {};
 	waitContext.WaitForBreakResume = true;

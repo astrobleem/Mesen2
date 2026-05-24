@@ -1,4 +1,4 @@
-# Issue #2399 Plan: SleepUntilResume Shared Break-Event Payload Refactor
+﻿# Issue #2399 Plan: SleepUntilResume Shared Break-Event Payload Refactor
 
 ## Objective
 

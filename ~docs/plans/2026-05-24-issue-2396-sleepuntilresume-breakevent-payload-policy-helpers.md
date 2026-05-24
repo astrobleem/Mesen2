@@ -1,4 +1,4 @@
-# Issue #2396 Plan: SleepUntilResume Break-Event Payload Policy Helpers
+﻿# Issue #2396 Plan: SleepUntilResume Break-Event Payload Policy Helpers
 
 ## Objective
 

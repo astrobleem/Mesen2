@@ -249,6 +249,24 @@ struct SleepUntilResumePreBreakOutcome {
 	return outcome;
 }
 
+struct SleepUntilResumePreLoopContext {
+	bool ShouldEmitBreakNotification = false;
+};
+
+struct SleepUntilResumePreLoopOutcome {
+	bool ShouldRunPreBreakSequence = false;
+	bool ShouldArmWaitForBreakResume = false;
+	bool ShouldEnableScreensaver = false;
+};
+
+[[nodiscard]] inline SleepUntilResumePreLoopOutcome ResolveSleepUntilResumePreLoopOutcome(const SleepUntilResumePreLoopContext& context) {
+	SleepUntilResumePreLoopOutcome outcome = {};
+	outcome.ShouldRunPreBreakSequence = context.ShouldEmitBreakNotification;
+	outcome.ShouldArmWaitForBreakResume = context.ShouldEmitBreakNotification;
+	outcome.ShouldEnableScreensaver = context.ShouldEmitBreakNotification;
+	return outcome;
+}
+
 struct SleepUntilResumeLoopContext {
 	bool WaitForBreakResume = false;
 	bool HasSuspendRequest = false;
