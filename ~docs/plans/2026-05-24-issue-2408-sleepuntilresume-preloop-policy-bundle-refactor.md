@@ -1,4 +1,4 @@
-# Issue #2408 Plan: SleepUntilResume Pre-Loop Policy Bundle Refactor
+﻿# Issue #2408 Plan: SleepUntilResume Pre-Loop Policy Bundle Refactor
 
 ## Objective
 

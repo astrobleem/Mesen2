@@ -710,8 +710,13 @@ void Debugger::SleepUntilResume(CpuType sourceCpu, BreakSource source, MemoryOpe
 	guardContext.AllowChangeProgramCounter = _debuggers[(int)sourceCpu].Debugger->AllowChangeProgramCounter;
 	guardContext.BreakpointForbidden = IsBreakpointForbidden(source, sourceCpu, operation);
 
-	SleepUntilResumeDecision sleepDecision = EvaluateSleepUntilResumeDecision(guardContext);
-	switch (sleepDecision) {
+	SleepUntilResumePhaseContext phaseContext = {};
+	phaseContext.Guard = guardContext;
+	phaseContext.Source = source;
+	phaseContext.HasBreakRequest = _breakRequestCount > 0;
+	SleepUntilResumePhaseOutcome phaseOutcome = ResolveSleepUntilResumePhaseOutcome(phaseContext);
+
+	switch (phaseOutcome.Decision) {
 		case SleepUntilResumeDecision::SkipForSuspendRequest:
 			return;
 		case SleepUntilResumeDecision::SkipForExecutionAlreadyStopped:
@@ -732,24 +737,21 @@ void Debugger::SleepUntilResume(CpuType sourceCpu, BreakSource source, MemoryOpe
 
 	_executionStopped = true;
 
-	bool shouldEmitBreakNotification = ShouldEmitSleepUntilResumeBreakNotification(source, _breakRequestCount > 0);
 	const DebugConfig& debugCfg = _settings->GetDebugConfig();
-	SleepUntilResumePreLoopBundleContext preLoopBundleContext = {};
-	preLoopBundleContext.ShouldEmitBreakNotification = shouldEmitBreakNotification;
-	preLoopBundleContext.SingleBreakpointPerInstruction = debugCfg.SingleBreakpointPerInstruction;
-	preLoopBundleContext.DrawPartialFrame = debugCfg.DrawPartialFrame;
-	SleepUntilResumePreLoopBundleOutcome preLoopBundleOutcome = ResolveSleepUntilResumePreLoopBundleOutcome(preLoopBundleContext);
+	phaseContext.SingleBreakpointPerInstruction = debugCfg.SingleBreakpointPerInstruction;
+	phaseContext.DrawPartialFrame = debugCfg.DrawPartialFrame;
+	phaseOutcome = ResolveSleepUntilResumePhaseOutcome(phaseContext);
 
 	bool notificationSent = false;
-	if (preLoopBundleOutcome.PreLoop.ShouldRunPreBreakSequence) {
+	if (phaseOutcome.PreLoopBundle.PreLoop.ShouldRunPreBreakSequence) {
 		GetMainDebugger()->OnBeforeBreak(sourceCpu);
 		_emu->OnBeforePause(false);
 
-		if (preLoopBundleOutcome.PreBreak.ShouldIgnoreBreakpoints) {
+		if (phaseOutcome.PreLoopBundle.PreBreak.ShouldIgnoreBreakpoints) {
 			_debuggers[(int)sourceCpu].Debugger->IgnoreBreakpoints = true;
 		}
 
-		if (preLoopBundleOutcome.PreBreak.ShouldDrawPartialFrame) {
+		if (phaseOutcome.PreLoopBundle.PreBreak.ShouldDrawPartialFrame) {
 			_debuggers[(int)sourceCpu].Debugger->DrawPartialFrame();
 		}
 
@@ -761,46 +763,46 @@ void Debugger::SleepUntilResume(CpuType sourceCpu, BreakSource source, MemoryOpe
 		breakEventContext.Operation = operation;
 		SleepUntilResumeBreakEventOutcome breakEventOutcome = ResolveSleepUntilResumeBreakEventOutcome(breakEventContext);
 
-		if (preLoopBundleOutcome.PreLoop.ShouldArmWaitForBreakResume) {
+		if (phaseOutcome.PreLoopBundle.PreLoop.ShouldArmWaitForBreakResume) {
 			_waitForBreakResume = true;
 		}
-		if (preLoopBundleOutcome.Dispatch.ShouldDispatchCodeBreakNotification) {
+		if (phaseOutcome.PreLoopBundle.Dispatch.ShouldDispatchCodeBreakNotification) {
 			_emu->GetNotificationManager()->SendNotification(ConsoleNotificationType::CodeBreak, &breakEventOutcome.Event);
 		}
-		if (preLoopBundleOutcome.Dispatch.ShouldProcessCodeBreakEvent) {
+		if (phaseOutcome.PreLoopBundle.Dispatch.ShouldProcessCodeBreakEvent) {
 			ProcessEvent(EventType::CodeBreak, sourceCpu);
 		}
-		if (preLoopBundleOutcome.Dispatch.ShouldMarkNotificationSent) {
+		if (phaseOutcome.PreLoopBundle.Dispatch.ShouldMarkNotificationSent) {
 			notificationSent = true;
 		}
-		if (preLoopBundleOutcome.PreLoop.ShouldEnableScreensaver) {
+		if (phaseOutcome.PreLoopBundle.PreLoop.ShouldEnableScreensaver) {
 			PlatformUtilities::EnableScreensaver();
 		}
 	}
 
 	while (true) {
-		SleepUntilResumeLoopContext loopContext = {};
-		loopContext.WaitForBreakResume = _waitForBreakResume;
-		loopContext.HasSuspendRequest = _suspendRequestCount > 0;
-		loopContext.HasBreakRequest = _breakRequestCount > 0;
+		SleepUntilResumePhaseContext loopPhaseContext = {};
+		loopPhaseContext.WaitForBreakResume = _waitForBreakResume;
+		loopPhaseContext.HasSuspendRequest = _suspendRequestCount > 0;
+		loopPhaseContext.HasBreakRequest = _breakRequestCount > 0;
+		SleepUntilResumePhaseOutcome loopPhaseOutcome = ResolveSleepUntilResumePhaseOutcome(loopPhaseContext);
 
-		SleepUntilResumeLoopOutcome loopOutcome = ResolveSleepUntilResumeLoopOutcome(loopContext);
-		if (!loopOutcome.ShouldContinueWaiting) {
+		if (!loopPhaseOutcome.Loop.ShouldContinueWaiting) {
 			break;
 		}
 
-		std::this_thread::sleep_for(std::chrono::duration<int, std::milli>(loopOutcome.WaitDelayMs));
+		std::this_thread::sleep_for(std::chrono::duration<int, std::milli>(loopPhaseOutcome.Loop.WaitDelayMs));
 	}
 
-	SleepUntilResumePostLoopContext postLoopContext = {};
-	postLoopContext.NotificationSent = notificationSent;
-	SleepUntilResumePostLoopOutcome postLoopOutcome = ResolveSleepUntilResumePostLoopOutcome(postLoopContext);
+	SleepUntilResumePhaseContext postLoopPhaseContext = {};
+	postLoopPhaseContext.NotificationSent = notificationSent;
+	SleepUntilResumePhaseOutcome postLoopPhaseOutcome = ResolveSleepUntilResumePhaseOutcome(postLoopPhaseContext);
 
-	if (postLoopOutcome.ShouldDisableScreensaver) {
+	if (postLoopPhaseOutcome.PostLoop.ShouldDisableScreensaver) {
 		PlatformUtilities::DisableScreensaver();
 	}
 
-	if (postLoopOutcome.ShouldSendDebuggerResumedNotification) {
+	if (postLoopPhaseOutcome.PostLoop.ShouldSendDebuggerResumedNotification) {
 		_emu->GetNotificationManager()->SendNotification(ConsoleNotificationType::DebuggerResumed);
 	}
 

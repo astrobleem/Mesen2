@@ -437,3 +437,76 @@ TEST(DebuggerDispatchUtilsTests, SleepUntilResumePreLoopBundleOutcomeEnablesPreL
 	EXPECT_TRUE(outcome.Dispatch.ShouldProcessCodeBreakEvent);
 	EXPECT_TRUE(outcome.Dispatch.ShouldMarkNotificationSent);
 }
+
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumePhaseOutcomeCarriesGuardSkipDecisionWithoutPreLoopSideEffects) {
+	SleepUntilResumePhaseContext context = {};
+	context.Guard.HasSuspendRequest = true;
+	context.Source = BreakSource::Breakpoint;
+	context.HasBreakRequest = false;
+	context.SingleBreakpointPerInstruction = true;
+	context.DrawPartialFrame = true;
+
+	SleepUntilResumePhaseOutcome outcome = ResolveSleepUntilResumePhaseOutcome(context);
+	EXPECT_EQ(outcome.Decision, SleepUntilResumeDecision::SkipForSuspendRequest);
+	EXPECT_FALSE(outcome.ShouldEmitBreakNotification);
+	EXPECT_FALSE(outcome.PreLoopBundle.PreLoop.ShouldRunPreBreakSequence);
+	EXPECT_FALSE(outcome.PreLoopBundle.Dispatch.ShouldDispatchCodeBreakNotification);
+}
+
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumePhaseOutcomeComposesPreLoopBundleWhenNotificationIsEmitted) {
+	SleepUntilResumePhaseContext context = {};
+	context.Guard.HasSuspendRequest = false;
+	context.Guard.ExecutionAlreadyStopped = false;
+	context.Guard.HasBreakRequest = false;
+	context.Guard.SourceCpuIsMainCpu = true;
+	context.Guard.AllowChangeProgramCounter = true;
+	context.Guard.BreakpointForbidden = false;
+	context.Source = BreakSource::Breakpoint;
+	context.HasBreakRequest = true;
+	context.SingleBreakpointPerInstruction = true;
+	context.DrawPartialFrame = true;
+
+	SleepUntilResumePhaseOutcome outcome = ResolveSleepUntilResumePhaseOutcome(context);
+	EXPECT_EQ(outcome.Decision, SleepUntilResumeDecision::Continue);
+	EXPECT_TRUE(outcome.ShouldEmitBreakNotification);
+	EXPECT_TRUE(outcome.PreLoopBundle.PreBreak.ShouldIgnoreBreakpoints);
+	EXPECT_TRUE(outcome.PreLoopBundle.PreBreak.ShouldDrawPartialFrame);
+	EXPECT_TRUE(outcome.PreLoopBundle.PreLoop.ShouldRunPreBreakSequence);
+	EXPECT_TRUE(outcome.PreLoopBundle.Dispatch.ShouldProcessCodeBreakEvent);
+}
+
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumePhaseOutcomeDisablesPreLoopBundleWhenNotificationNotEmitted) {
+	SleepUntilResumePhaseContext context = {};
+	context.Guard.HasSuspendRequest = false;
+	context.Guard.ExecutionAlreadyStopped = false;
+	context.Guard.HasBreakRequest = false;
+	context.Guard.SourceCpuIsMainCpu = true;
+	context.Guard.AllowChangeProgramCounter = true;
+	context.Guard.BreakpointForbidden = false;
+	context.Source = BreakSource::Unspecified;
+	context.HasBreakRequest = true;
+	context.SingleBreakpointPerInstruction = true;
+	context.DrawPartialFrame = true;
+
+	SleepUntilResumePhaseOutcome outcome = ResolveSleepUntilResumePhaseOutcome(context);
+	EXPECT_EQ(outcome.Decision, SleepUntilResumeDecision::Continue);
+	EXPECT_FALSE(outcome.ShouldEmitBreakNotification);
+	EXPECT_FALSE(outcome.PreLoopBundle.PreBreak.ShouldIgnoreBreakpoints);
+	EXPECT_FALSE(outcome.PreLoopBundle.PreBreak.ShouldDrawPartialFrame);
+	EXPECT_FALSE(outcome.PreLoopBundle.PreLoop.ShouldRunPreBreakSequence);
+	EXPECT_FALSE(outcome.PreLoopBundle.Dispatch.ShouldMarkNotificationSent);
+}
+
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumePhaseOutcomeComposesLoopAndPostLoopPolicies) {
+	SleepUntilResumePhaseContext context = {};
+	context.WaitForBreakResume = false;
+	context.HasSuspendRequest = true;
+	context.HasBreakRequest = true;
+	context.NotificationSent = true;
+
+	SleepUntilResumePhaseOutcome outcome = ResolveSleepUntilResumePhaseOutcome(context);
+	EXPECT_TRUE(outcome.Loop.ShouldContinueWaiting);
+	EXPECT_EQ(outcome.Loop.WaitDelayMs, 1);
+	EXPECT_TRUE(outcome.PostLoop.ShouldDisableScreensaver);
+	EXPECT_TRUE(outcome.PostLoop.ShouldSendDebuggerResumedNotification);
+}

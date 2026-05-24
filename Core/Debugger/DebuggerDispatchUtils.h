@@ -377,6 +377,52 @@ struct SleepUntilResumePreLoopBundleOutcome {
 	return outcome;
 }
 
+struct SleepUntilResumePhaseContext {
+	SleepUntilResumeGuardContext Guard = {};
+	BreakSource Source = BreakSource::Unspecified;
+	bool HasBreakRequest = false;
+	bool SingleBreakpointPerInstruction = false;
+	bool DrawPartialFrame = false;
+	bool WaitForBreakResume = false;
+	bool HasSuspendRequest = false;
+	bool NotificationSent = false;
+};
+
+struct SleepUntilResumePhaseOutcome {
+	SleepUntilResumeDecision Decision = SleepUntilResumeDecision::Continue;
+	bool ShouldEmitBreakNotification = false;
+	SleepUntilResumePreLoopBundleOutcome PreLoopBundle = {};
+	SleepUntilResumeLoopOutcome Loop = {};
+	SleepUntilResumePostLoopOutcome PostLoop = {};
+};
+
+[[nodiscard]] inline SleepUntilResumePhaseOutcome ResolveSleepUntilResumePhaseOutcome(const SleepUntilResumePhaseContext& context) {
+	SleepUntilResumePhaseOutcome outcome = {};
+	outcome.Decision = EvaluateSleepUntilResumeDecision(context.Guard);
+
+	if (outcome.Decision == SleepUntilResumeDecision::Continue) {
+		outcome.ShouldEmitBreakNotification = ShouldEmitSleepUntilResumeBreakNotification(context.Source, context.HasBreakRequest);
+
+		SleepUntilResumePreLoopBundleContext preLoopBundleContext = {};
+		preLoopBundleContext.ShouldEmitBreakNotification = outcome.ShouldEmitBreakNotification;
+		preLoopBundleContext.SingleBreakpointPerInstruction = context.SingleBreakpointPerInstruction;
+		preLoopBundleContext.DrawPartialFrame = context.DrawPartialFrame;
+		outcome.PreLoopBundle = ResolveSleepUntilResumePreLoopBundleOutcome(preLoopBundleContext);
+	}
+
+	SleepUntilResumeLoopContext loopContext = {};
+	loopContext.WaitForBreakResume = context.WaitForBreakResume;
+	loopContext.HasSuspendRequest = context.HasSuspendRequest;
+	loopContext.HasBreakRequest = context.HasBreakRequest;
+	outcome.Loop = ResolveSleepUntilResumeLoopOutcome(loopContext);
+
+	SleepUntilResumePostLoopContext postLoopContext = {};
+	postLoopContext.NotificationSent = context.NotificationSent;
+	outcome.PostLoop = ResolveSleepUntilResumePostLoopOutcome(postLoopContext);
+
+	return outcome;
+}
+
 [[nodiscard]] inline bool ShouldDispatchScriptEvent(bool debuggerOwnsInstance) {
 	return debuggerOwnsInstance;
 }

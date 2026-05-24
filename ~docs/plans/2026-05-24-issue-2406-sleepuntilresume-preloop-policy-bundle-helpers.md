@@ -1,4 +1,4 @@
-# Issue #2406 Plan: SleepUntilResume Pre-Loop Policy Bundle Helpers
+﻿# Issue #2406 Plan: SleepUntilResume Pre-Loop Policy Bundle Helpers
 
 ## Objective
 

@@ -1,4 +1,4 @@
-# Issue #2407 Plan: SleepUntilResume Pre-Loop Policy Bundle Regression Tests
+﻿# Issue #2407 Plan: SleepUntilResume Pre-Loop Policy Bundle Regression Tests
 
 ## Objective
 
