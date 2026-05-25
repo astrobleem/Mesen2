@@ -761,12 +761,14 @@ void Debugger::SleepUntilResume(CpuType sourceCpu, BreakSource source, MemoryOpe
 		SleepUntilResumeRuntimeBundleOutcome runtimeBundleOutcome = ResolveSleepUntilResumeRuntimeBundleOutcome(runtimeBundleContext);
 		SleepUntilResumeRuntimeSideEffectApplicationContext runtimeSideEffectApplicationContext = BuildSleepUntilResumeRuntimeSideEffectApplicationContext(_waitForBreakResume, notificationSent, runtimeBundleOutcome);
 		SleepUntilResumeRuntimeSideEffectApplicationOutcome runtimeSideEffectApplicationOutcome = ResolveSleepUntilResumeRuntimeSideEffectApplicationOutcome(runtimeSideEffectApplicationContext);
+		SleepUntilResumeRuntimeDispatchExecutionContext runtimeDispatchExecutionContext = BuildSleepUntilResumeRuntimeDispatchExecutionContext(runtimeBundleOutcome);
+		SleepUntilResumeRuntimeDispatchExecutionOutcome runtimeDispatchExecutionOutcome = ResolveSleepUntilResumeRuntimeDispatchExecutionOutcome(runtimeDispatchExecutionContext);
 
 		_waitForBreakResume = runtimeSideEffectApplicationOutcome.WaitForBreakResume;
-		if (runtimeBundleOutcome.Dispatch.Dispatch.ShouldDispatchCodeBreakNotification) {
-			_emu->GetNotificationManager()->SendNotification(ConsoleNotificationType::CodeBreak, &runtimeBundleOutcome.Dispatch.BreakEvent.Event);
+		if (runtimeDispatchExecutionOutcome.ShouldDispatchCodeBreakNotification) {
+			_emu->GetNotificationManager()->SendNotification(ConsoleNotificationType::CodeBreak, &runtimeDispatchExecutionOutcome.Event);
 		}
-		if (runtimeBundleOutcome.Dispatch.Dispatch.ShouldProcessCodeBreakEvent) {
+		if (runtimeDispatchExecutionOutcome.ShouldProcessCodeBreakEvent) {
 			ProcessEvent(EventType::CodeBreak, sourceCpu);
 		}
 		notificationSent = runtimeSideEffectApplicationOutcome.NotificationSent;

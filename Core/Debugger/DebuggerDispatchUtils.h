@@ -435,6 +435,16 @@ struct SleepUntilResumeRuntimeSideEffectApplicationOutcome {
 	bool ShouldEnableScreensaver = false;
 };
 
+struct SleepUntilResumeRuntimeDispatchExecutionContext {
+	SleepUntilResumeRuntimeDispatchOutcome Dispatch = {};
+};
+
+struct SleepUntilResumeRuntimeDispatchExecutionOutcome {
+	bool ShouldDispatchCodeBreakNotification = false;
+	bool ShouldProcessCodeBreakEvent = false;
+	BreakEvent Event = {};
+};
+
 [[nodiscard]] inline SleepUntilResumeRuntimeDispatchContext BuildSleepUntilResumeRuntimeDispatchContext(const SleepUntilResumeRuntimeBundleContext& context) {
 	SleepUntilResumeRuntimeDispatchContext dispatchContext = {};
 	dispatchContext.ShouldRunPreBreakSequence = context.ShouldRunPreBreakSequence;
@@ -479,6 +489,20 @@ struct SleepUntilResumeRuntimeSideEffectApplicationOutcome {
 	outcome.WaitForBreakResume = context.WaitForBreakResume || context.SideEffect.ShouldSetWaitForBreakResume;
 	outcome.NotificationSent = context.NotificationSent || context.SideEffect.NotificationSent;
 	outcome.ShouldEnableScreensaver = context.SideEffect.ShouldEnableScreensaver;
+	return outcome;
+}
+
+[[nodiscard]] inline SleepUntilResumeRuntimeDispatchExecutionContext BuildSleepUntilResumeRuntimeDispatchExecutionContext(const SleepUntilResumeRuntimeBundleOutcome& runtimeBundleOutcome) {
+	SleepUntilResumeRuntimeDispatchExecutionContext context = {};
+	context.Dispatch = runtimeBundleOutcome.Dispatch;
+	return context;
+}
+
+[[nodiscard]] inline SleepUntilResumeRuntimeDispatchExecutionOutcome ResolveSleepUntilResumeRuntimeDispatchExecutionOutcome(const SleepUntilResumeRuntimeDispatchExecutionContext& context) {
+	SleepUntilResumeRuntimeDispatchExecutionOutcome outcome = {};
+	outcome.ShouldDispatchCodeBreakNotification = context.Dispatch.Dispatch.ShouldDispatchCodeBreakNotification;
+	outcome.ShouldProcessCodeBreakEvent = context.Dispatch.Dispatch.ShouldProcessCodeBreakEvent;
+	outcome.Event = context.Dispatch.BreakEvent.Event;
 	return outcome;
 }
 

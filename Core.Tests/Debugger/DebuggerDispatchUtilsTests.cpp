@@ -890,6 +890,38 @@ TEST(DebuggerDispatchUtilsTests, SleepUntilResumeRuntimeSideEffectApplicationOut
 	EXPECT_FALSE(outcome.ShouldEnableScreensaver);
 }
 
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumeRuntimeDispatchExecutionContextBuilderMapsRuntimeDispatchPayload) {
+	SleepUntilResumeRuntimeBundleOutcome runtimeBundleOutcome = {};
+	runtimeBundleOutcome.Dispatch.Dispatch.ShouldDispatchCodeBreakNotification = true;
+	runtimeBundleOutcome.Dispatch.Dispatch.ShouldProcessCodeBreakEvent = false;
+	runtimeBundleOutcome.Dispatch.BreakEvent.Event.SourceCpu = CpuType::Nes;
+	runtimeBundleOutcome.Dispatch.BreakEvent.Event.Source = BreakSource::Breakpoint;
+	runtimeBundleOutcome.Dispatch.BreakEvent.Event.BreakpointId = 17;
+
+	SleepUntilResumeRuntimeDispatchExecutionContext context = BuildSleepUntilResumeRuntimeDispatchExecutionContext(runtimeBundleOutcome);
+	EXPECT_TRUE(context.Dispatch.Dispatch.ShouldDispatchCodeBreakNotification);
+	EXPECT_FALSE(context.Dispatch.Dispatch.ShouldProcessCodeBreakEvent);
+	EXPECT_EQ(context.Dispatch.BreakEvent.Event.SourceCpu, CpuType::Nes);
+	EXPECT_EQ(context.Dispatch.BreakEvent.Event.Source, BreakSource::Breakpoint);
+	EXPECT_EQ(context.Dispatch.BreakEvent.Event.BreakpointId, 17);
+}
+
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumeRuntimeDispatchExecutionOutcomeMapsDispatchFlagsAndEventPayload) {
+	SleepUntilResumeRuntimeDispatchExecutionContext context = {};
+	context.Dispatch.Dispatch.ShouldDispatchCodeBreakNotification = true;
+	context.Dispatch.Dispatch.ShouldProcessCodeBreakEvent = true;
+	context.Dispatch.BreakEvent.Event.SourceCpu = CpuType::Gba;
+	context.Dispatch.BreakEvent.Event.Source = BreakSource::CpuStep;
+	context.Dispatch.BreakEvent.Event.BreakpointId = 9;
+
+	SleepUntilResumeRuntimeDispatchExecutionOutcome outcome = ResolveSleepUntilResumeRuntimeDispatchExecutionOutcome(context);
+	EXPECT_TRUE(outcome.ShouldDispatchCodeBreakNotification);
+	EXPECT_TRUE(outcome.ShouldProcessCodeBreakEvent);
+	EXPECT_EQ(outcome.Event.SourceCpu, CpuType::Gba);
+	EXPECT_EQ(outcome.Event.Source, BreakSource::CpuStep);
+	EXPECT_EQ(outcome.Event.BreakpointId, 9);
+}
+
 TEST(DebuggerDispatchUtilsTests, SleepUntilResumeLoopContextBuilderMapsLoopPostBundleFields) {
 	SleepUntilResumeLoopPostBundleContext bundleContext = {};
 	bundleContext.WaitForBreakResume = true;
