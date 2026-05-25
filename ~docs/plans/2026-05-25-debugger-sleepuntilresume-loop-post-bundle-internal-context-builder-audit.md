@@ -1,4 +1,4 @@
-# Debugger SleepUntilResume Loop-Post Bundle Internal Context Builder Audit (2026-05-25)
+﻿# Debugger SleepUntilResume Loop-Post Bundle Internal Context Builder Audit (2026-05-25)
 
 ## Context
 

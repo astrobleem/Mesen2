@@ -1,4 +1,4 @@
-# Issue #2481 SleepUntilResume Loop-Post Bundle Resolver Refactor
+﻿# Issue #2481 SleepUntilResume Loop-Post Bundle Resolver Refactor
 
 ## Scope
 

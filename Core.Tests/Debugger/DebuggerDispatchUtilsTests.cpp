@@ -815,6 +815,38 @@ TEST(DebuggerDispatchUtilsTests, SleepUntilResumePostLoopContextBuilderMapsLoopP
 	EXPECT_TRUE(postLoopContext.NotificationSent);
 }
 
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumePreBreakContextBuilderMapsPreLoopBundleFields) {
+	SleepUntilResumePreLoopBundleContext bundleContext = {};
+	bundleContext.ShouldEmitBreakNotification = true;
+	bundleContext.SingleBreakpointPerInstruction = true;
+	bundleContext.DrawPartialFrame = false;
+
+	SleepUntilResumePreBreakContext preBreakContext = BuildSleepUntilResumePreBreakContext(bundleContext);
+	EXPECT_TRUE(preBreakContext.ShouldEmitBreakNotification);
+	EXPECT_TRUE(preBreakContext.SingleBreakpointPerInstruction);
+	EXPECT_FALSE(preBreakContext.DrawPartialFrame);
+}
+
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumePreLoopContextBuilderMapsPreLoopBundleNotificationField) {
+	SleepUntilResumePreLoopBundleContext bundleContext = {};
+	bundleContext.ShouldEmitBreakNotification = false;
+	bundleContext.SingleBreakpointPerInstruction = true;
+	bundleContext.DrawPartialFrame = true;
+
+	SleepUntilResumePreLoopContext preLoopContext = BuildSleepUntilResumePreLoopContext(bundleContext);
+	EXPECT_FALSE(preLoopContext.ShouldEmitBreakNotification);
+}
+
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumeDispatchContextBuilderMapsPreLoopOutcomeRunSequenceFlag) {
+	SleepUntilResumePreLoopOutcome preLoopOutcome = {};
+	preLoopOutcome.ShouldRunPreBreakSequence = true;
+	preLoopOutcome.ShouldArmWaitForBreakResume = true;
+	preLoopOutcome.ShouldEnableScreensaver = false;
+
+	SleepUntilResumeDispatchContext dispatchContext = BuildSleepUntilResumeDispatchContext(preLoopOutcome);
+	EXPECT_TRUE(dispatchContext.ShouldRunPreBreakSequence);
+}
+
 TEST(DebuggerDispatchUtilsTests, SleepUntilResumeRuntimeBundleContextBuilderComposesPhasePreLoopFlagsAndRuntimePayloadForEmittedFlow) {
 	MemoryOperationInfo operation = {};
 	operation.Address = 0x2468;

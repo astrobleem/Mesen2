@@ -504,21 +504,36 @@ struct SleepUntilResumePreLoopBundleOutcome {
 	SleepUntilResumeDispatchOutcome Dispatch = {};
 };
 
-[[nodiscard]] inline SleepUntilResumePreLoopBundleOutcome ResolveSleepUntilResumePreLoopBundleOutcome(const SleepUntilResumePreLoopBundleContext& context) {
-	SleepUntilResumePreLoopBundleOutcome outcome = {};
-
+[[nodiscard]] inline SleepUntilResumePreBreakContext BuildSleepUntilResumePreBreakContext(const SleepUntilResumePreLoopBundleContext& context) {
 	SleepUntilResumePreBreakContext preBreakContext = {};
 	preBreakContext.ShouldEmitBreakNotification = context.ShouldEmitBreakNotification;
 	preBreakContext.SingleBreakpointPerInstruction = context.SingleBreakpointPerInstruction;
 	preBreakContext.DrawPartialFrame = context.DrawPartialFrame;
-	outcome.PreBreak = ResolveSleepUntilResumePreBreakOutcome(preBreakContext);
+	return preBreakContext;
+}
 
+[[nodiscard]] inline SleepUntilResumePreLoopContext BuildSleepUntilResumePreLoopContext(const SleepUntilResumePreLoopBundleContext& context) {
 	SleepUntilResumePreLoopContext preLoopContext = {};
 	preLoopContext.ShouldEmitBreakNotification = context.ShouldEmitBreakNotification;
+	return preLoopContext;
+}
+
+[[nodiscard]] inline SleepUntilResumeDispatchContext BuildSleepUntilResumeDispatchContext(const SleepUntilResumePreLoopOutcome& preLoopOutcome) {
+	SleepUntilResumeDispatchContext dispatchContext = {};
+	dispatchContext.ShouldRunPreBreakSequence = preLoopOutcome.ShouldRunPreBreakSequence;
+	return dispatchContext;
+}
+
+[[nodiscard]] inline SleepUntilResumePreLoopBundleOutcome ResolveSleepUntilResumePreLoopBundleOutcome(const SleepUntilResumePreLoopBundleContext& context) {
+	SleepUntilResumePreLoopBundleOutcome outcome = {};
+
+	SleepUntilResumePreBreakContext preBreakContext = BuildSleepUntilResumePreBreakContext(context);
+	outcome.PreBreak = ResolveSleepUntilResumePreBreakOutcome(preBreakContext);
+
+	SleepUntilResumePreLoopContext preLoopContext = BuildSleepUntilResumePreLoopContext(context);
 	outcome.PreLoop = ResolveSleepUntilResumePreLoopOutcome(preLoopContext);
 
-	SleepUntilResumeDispatchContext dispatchContext = {};
-	dispatchContext.ShouldRunPreBreakSequence = outcome.PreLoop.ShouldRunPreBreakSequence;
+	SleepUntilResumeDispatchContext dispatchContext = BuildSleepUntilResumeDispatchContext(outcome.PreLoop);
 	outcome.Dispatch = ResolveSleepUntilResumeDispatchOutcome(dispatchContext);
 
 	return outcome;

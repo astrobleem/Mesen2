@@ -1,4 +1,4 @@
-# Issue #2482 SleepUntilResume Loop-Post Bundle Internal Context Builders
+﻿# Issue #2482 SleepUntilResume Loop-Post Bundle Internal Context Builders
 
 ## Scope
 

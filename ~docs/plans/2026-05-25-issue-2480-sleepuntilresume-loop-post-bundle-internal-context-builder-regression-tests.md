@@ -1,4 +1,4 @@
-# Issue #2480 SleepUntilResume Loop-Post Bundle Internal Context Builder Regression Tests
+﻿# Issue #2480 SleepUntilResume Loop-Post Bundle Internal Context Builder Regression Tests
 
 ## Scope
 
