@@ -25,7 +25,17 @@ Reduce duplicated CpuType/MemoryType mapping logic and centralize debugger mappi
 ## Progress
 
 - Completed: #2532, #2533, #2534 (shared CpuType metadata for CPU-memory and PC-width mappings).
-- In Progress: #2535, #2536, #2537 (PRG-ROM mapping consolidation).
+- Completed: #2535, #2536, #2537 (PRG-ROM mapping consolidation).
+
+## Third Slice Trio
+
+1. #2538 - Add base CPU-memory ownership lookup helper from CpuType metadata.
+2. #2541 - Add base CPU-memory ownership mapping regression tests.
+3. #2543 - Refactor ToCpuType base-memory path to metadata helper.
+
+## Current Status
+
+- In Progress: #2538, #2541, #2543 (base-memory ownership path consolidation in ToCpuType).
 
 ## Acceptance
 

@@ -50,6 +50,16 @@ public:
 		[[unlikely]] throw std::runtime_error("Invalid CPU type");
 	}
 
+	[[nodiscard]] static constexpr CpuType GetCpuTypeFromBaseMemoryType(MemoryType type) {
+		for (const CpuTypeMetadata& metadata : _cpuTypeMetadata) {
+			if (metadata.CpuMemoryType == type) {
+				return metadata.Type;
+			}
+		}
+
+		[[unlikely]] throw std::runtime_error("Invalid CPU memory type");
+	}
+
 	/// <summary>
 	/// Get CPU memory type for CPU.
 	/// </summary>
@@ -74,8 +84,11 @@ public:
 	/// <param name="type">Memory type</param>
 	/// <returns>Owning CPU type</returns>
 	[[nodiscard]] static constexpr CpuType ToCpuType(MemoryType type) {
+		if (IsRelativeMemory(type)) {
+			return GetCpuTypeFromBaseMemoryType(type);
+		}
+
 		switch (type) {
-			case MemoryType::SnesMemory:
 			case MemoryType::SnesCgRam:
 			case MemoryType::SnesPrgRom:
 			case MemoryType::SnesSaveRam:
@@ -90,31 +103,25 @@ public:
 			case MemoryType::SnesRegister:
 				return CpuType::Snes;
 
-			case MemoryType::SpcMemory:
 			case MemoryType::SpcRam:
 			case MemoryType::SpcRom:
 			case MemoryType::SpcDspRegisters:
 				return CpuType::Spc;
 
-			case MemoryType::GsuMemory:
 			case MemoryType::GsuWorkRam:
 				return CpuType::Gsu;
 
 			case MemoryType::Sa1InternalRam:
-			case MemoryType::Sa1Memory:
 				return CpuType::Sa1;
 
-			case MemoryType::NecDspMemory:
 			case MemoryType::DspDataRam:
 			case MemoryType::DspDataRom:
 			case MemoryType::DspProgramRom:
 				return CpuType::NecDsp;
 
 			case MemoryType::Cx4DataRam:
-			case MemoryType::Cx4Memory:
 				return CpuType::Cx4;
 
-			case MemoryType::St018Memory:
 			case MemoryType::St018PrgRom:
 			case MemoryType::St018DataRom:
 			case MemoryType::St018WorkRam:
@@ -127,7 +134,6 @@ public:
 			case MemoryType::GbBootRom:
 			case MemoryType::GbVideoRam:
 			case MemoryType::GbSpriteRam:
-			case MemoryType::GameboyMemory:
 				return CpuType::Gameboy;
 
 			case MemoryType::NesChrRam:
@@ -141,10 +147,8 @@ public:
 			case MemoryType::NesPrgRom:
 			case MemoryType::NesSaveRam:
 			case MemoryType::NesSpriteRam:
-			case MemoryType::NesSecondarySpriteRam:
 			case MemoryType::NesWorkRam:
 				return CpuType::Nes;
-
 			case MemoryType::PceMemory:
 			case MemoryType::PcePrgRom:
 			case MemoryType::PceWorkRam:
@@ -160,7 +164,6 @@ public:
 			case MemoryType::PceSpriteRamVdc2:
 				return CpuType::Pce;
 
-			case MemoryType::SmsMemory:
 			case MemoryType::SmsPrgRom:
 			case MemoryType::SmsWorkRam:
 			case MemoryType::SmsCartRam:
@@ -170,7 +173,6 @@ public:
 			case MemoryType::SmsPort:
 				return CpuType::Sms;
 
-			case MemoryType::GbaMemory:
 			case MemoryType::GbaPrgRom:
 			case MemoryType::GbaBootRom:
 			case MemoryType::GbaSaveRam:
@@ -181,7 +183,6 @@ public:
 			case MemoryType::GbaPaletteRam:
 				return CpuType::Gba;
 
-			case MemoryType::WsMemory:
 			case MemoryType::WsPrgRom:
 			case MemoryType::WsWorkRam:
 			case MemoryType::WsCartRam:
@@ -191,27 +192,23 @@ public:
 			case MemoryType::WsPort:
 				return CpuType::Ws;
 
-			case MemoryType::LynxMemory:
 			case MemoryType::LynxPrgRom:
 			case MemoryType::LynxWorkRam:
 			case MemoryType::LynxBootRom:
 			case MemoryType::LynxSaveRam:
 				return CpuType::Lynx;
 
-			case MemoryType::GenesisMemory:
 			case MemoryType::GenesisPrgRom:
 			case MemoryType::GenesisWorkRam:
 			case MemoryType::GenesisVideoRam:
 			case MemoryType::GenesisPaletteRam:
 				return CpuType::Genesis;
 
-			case MemoryType::Atari2600Memory:
 			case MemoryType::Atari2600PrgRom:
 			case MemoryType::Atari2600Ram:
 			case MemoryType::Atari2600TiaRegisters:
 				return CpuType::Atari2600;
 
-			case MemoryType::ChannelFMemory:
 			case MemoryType::ChannelFBiosRom:
 			case MemoryType::ChannelFCartRom:
 			case MemoryType::ChannelFVideoRam:

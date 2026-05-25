@@ -63,3 +63,43 @@ TEST(DebugUtilitiesTests, CpuMemoryTypeRoundtripsBackToOwningCpuType) {
 		EXPECT_EQ(DebugUtilities::ToCpuType(memoryType), cpuType);
 	}
 }
+
+TEST(DebugUtilitiesTests, BaseCpuMemoryTypesMapBackToExpectedCpuOwners) {
+	EXPECT_EQ(DebugUtilities::ToCpuType(MemoryType::SnesMemory), CpuType::Snes);
+	EXPECT_EQ(DebugUtilities::ToCpuType(MemoryType::SpcMemory), CpuType::Spc);
+	EXPECT_EQ(DebugUtilities::ToCpuType(MemoryType::NecDspMemory), CpuType::NecDsp);
+	EXPECT_EQ(DebugUtilities::ToCpuType(MemoryType::Sa1Memory), CpuType::Sa1);
+	EXPECT_EQ(DebugUtilities::ToCpuType(MemoryType::GsuMemory), CpuType::Gsu);
+	EXPECT_EQ(DebugUtilities::ToCpuType(MemoryType::Cx4Memory), CpuType::Cx4);
+	EXPECT_EQ(DebugUtilities::ToCpuType(MemoryType::St018Memory), CpuType::St018);
+	EXPECT_EQ(DebugUtilities::ToCpuType(MemoryType::GameboyMemory), CpuType::Gameboy);
+	EXPECT_EQ(DebugUtilities::ToCpuType(MemoryType::NesMemory), CpuType::Nes);
+	EXPECT_EQ(DebugUtilities::ToCpuType(MemoryType::PceMemory), CpuType::Pce);
+	EXPECT_EQ(DebugUtilities::ToCpuType(MemoryType::SmsMemory), CpuType::Sms);
+	EXPECT_EQ(DebugUtilities::ToCpuType(MemoryType::GbaMemory), CpuType::Gba);
+	EXPECT_EQ(DebugUtilities::ToCpuType(MemoryType::WsMemory), CpuType::Ws);
+	EXPECT_EQ(DebugUtilities::ToCpuType(MemoryType::LynxMemory), CpuType::Lynx);
+	EXPECT_EQ(DebugUtilities::ToCpuType(MemoryType::GenesisMemory), CpuType::Genesis);
+	EXPECT_EQ(DebugUtilities::ToCpuType(MemoryType::Atari2600Memory), CpuType::Atari2600);
+	EXPECT_EQ(DebugUtilities::ToCpuType(MemoryType::ChannelFMemory), CpuType::ChannelF);
+}
+
+TEST(DebugUtilitiesTests, SubMemoryTypesContinueToMapToExpectedCpuOwners) {
+	EXPECT_EQ(DebugUtilities::ToCpuType(MemoryType::SnesPrgRom), CpuType::Snes);
+	EXPECT_EQ(DebugUtilities::ToCpuType(MemoryType::SpcRom), CpuType::Spc);
+	EXPECT_EQ(DebugUtilities::ToCpuType(MemoryType::DspProgramRom), CpuType::NecDsp);
+	EXPECT_EQ(DebugUtilities::ToCpuType(MemoryType::Sa1InternalRam), CpuType::Sa1);
+	EXPECT_EQ(DebugUtilities::ToCpuType(MemoryType::GsuWorkRam), CpuType::Gsu);
+	EXPECT_EQ(DebugUtilities::ToCpuType(MemoryType::Cx4DataRam), CpuType::Cx4);
+	EXPECT_EQ(DebugUtilities::ToCpuType(MemoryType::St018PrgRom), CpuType::St018);
+	EXPECT_EQ(DebugUtilities::ToCpuType(MemoryType::GbPrgRom), CpuType::Gameboy);
+	EXPECT_EQ(DebugUtilities::ToCpuType(MemoryType::NesPrgRom), CpuType::Nes);
+	EXPECT_EQ(DebugUtilities::ToCpuType(MemoryType::PcePrgRom), CpuType::Pce);
+	EXPECT_EQ(DebugUtilities::ToCpuType(MemoryType::SmsPrgRom), CpuType::Sms);
+	EXPECT_EQ(DebugUtilities::ToCpuType(MemoryType::GbaPrgRom), CpuType::Gba);
+	EXPECT_EQ(DebugUtilities::ToCpuType(MemoryType::WsPrgRom), CpuType::Ws);
+	EXPECT_EQ(DebugUtilities::ToCpuType(MemoryType::LynxPrgRom), CpuType::Lynx);
+	EXPECT_EQ(DebugUtilities::ToCpuType(MemoryType::GenesisPrgRom), CpuType::Genesis);
+	EXPECT_EQ(DebugUtilities::ToCpuType(MemoryType::Atari2600PrgRom), CpuType::Atari2600);
+	EXPECT_EQ(DebugUtilities::ToCpuType(MemoryType::ChannelFCartRom), CpuType::ChannelF);
+}
