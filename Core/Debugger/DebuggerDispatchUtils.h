@@ -466,17 +466,27 @@ struct SleepUntilResumeLoopPostBundleOutcome {
 	SleepUntilResumePostLoopOutcome PostLoop = {};
 };
 
-[[nodiscard]] inline SleepUntilResumeLoopPostBundleOutcome ResolveSleepUntilResumeLoopPostBundleOutcome(const SleepUntilResumeLoopPostBundleContext& context) {
-	SleepUntilResumeLoopPostBundleOutcome outcome = {};
-
+[[nodiscard]] inline SleepUntilResumeLoopContext BuildSleepUntilResumeLoopContext(const SleepUntilResumeLoopPostBundleContext& context) {
 	SleepUntilResumeLoopContext loopContext = {};
 	loopContext.WaitForBreakResume = context.WaitForBreakResume;
 	loopContext.HasSuspendRequest = context.HasSuspendRequest;
 	loopContext.HasBreakRequest = context.HasBreakRequest;
-	outcome.Loop = ResolveSleepUntilResumeLoopOutcome(loopContext);
+	return loopContext;
+}
 
+[[nodiscard]] inline SleepUntilResumePostLoopContext BuildSleepUntilResumePostLoopContext(const SleepUntilResumeLoopPostBundleContext& context) {
 	SleepUntilResumePostLoopContext postLoopContext = {};
 	postLoopContext.NotificationSent = context.NotificationSent;
+	return postLoopContext;
+}
+
+[[nodiscard]] inline SleepUntilResumeLoopPostBundleOutcome ResolveSleepUntilResumeLoopPostBundleOutcome(const SleepUntilResumeLoopPostBundleContext& context) {
+	SleepUntilResumeLoopPostBundleOutcome outcome = {};
+
+	SleepUntilResumeLoopContext loopContext = BuildSleepUntilResumeLoopContext(context);
+	outcome.Loop = ResolveSleepUntilResumeLoopOutcome(loopContext);
+
+	SleepUntilResumePostLoopContext postLoopContext = BuildSleepUntilResumePostLoopContext(context);
 	outcome.PostLoop = ResolveSleepUntilResumePostLoopOutcome(postLoopContext);
 
 	return outcome;

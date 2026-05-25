@@ -791,6 +791,30 @@ TEST(DebuggerDispatchUtilsTests, SleepUntilResumeRuntimeSideEffectContextBuilder
 	EXPECT_TRUE(sideEffectContext.NotificationSent);
 }
 
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumeLoopContextBuilderMapsLoopPostBundleFields) {
+	SleepUntilResumeLoopPostBundleContext bundleContext = {};
+	bundleContext.WaitForBreakResume = true;
+	bundleContext.HasSuspendRequest = false;
+	bundleContext.HasBreakRequest = true;
+	bundleContext.NotificationSent = true;
+
+	SleepUntilResumeLoopContext loopContext = BuildSleepUntilResumeLoopContext(bundleContext);
+	EXPECT_TRUE(loopContext.WaitForBreakResume);
+	EXPECT_FALSE(loopContext.HasSuspendRequest);
+	EXPECT_TRUE(loopContext.HasBreakRequest);
+}
+
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumePostLoopContextBuilderMapsLoopPostBundleNotificationState) {
+	SleepUntilResumeLoopPostBundleContext bundleContext = {};
+	bundleContext.WaitForBreakResume = false;
+	bundleContext.HasSuspendRequest = true;
+	bundleContext.HasBreakRequest = false;
+	bundleContext.NotificationSent = true;
+
+	SleepUntilResumePostLoopContext postLoopContext = BuildSleepUntilResumePostLoopContext(bundleContext);
+	EXPECT_TRUE(postLoopContext.NotificationSent);
+}
+
 TEST(DebuggerDispatchUtilsTests, SleepUntilResumeRuntimeBundleContextBuilderComposesPhasePreLoopFlagsAndRuntimePayloadForEmittedFlow) {
 	MemoryOperationInfo operation = {};
 	operation.Address = 0x2468;
