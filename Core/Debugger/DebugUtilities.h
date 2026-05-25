@@ -36,6 +36,7 @@ public:
 	struct CpuTypeMetadata {
 		CpuType Type;
 		MemoryType CpuMemoryType;
+		MemoryType PrgRomMemoryType;
 		int ProgramCounterSize;
 	};
 
@@ -235,41 +236,7 @@ public:
 	/// <param name="cpuType">CPU type</param>
 	/// <returns>PRG ROM memory type (e.g., NesPrgRom for NES, SnesPrgRom for SNES)</returns>
 	[[nodiscard]] static constexpr MemoryType GetPrgRomMemoryType(CpuType cpuType) {
-		switch (cpuType) {
-			case CpuType::Snes:
-			case CpuType::Sa1:
-			case CpuType::Gsu:
-			case CpuType::Cx4:
-				return MemoryType::SnesPrgRom;
-			case CpuType::Spc:
-				return MemoryType::SpcRom;
-			case CpuType::NecDsp:
-				return MemoryType::DspProgramRom;
-			case CpuType::St018:
-				return MemoryType::St018PrgRom;
-			case CpuType::Gameboy:
-				return MemoryType::GbPrgRom;
-			case CpuType::Nes:
-				return MemoryType::NesPrgRom;
-			case CpuType::Pce:
-				return MemoryType::PcePrgRom;
-			case CpuType::Sms:
-				return MemoryType::SmsPrgRom;
-			case CpuType::Gba:
-				return MemoryType::GbaPrgRom;
-			case CpuType::Ws:
-				return MemoryType::WsPrgRom;
-			case CpuType::Lynx:
-				return MemoryType::LynxPrgRom;
-			case CpuType::Genesis:
-				return MemoryType::GenesisPrgRom;
-			case CpuType::Atari2600:
-				return MemoryType::Atari2600PrgRom;
-			case CpuType::ChannelF:
-				return MemoryType::ChannelFCartRom;
-		}
-
-		[[unlikely]] return MemoryType::None;
+		return GetCpuTypeMetadata(cpuType).PrgRomMemoryType;
 	}
 
 	/// <summary>
@@ -425,22 +392,22 @@ public:
 
 private:
 	static constexpr std::array<CpuTypeMetadata, 17> _cpuTypeMetadata = {{
-		{CpuType::Snes, MemoryType::SnesMemory, 6},
-		{CpuType::Spc, MemoryType::SpcMemory, 4},
-		{CpuType::NecDsp, MemoryType::NecDspMemory, 6},
-		{CpuType::Sa1, MemoryType::Sa1Memory, 6},
-		{CpuType::Gsu, MemoryType::GsuMemory, 6},
-		{CpuType::Cx4, MemoryType::Cx4Memory, 6},
-		{CpuType::St018, MemoryType::St018Memory, 8},
-		{CpuType::Gameboy, MemoryType::GameboyMemory, 4},
-		{CpuType::Nes, MemoryType::NesMemory, 4},
-		{CpuType::Pce, MemoryType::PceMemory, 4},
-		{CpuType::Sms, MemoryType::SmsMemory, 4},
-		{CpuType::Gba, MemoryType::GbaMemory, 8},
-		{CpuType::Ws, MemoryType::WsMemory, 5},
-		{CpuType::Lynx, MemoryType::LynxMemory, 4},
-		{CpuType::Genesis, MemoryType::GenesisMemory, 6},
-		{CpuType::Atari2600, MemoryType::Atari2600Memory, 4},
-		{CpuType::ChannelF, MemoryType::ChannelFMemory, 4}
+		{CpuType::Snes, MemoryType::SnesMemory, MemoryType::SnesPrgRom, 6},
+		{CpuType::Spc, MemoryType::SpcMemory, MemoryType::SpcRom, 4},
+		{CpuType::NecDsp, MemoryType::NecDspMemory, MemoryType::DspProgramRom, 6},
+		{CpuType::Sa1, MemoryType::Sa1Memory, MemoryType::SnesPrgRom, 6},
+		{CpuType::Gsu, MemoryType::GsuMemory, MemoryType::SnesPrgRom, 6},
+		{CpuType::Cx4, MemoryType::Cx4Memory, MemoryType::SnesPrgRom, 6},
+		{CpuType::St018, MemoryType::St018Memory, MemoryType::St018PrgRom, 8},
+		{CpuType::Gameboy, MemoryType::GameboyMemory, MemoryType::GbPrgRom, 4},
+		{CpuType::Nes, MemoryType::NesMemory, MemoryType::NesPrgRom, 4},
+		{CpuType::Pce, MemoryType::PceMemory, MemoryType::PcePrgRom, 4},
+		{CpuType::Sms, MemoryType::SmsMemory, MemoryType::SmsPrgRom, 4},
+		{CpuType::Gba, MemoryType::GbaMemory, MemoryType::GbaPrgRom, 8},
+		{CpuType::Ws, MemoryType::WsMemory, MemoryType::WsPrgRom, 5},
+		{CpuType::Lynx, MemoryType::LynxMemory, MemoryType::LynxPrgRom, 4},
+		{CpuType::Genesis, MemoryType::GenesisMemory, MemoryType::GenesisPrgRom, 6},
+		{CpuType::Atari2600, MemoryType::Atari2600Memory, MemoryType::Atari2600PrgRom, 4},
+		{CpuType::ChannelF, MemoryType::ChannelFMemory, MemoryType::ChannelFCartRom, 4}
 	}};
 };

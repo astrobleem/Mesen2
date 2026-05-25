@@ -16,6 +16,17 @@ Reduce duplicated CpuType/MemoryType mapping logic and centralize debugger mappi
 2. #2531 - Add full mapping regression tests.
 3. #2532 - Refactor DebugUtilities callsites to helper mappings.
 
+## Continued Slice Trio
+
+1. #2535 - Extend CpuType metadata helper with PRG-ROM mapping.
+2. #2536 - Add PRG-ROM mapping compatibility regression tests.
+3. #2537 - Refactor PRG-ROM mapping callsite to metadata helper.
+
+## Progress
+
+- Completed: #2532, #2533, #2534 (shared CpuType metadata for CPU-memory and PC-width mappings).
+- In Progress: #2535, #2536, #2537 (PRG-ROM mapping consolidation).
+
 ## Acceptance
 
 - Mapping functions preserve behavior.
