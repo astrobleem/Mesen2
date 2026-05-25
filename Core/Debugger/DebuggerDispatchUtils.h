@@ -423,22 +423,32 @@ struct SleepUntilResumeRuntimeBundleOutcome {
 	SleepUntilResumeRuntimeSideEffectOutcome SideEffect = {};
 };
 
-[[nodiscard]] inline SleepUntilResumeRuntimeBundleOutcome ResolveSleepUntilResumeRuntimeBundleOutcome(const SleepUntilResumeRuntimeBundleContext& context) {
-	SleepUntilResumeRuntimeBundleOutcome outcome = {};
-
+[[nodiscard]] inline SleepUntilResumeRuntimeDispatchContext BuildSleepUntilResumeRuntimeDispatchContext(const SleepUntilResumeRuntimeBundleContext& context) {
 	SleepUntilResumeRuntimeDispatchContext dispatchContext = {};
 	dispatchContext.ShouldRunPreBreakSequence = context.ShouldRunPreBreakSequence;
 	dispatchContext.SourceCpu = context.SourceCpu;
 	dispatchContext.Source = context.Source;
 	dispatchContext.BreakpointId = context.BreakpointId;
 	dispatchContext.Operation = context.Operation;
-	outcome.Dispatch = ResolveSleepUntilResumeRuntimeDispatchOutcome(dispatchContext);
+	return dispatchContext;
+}
 
+[[nodiscard]] inline SleepUntilResumeRuntimeSideEffectContext BuildSleepUntilResumeRuntimeSideEffectContext(const SleepUntilResumeRuntimeBundleContext& context, bool shouldMarkNotificationSent) {
 	SleepUntilResumeRuntimeSideEffectContext sideEffectContext = {};
 	sideEffectContext.ShouldArmWaitForBreakResume = context.ShouldArmWaitForBreakResume;
 	sideEffectContext.ShouldEnableScreensaver = context.ShouldEnableScreensaver;
-	sideEffectContext.ShouldMarkNotificationSent = outcome.Dispatch.Dispatch.ShouldMarkNotificationSent;
+	sideEffectContext.ShouldMarkNotificationSent = shouldMarkNotificationSent;
 	sideEffectContext.NotificationSent = context.NotificationSent;
+	return sideEffectContext;
+}
+
+[[nodiscard]] inline SleepUntilResumeRuntimeBundleOutcome ResolveSleepUntilResumeRuntimeBundleOutcome(const SleepUntilResumeRuntimeBundleContext& context) {
+	SleepUntilResumeRuntimeBundleOutcome outcome = {};
+
+	SleepUntilResumeRuntimeDispatchContext dispatchContext = BuildSleepUntilResumeRuntimeDispatchContext(context);
+	outcome.Dispatch = ResolveSleepUntilResumeRuntimeDispatchOutcome(dispatchContext);
+
+	SleepUntilResumeRuntimeSideEffectContext sideEffectContext = BuildSleepUntilResumeRuntimeSideEffectContext(context, outcome.Dispatch.Dispatch.ShouldMarkNotificationSent);
 	outcome.SideEffect = ResolveSleepUntilResumeRuntimeSideEffectOutcome(sideEffectContext);
 
 	return outcome;

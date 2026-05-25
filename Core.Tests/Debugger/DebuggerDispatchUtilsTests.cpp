@@ -759,6 +759,38 @@ TEST(DebuggerDispatchUtilsTests, SleepUntilResumeRuntimeSideEffectOutcomeApplies
 	EXPECT_TRUE(outcome.NotificationSent);
 }
 
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumeRuntimeDispatchContextBuilderMapsRuntimeBundlePayloadFields) {
+	MemoryOperationInfo operation = {};
+	operation.Address = 0x1357;
+
+	SleepUntilResumeRuntimeBundleContext bundleContext = {};
+	bundleContext.ShouldRunPreBreakSequence = true;
+	bundleContext.SourceCpu = CpuType::Nes;
+	bundleContext.Source = BreakSource::Breakpoint;
+	bundleContext.BreakpointId = 55;
+	bundleContext.Operation = &operation;
+
+	SleepUntilResumeRuntimeDispatchContext dispatchContext = BuildSleepUntilResumeRuntimeDispatchContext(bundleContext);
+	EXPECT_TRUE(dispatchContext.ShouldRunPreBreakSequence);
+	EXPECT_EQ(dispatchContext.SourceCpu, CpuType::Nes);
+	EXPECT_EQ(dispatchContext.Source, BreakSource::Breakpoint);
+	EXPECT_EQ(dispatchContext.BreakpointId, 55);
+	EXPECT_EQ(dispatchContext.Operation, &operation);
+}
+
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumeRuntimeSideEffectContextBuilderMapsRuntimeBundleAndMarkSentInputs) {
+	SleepUntilResumeRuntimeBundleContext bundleContext = {};
+	bundleContext.ShouldArmWaitForBreakResume = true;
+	bundleContext.ShouldEnableScreensaver = false;
+	bundleContext.NotificationSent = true;
+
+	SleepUntilResumeRuntimeSideEffectContext sideEffectContext = BuildSleepUntilResumeRuntimeSideEffectContext(bundleContext, true);
+	EXPECT_TRUE(sideEffectContext.ShouldArmWaitForBreakResume);
+	EXPECT_FALSE(sideEffectContext.ShouldEnableScreensaver);
+	EXPECT_TRUE(sideEffectContext.ShouldMarkNotificationSent);
+	EXPECT_TRUE(sideEffectContext.NotificationSent);
+}
+
 TEST(DebuggerDispatchUtilsTests, SleepUntilResumeRuntimeBundleContextBuilderComposesPhasePreLoopFlagsAndRuntimePayloadForEmittedFlow) {
 	MemoryOperationInfo operation = {};
 	operation.Address = 0x2468;
