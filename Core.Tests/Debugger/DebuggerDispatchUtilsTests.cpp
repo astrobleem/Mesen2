@@ -847,6 +847,37 @@ TEST(DebuggerDispatchUtilsTests, SleepUntilResumeDispatchContextBuilderMapsPreLo
 	EXPECT_TRUE(dispatchContext.ShouldRunPreBreakSequence);
 }
 
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumePreLoopBundleContextBuilderMapsPhaseOutcomeInputs) {
+	SleepUntilResumePhaseContext phaseContext = {};
+	phaseContext.SingleBreakpointPerInstruction = true;
+	phaseContext.DrawPartialFrame = false;
+
+	SleepUntilResumePreLoopBundleContext preLoopBundleContext = BuildSleepUntilResumePreLoopBundleContext(phaseContext, true);
+	EXPECT_TRUE(preLoopBundleContext.ShouldEmitBreakNotification);
+	EXPECT_TRUE(preLoopBundleContext.SingleBreakpointPerInstruction);
+	EXPECT_FALSE(preLoopBundleContext.DrawPartialFrame);
+}
+
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumeLoopContextBuilderMapsPhaseContextLoopFields) {
+	SleepUntilResumePhaseContext phaseContext = {};
+	phaseContext.WaitForBreakResume = true;
+	phaseContext.HasSuspendRequest = false;
+	phaseContext.HasBreakRequest = true;
+
+	SleepUntilResumeLoopContext loopContext = BuildSleepUntilResumeLoopContext(phaseContext);
+	EXPECT_TRUE(loopContext.WaitForBreakResume);
+	EXPECT_FALSE(loopContext.HasSuspendRequest);
+	EXPECT_TRUE(loopContext.HasBreakRequest);
+}
+
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumePostLoopContextBuilderMapsPhaseContextNotificationState) {
+	SleepUntilResumePhaseContext phaseContext = {};
+	phaseContext.NotificationSent = true;
+
+	SleepUntilResumePostLoopContext postLoopContext = BuildSleepUntilResumePostLoopContext(phaseContext);
+	EXPECT_TRUE(postLoopContext.NotificationSent);
+}
+
 TEST(DebuggerDispatchUtilsTests, SleepUntilResumeRuntimeBundleContextBuilderComposesPhasePreLoopFlagsAndRuntimePayloadForEmittedFlow) {
 	MemoryOperationInfo operation = {};
 	operation.Address = 0x2468;

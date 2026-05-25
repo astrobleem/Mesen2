@@ -584,28 +584,42 @@ struct SleepUntilResumePreBreakActionPlanOutcome {
 	bool ShouldDrawPartialFrame = false;
 };
 
+[[nodiscard]] inline SleepUntilResumePreLoopBundleContext BuildSleepUntilResumePreLoopBundleContext(const SleepUntilResumePhaseContext& context, bool shouldEmitBreakNotification) {
+	SleepUntilResumePreLoopBundleContext preLoopBundleContext = {};
+	preLoopBundleContext.ShouldEmitBreakNotification = shouldEmitBreakNotification;
+	preLoopBundleContext.SingleBreakpointPerInstruction = context.SingleBreakpointPerInstruction;
+	preLoopBundleContext.DrawPartialFrame = context.DrawPartialFrame;
+	return preLoopBundleContext;
+}
+
+[[nodiscard]] inline SleepUntilResumeLoopContext BuildSleepUntilResumeLoopContext(const SleepUntilResumePhaseContext& context) {
+	SleepUntilResumeLoopContext loopContext = {};
+	loopContext.WaitForBreakResume = context.WaitForBreakResume;
+	loopContext.HasSuspendRequest = context.HasSuspendRequest;
+	loopContext.HasBreakRequest = context.HasBreakRequest;
+	return loopContext;
+}
+
+[[nodiscard]] inline SleepUntilResumePostLoopContext BuildSleepUntilResumePostLoopContext(const SleepUntilResumePhaseContext& context) {
+	SleepUntilResumePostLoopContext postLoopContext = {};
+	postLoopContext.NotificationSent = context.NotificationSent;
+	return postLoopContext;
+}
+
 [[nodiscard]] inline SleepUntilResumePhaseOutcome ResolveSleepUntilResumePhaseOutcome(const SleepUntilResumePhaseContext& context) {
 	SleepUntilResumePhaseOutcome outcome = {};
 	outcome.Decision = EvaluateSleepUntilResumeDecision(context.Guard);
 
 	if (outcome.Decision == SleepUntilResumeDecision::Continue) {
 		outcome.ShouldEmitBreakNotification = ShouldEmitSleepUntilResumeBreakNotification(context.Source, context.HasBreakRequest);
-
-		SleepUntilResumePreLoopBundleContext preLoopBundleContext = {};
-		preLoopBundleContext.ShouldEmitBreakNotification = outcome.ShouldEmitBreakNotification;
-		preLoopBundleContext.SingleBreakpointPerInstruction = context.SingleBreakpointPerInstruction;
-		preLoopBundleContext.DrawPartialFrame = context.DrawPartialFrame;
+		SleepUntilResumePreLoopBundleContext preLoopBundleContext = BuildSleepUntilResumePreLoopBundleContext(context, outcome.ShouldEmitBreakNotification);
 		outcome.PreLoopBundle = ResolveSleepUntilResumePreLoopBundleOutcome(preLoopBundleContext);
 	}
 
-	SleepUntilResumeLoopContext loopContext = {};
-	loopContext.WaitForBreakResume = context.WaitForBreakResume;
-	loopContext.HasSuspendRequest = context.HasSuspendRequest;
-	loopContext.HasBreakRequest = context.HasBreakRequest;
+	SleepUntilResumeLoopContext loopContext = BuildSleepUntilResumeLoopContext(context);
 	outcome.Loop = ResolveSleepUntilResumeLoopOutcome(loopContext);
 
-	SleepUntilResumePostLoopContext postLoopContext = {};
-	postLoopContext.NotificationSent = context.NotificationSent;
+	SleepUntilResumePostLoopContext postLoopContext = BuildSleepUntilResumePostLoopContext(context);
 	outcome.PostLoop = ResolveSleepUntilResumePostLoopOutcome(postLoopContext);
 
 	return outcome;
