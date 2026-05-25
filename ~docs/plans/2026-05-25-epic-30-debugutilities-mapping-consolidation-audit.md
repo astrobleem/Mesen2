@@ -33,9 +33,16 @@ Reduce duplicated CpuType/MemoryType mapping logic and centralize debugger mappi
 2. #2541 - Add base CPU-memory ownership mapping regression tests.
 3. #2543 - Refactor ToCpuType base-memory path to metadata helper.
 
-## Current Status
+## Fourth Slice Trio
 
-- In Progress: #2538, #2541, #2543 (base-memory ownership path consolidation in ToCpuType).
+1. #2544 - Add shared memory-type predicate/helper for grouped owner mappings.
+2. #2545 - Add regression tests for grouped owner mapping parity.
+3. #2546 - Refactor DebugUtilities::ToCpuType grouped mappings to helper.
+
+## Progress
+
+- Completed: #2538, #2541, #2543 (base-memory ownership path consolidation in ToCpuType).
+- In Progress: #2544, #2545, #2546 (non-relative owner mapping consolidation in ToCpuType).
 
 ## Acceptance
 

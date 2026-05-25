@@ -85,21 +85,105 @@ TEST(DebugUtilitiesTests, BaseCpuMemoryTypesMapBackToExpectedCpuOwners) {
 }
 
 TEST(DebugUtilitiesTests, SubMemoryTypesContinueToMapToExpectedCpuOwners) {
-	EXPECT_EQ(DebugUtilities::ToCpuType(MemoryType::SnesPrgRom), CpuType::Snes);
-	EXPECT_EQ(DebugUtilities::ToCpuType(MemoryType::SpcRom), CpuType::Spc);
-	EXPECT_EQ(DebugUtilities::ToCpuType(MemoryType::DspProgramRom), CpuType::NecDsp);
-	EXPECT_EQ(DebugUtilities::ToCpuType(MemoryType::Sa1InternalRam), CpuType::Sa1);
-	EXPECT_EQ(DebugUtilities::ToCpuType(MemoryType::GsuWorkRam), CpuType::Gsu);
-	EXPECT_EQ(DebugUtilities::ToCpuType(MemoryType::Cx4DataRam), CpuType::Cx4);
-	EXPECT_EQ(DebugUtilities::ToCpuType(MemoryType::St018PrgRom), CpuType::St018);
-	EXPECT_EQ(DebugUtilities::ToCpuType(MemoryType::GbPrgRom), CpuType::Gameboy);
-	EXPECT_EQ(DebugUtilities::ToCpuType(MemoryType::NesPrgRom), CpuType::Nes);
-	EXPECT_EQ(DebugUtilities::ToCpuType(MemoryType::PcePrgRom), CpuType::Pce);
-	EXPECT_EQ(DebugUtilities::ToCpuType(MemoryType::SmsPrgRom), CpuType::Sms);
-	EXPECT_EQ(DebugUtilities::ToCpuType(MemoryType::GbaPrgRom), CpuType::Gba);
-	EXPECT_EQ(DebugUtilities::ToCpuType(MemoryType::WsPrgRom), CpuType::Ws);
-	EXPECT_EQ(DebugUtilities::ToCpuType(MemoryType::LynxPrgRom), CpuType::Lynx);
-	EXPECT_EQ(DebugUtilities::ToCpuType(MemoryType::GenesisPrgRom), CpuType::Genesis);
-	EXPECT_EQ(DebugUtilities::ToCpuType(MemoryType::Atari2600PrgRom), CpuType::Atari2600);
-	EXPECT_EQ(DebugUtilities::ToCpuType(MemoryType::ChannelFCartRom), CpuType::ChannelF);
+	struct ExpectedOwner {
+		MemoryType Type;
+		CpuType Cpu;
+	};
+
+	static constexpr std::array<ExpectedOwner, 91> kExpected = {{
+		{MemoryType::SnesCgRam, CpuType::Snes},
+		{MemoryType::SnesPrgRom, CpuType::Snes},
+		{MemoryType::SnesSaveRam, CpuType::Snes},
+		{MemoryType::SnesSpriteRam, CpuType::Snes},
+		{MemoryType::SnesVideoRam, CpuType::Snes},
+		{MemoryType::SnesWorkRam, CpuType::Snes},
+		{MemoryType::BsxMemoryPack, CpuType::Snes},
+		{MemoryType::BsxPsRam, CpuType::Snes},
+		{MemoryType::SufamiTurboFirmware, CpuType::Snes},
+		{MemoryType::SufamiTurboSecondCart, CpuType::Snes},
+		{MemoryType::SufamiTurboSecondCartRam, CpuType::Snes},
+		{MemoryType::SnesRegister, CpuType::Snes},
+		{MemoryType::SpcRam, CpuType::Spc},
+		{MemoryType::SpcRom, CpuType::Spc},
+		{MemoryType::SpcDspRegisters, CpuType::Spc},
+		{MemoryType::GsuWorkRam, CpuType::Gsu},
+		{MemoryType::Sa1InternalRam, CpuType::Sa1},
+		{MemoryType::DspDataRam, CpuType::NecDsp},
+		{MemoryType::DspDataRom, CpuType::NecDsp},
+		{MemoryType::DspProgramRom, CpuType::NecDsp},
+		{MemoryType::Cx4DataRam, CpuType::Cx4},
+		{MemoryType::St018PrgRom, CpuType::St018},
+		{MemoryType::St018DataRom, CpuType::St018},
+		{MemoryType::St018WorkRam, CpuType::St018},
+		{MemoryType::GbPrgRom, CpuType::Gameboy},
+		{MemoryType::GbWorkRam, CpuType::Gameboy},
+		{MemoryType::GbCartRam, CpuType::Gameboy},
+		{MemoryType::GbHighRam, CpuType::Gameboy},
+		{MemoryType::GbBootRom, CpuType::Gameboy},
+		{MemoryType::GbVideoRam, CpuType::Gameboy},
+		{MemoryType::GbSpriteRam, CpuType::Gameboy},
+		{MemoryType::NesChrRam, CpuType::Nes},
+		{MemoryType::NesChrRom, CpuType::Nes},
+		{MemoryType::NesInternalRam, CpuType::Nes},
+		{MemoryType::NesNametableRam, CpuType::Nes},
+		{MemoryType::NesMapperRam, CpuType::Nes},
+		{MemoryType::NesPaletteRam, CpuType::Nes},
+		{MemoryType::NesPpuMemory, CpuType::Nes},
+		{MemoryType::NesPrgRom, CpuType::Nes},
+		{MemoryType::NesSaveRam, CpuType::Nes},
+		{MemoryType::NesSpriteRam, CpuType::Nes},
+		{MemoryType::NesWorkRam, CpuType::Nes},
+		{MemoryType::PcePrgRom, CpuType::Pce},
+		{MemoryType::PceWorkRam, CpuType::Pce},
+		{MemoryType::PceSaveRam, CpuType::Pce},
+		{MemoryType::PceCdromRam, CpuType::Pce},
+		{MemoryType::PceCardRam, CpuType::Pce},
+		{MemoryType::PceAdpcmRam, CpuType::Pce},
+		{MemoryType::PceArcadeCardRam, CpuType::Pce},
+		{MemoryType::PceVideoRam, CpuType::Pce},
+		{MemoryType::PceVideoRamVdc2, CpuType::Pce},
+		{MemoryType::PcePaletteRam, CpuType::Pce},
+		{MemoryType::PceSpriteRam, CpuType::Pce},
+		{MemoryType::PceSpriteRamVdc2, CpuType::Pce},
+		{MemoryType::SmsPrgRom, CpuType::Sms},
+		{MemoryType::SmsWorkRam, CpuType::Sms},
+		{MemoryType::SmsCartRam, CpuType::Sms},
+		{MemoryType::SmsBootRom, CpuType::Sms},
+		{MemoryType::SmsVideoRam, CpuType::Sms},
+		{MemoryType::SmsPaletteRam, CpuType::Sms},
+		{MemoryType::SmsPort, CpuType::Sms},
+		{MemoryType::GbaPrgRom, CpuType::Gba},
+		{MemoryType::GbaBootRom, CpuType::Gba},
+		{MemoryType::GbaSaveRam, CpuType::Gba},
+		{MemoryType::GbaIntWorkRam, CpuType::Gba},
+		{MemoryType::GbaExtWorkRam, CpuType::Gba},
+		{MemoryType::GbaVideoRam, CpuType::Gba},
+		{MemoryType::GbaSpriteRam, CpuType::Gba},
+		{MemoryType::GbaPaletteRam, CpuType::Gba},
+		{MemoryType::WsPrgRom, CpuType::Ws},
+		{MemoryType::WsWorkRam, CpuType::Ws},
+		{MemoryType::WsCartRam, CpuType::Ws},
+		{MemoryType::WsCartEeprom, CpuType::Ws},
+		{MemoryType::WsBootRom, CpuType::Ws},
+		{MemoryType::WsInternalEeprom, CpuType::Ws},
+		{MemoryType::WsPort, CpuType::Ws},
+		{MemoryType::LynxPrgRom, CpuType::Lynx},
+		{MemoryType::LynxWorkRam, CpuType::Lynx},
+		{MemoryType::LynxBootRom, CpuType::Lynx},
+		{MemoryType::LynxSaveRam, CpuType::Lynx},
+		{MemoryType::GenesisPrgRom, CpuType::Genesis},
+		{MemoryType::GenesisWorkRam, CpuType::Genesis},
+		{MemoryType::GenesisVideoRam, CpuType::Genesis},
+		{MemoryType::GenesisPaletteRam, CpuType::Genesis},
+		{MemoryType::Atari2600PrgRom, CpuType::Atari2600},
+		{MemoryType::Atari2600Ram, CpuType::Atari2600},
+		{MemoryType::Atari2600TiaRegisters, CpuType::Atari2600},
+		{MemoryType::ChannelFBiosRom, CpuType::ChannelF},
+		{MemoryType::ChannelFCartRom, CpuType::ChannelF},
+		{MemoryType::ChannelFVideoRam, CpuType::ChannelF}
+	}};
+
+	for (const ExpectedOwner& expected : kExpected) {
+		EXPECT_EQ(DebugUtilities::ToCpuType(expected.Type), expected.Cpu);
+	}
 }
