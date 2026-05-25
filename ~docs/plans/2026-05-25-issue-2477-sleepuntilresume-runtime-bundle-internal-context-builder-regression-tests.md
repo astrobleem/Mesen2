@@ -1,4 +1,4 @@
-# Issue #2477 SleepUntilResume Runtime-Bundle Internal Context Builder Regression Tests
+﻿# Issue #2477 SleepUntilResume Runtime-Bundle Internal Context Builder Regression Tests
 
 ## Scope
 

@@ -1,4 +1,4 @@
-# Issue #2476 SleepUntilResume Runtime-Bundle Dispatch Context Builder
+﻿# Issue #2476 SleepUntilResume Runtime-Bundle Dispatch Context Builder
 
 ## Scope
 

@@ -1,4 +1,4 @@
-# Issue #2478 SleepUntilResume Runtime-Bundle Internal Context Builder Refactor
+﻿# Issue #2478 SleepUntilResume Runtime-Bundle Internal Context Builder Refactor
 
 ## Scope
 

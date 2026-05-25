@@ -1,4 +1,4 @@
-# Issue #2473 SleepUntilResume Pre-Break Action Plan Helper
+﻿# Issue #2473 SleepUntilResume Pre-Break Action Plan Helper
 
 ## Scope
 
