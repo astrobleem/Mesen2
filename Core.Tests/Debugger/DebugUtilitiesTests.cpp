@@ -187,3 +187,92 @@ TEST(DebugUtilitiesTests, SubMemoryTypesContinueToMapToExpectedCpuOwners) {
 		EXPECT_EQ(DebugUtilities::ToCpuType(expected.Type), expected.Cpu);
 	}
 }
+
+TEST(DebugUtilitiesTests, MemoryClassificationParityRemainsStable) {
+	static constexpr std::array<MemoryType, 24> kPpuMemoryTypes = {{
+		MemoryType::SnesVideoRam,
+		MemoryType::SnesSpriteRam,
+		MemoryType::SnesCgRam,
+		MemoryType::GbVideoRam,
+		MemoryType::GbSpriteRam,
+		MemoryType::NesChrRam,
+		MemoryType::NesChrRom,
+		MemoryType::NesSpriteRam,
+		MemoryType::NesPaletteRam,
+		MemoryType::NesNametableRam,
+		MemoryType::NesSecondarySpriteRam,
+		MemoryType::NesPpuMemory,
+		MemoryType::PceVideoRam,
+		MemoryType::PceVideoRamVdc2,
+		MemoryType::PcePaletteRam,
+		MemoryType::PceSpriteRam,
+		MemoryType::PceSpriteRamVdc2,
+		MemoryType::SmsVideoRam,
+		MemoryType::SmsPaletteRam,
+		MemoryType::GbaVideoRam,
+		MemoryType::GbaSpriteRam,
+		MemoryType::GbaPaletteRam,
+		MemoryType::GenesisVideoRam,
+		MemoryType::GenesisPaletteRam
+	}};
+
+	static constexpr std::array<MemoryType, 24> kRomMemoryTypes = {{
+		MemoryType::SnesPrgRom,
+		MemoryType::GbPrgRom,
+		MemoryType::GbBootRom,
+		MemoryType::NesPrgRom,
+		MemoryType::NesChrRom,
+		MemoryType::PcePrgRom,
+		MemoryType::DspDataRom,
+		MemoryType::DspProgramRom,
+		MemoryType::St018PrgRom,
+		MemoryType::St018DataRom,
+		MemoryType::SufamiTurboFirmware,
+		MemoryType::SufamiTurboSecondCart,
+		MemoryType::SpcRom,
+		MemoryType::SmsPrgRom,
+		MemoryType::SmsBootRom,
+		MemoryType::GbaPrgRom,
+		MemoryType::GbaBootRom,
+		MemoryType::WsPrgRom,
+		MemoryType::LynxPrgRom,
+		MemoryType::LynxBootRom,
+		MemoryType::GenesisPrgRom,
+		MemoryType::Atari2600PrgRom,
+		MemoryType::ChannelFBiosRom,
+		MemoryType::ChannelFCartRom
+	}};
+
+	static constexpr std::array<MemoryType, 10> kNonVolatileRamMemoryTypes = {{
+		MemoryType::NesSaveRam,
+		MemoryType::GbCartRam,
+		MemoryType::SnesSaveRam,
+		MemoryType::SufamiTurboSecondCartRam,
+		MemoryType::PceSaveRam,
+		MemoryType::SnesRegister,
+		MemoryType::SmsCartRam,
+		MemoryType::GbaSaveRam,
+		MemoryType::WsCartRam,
+		MemoryType::LynxSaveRam
+	}};
+
+	for (MemoryType memoryType : kPpuMemoryTypes) {
+		EXPECT_TRUE(DebugUtilities::IsPpuMemory(memoryType));
+	}
+
+	for (MemoryType memoryType : kRomMemoryTypes) {
+		EXPECT_TRUE(DebugUtilities::IsRom(memoryType));
+		EXPECT_FALSE(DebugUtilities::IsVolatileRam(memoryType));
+	}
+
+	for (MemoryType memoryType : kNonVolatileRamMemoryTypes) {
+		EXPECT_FALSE(DebugUtilities::IsVolatileRam(memoryType));
+	}
+
+	EXPECT_FALSE(DebugUtilities::IsPpuMemory(MemoryType::SnesMemory));
+	EXPECT_FALSE(DebugUtilities::IsPpuMemory(MemoryType::NesMemory));
+	EXPECT_FALSE(DebugUtilities::IsRom(MemoryType::GbaVideoRam));
+	EXPECT_FALSE(DebugUtilities::IsRom(MemoryType::SnesWorkRam));
+	EXPECT_TRUE(DebugUtilities::IsVolatileRam(MemoryType::SnesWorkRam));
+	EXPECT_TRUE(DebugUtilities::IsVolatileRam(MemoryType::GbWorkRam));
+}

@@ -39,10 +39,17 @@ Reduce duplicated CpuType/MemoryType mapping logic and centralize debugger mappi
 2. #2545 - Add regression tests for grouped owner mapping parity.
 3. #2546 - Refactor DebugUtilities::ToCpuType grouped mappings to helper.
 
+## Fifth Slice Trio
+
+1. #2547 - Add shared constexpr membership helper for memory classification sets.
+2. #2548 - Add regression tests for memory classification parity.
+3. #2549 - Refactor DebugUtilities classification switches to shared set helper.
+
 ## Progress
 
 - Completed: #2538, #2541, #2543 (base-memory ownership path consolidation in ToCpuType).
-- In Progress: #2544, #2545, #2546 (non-relative owner mapping consolidation in ToCpuType).
+- Completed: #2544, #2545, #2546 (non-relative owner mapping consolidation in ToCpuType).
+- In Progress: #2547, #2548, #2549 (classification membership helper + switch consolidation).
 
 ## Acceptance
 

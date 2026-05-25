@@ -70,6 +70,17 @@ public:
 		[[unlikely]] throw std::runtime_error("Invalid CPU type");
 	}
 
+	template<size_t N>
+	[[nodiscard]] static constexpr bool ContainsMemoryType(MemoryType type, const std::array<MemoryType, N>& set) {
+		for (MemoryType value : set) {
+			if (value == type) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	/// <summary>
 	/// Get CPU memory type for CPU.
 	/// </summary>
@@ -95,7 +106,11 @@ public:
 	/// <returns>Owning CPU type</returns>
 	[[nodiscard]] static constexpr CpuType ToCpuType(MemoryType type) {
 		if (IsRelativeMemory(type)) {
-			return GetCpuTypeFromBaseMemoryType(type);
+			for (const CpuTypeMetadata& metadata : _cpuTypeMetadata) {
+				if (metadata.CpuMemoryType == type) {
+					return metadata.Type;
+				}
+			}
 		}
 
 		return GetCpuTypeFromNonRelativeMemoryType(type);
@@ -129,85 +144,14 @@ public:
 	/// Check if memory type is PPU memory (VRAM/OAM/palette).
 	/// </summary>
 	[[nodiscard]] static constexpr bool IsPpuMemory(MemoryType memType) {
-		switch (memType) {
-			case MemoryType::SnesVideoRam:
-			case MemoryType::SnesSpriteRam:
-			case MemoryType::SnesCgRam:
-			case MemoryType::GbVideoRam:
-			case MemoryType::GbSpriteRam:
-
-			case MemoryType::NesChrRam:
-			case MemoryType::NesChrRom:
-			case MemoryType::NesSpriteRam:
-			case MemoryType::NesPaletteRam:
-			case MemoryType::NesNametableRam:
-			case MemoryType::NesSecondarySpriteRam:
-			case MemoryType::NesPpuMemory:
-				return true;
-
-			case MemoryType::PceVideoRam:
-			case MemoryType::PceVideoRamVdc2:
-			case MemoryType::PcePaletteRam:
-			case MemoryType::PceSpriteRam:
-			case MemoryType::PceSpriteRamVdc2:
-				return true;
-
-			case MemoryType::SmsVideoRam:
-			case MemoryType::SmsPaletteRam:
-				return true;
-
-			case MemoryType::GbaVideoRam:
-			case MemoryType::GbaSpriteRam:
-			case MemoryType::GbaPaletteRam:
-				return true;
-
-			case MemoryType::GenesisVideoRam:
-			case MemoryType::GenesisPaletteRam:
-				return true;
-
-			default:
-				return false;
-		}
+		return ContainsMemoryType(memType, _ppuMemoryTypes);
 	}
 
 	/// <summary>
 	/// Check if memory type is ROM (read-only).
 	/// </summary>
 	[[nodiscard]] static constexpr bool IsRom(MemoryType memType) {
-		switch (memType) {
-			case MemoryType::SnesPrgRom:
-			case MemoryType::GbPrgRom:
-			case MemoryType::GbBootRom:
-			case MemoryType::NesPrgRom:
-			case MemoryType::NesChrRom:
-			case MemoryType::PcePrgRom:
-			case MemoryType::DspDataRom:
-			case MemoryType::DspProgramRom:
-			case MemoryType::St018PrgRom:
-			case MemoryType::St018DataRom:
-			case MemoryType::SufamiTurboFirmware:
-			case MemoryType::SufamiTurboSecondCart:
-			case MemoryType::SpcRom:
-			case MemoryType::SmsPrgRom:
-			case MemoryType::SmsBootRom:
-			case MemoryType::GbaPrgRom:
-			case MemoryType::GbaBootRom:
-			case MemoryType::WsPrgRom:
-			case MemoryType::LynxPrgRom:
-			case MemoryType::LynxBootRom:
-			case MemoryType::GenesisPrgRom:
-				return true;
-
-			case MemoryType::Atari2600PrgRom:
-				return true;
-
-			case MemoryType::ChannelFBiosRom:
-			case MemoryType::ChannelFCartRom:
-				return true;
-
-			default:
-				return false;
-		}
+		return ContainsMemoryType(memType, _romMemoryTypes);
 	}
 
 	[[nodiscard]] static constexpr bool IsVolatileRam(MemoryType memType) {
@@ -215,22 +159,7 @@ public:
 			return false;
 		}
 
-		switch (memType) {
-			case MemoryType::NesSaveRam:
-			case MemoryType::GbCartRam:
-			case MemoryType::SnesSaveRam:
-			case MemoryType::SufamiTurboSecondCartRam:
-			case MemoryType::PceSaveRam:
-			case MemoryType::SnesRegister:
-			case MemoryType::SmsCartRam:
-			case MemoryType::GbaSaveRam:
-			case MemoryType::WsCartRam:
-			case MemoryType::LynxSaveRam:
-				return false;
-
-			default:
-				return true;
-		}
+		return !ContainsMemoryType(memType, _nonVolatileRamMemoryTypes);
 	}
 
 	/// <summary>
@@ -295,7 +224,7 @@ private:
 		{CpuType::ChannelF, MemoryType::ChannelFMemory, MemoryType::ChannelFCartRom, 4}
 	}};
 
-	static constexpr std::array<MemoryTypeOwnerMapping, 76> _nonRelativeMemoryTypeOwnerMappings = {{
+	static constexpr std::array<MemoryTypeOwnerMapping, 91> _nonRelativeMemoryTypeOwnerMappings = {{
 		{MemoryType::SnesCgRam, CpuType::Snes},
 		{MemoryType::SnesPrgRom, CpuType::Snes},
 		{MemoryType::SnesSaveRam, CpuType::Snes},
@@ -386,5 +315,72 @@ private:
 		{MemoryType::ChannelFBiosRom, CpuType::ChannelF},
 		{MemoryType::ChannelFCartRom, CpuType::ChannelF},
 		{MemoryType::ChannelFVideoRam, CpuType::ChannelF}
+	}};
+
+	static constexpr std::array<MemoryType, 24> _ppuMemoryTypes = {{
+		MemoryType::SnesVideoRam,
+		MemoryType::SnesSpriteRam,
+		MemoryType::SnesCgRam,
+		MemoryType::GbVideoRam,
+		MemoryType::GbSpriteRam,
+		MemoryType::NesChrRam,
+		MemoryType::NesChrRom,
+		MemoryType::NesSpriteRam,
+		MemoryType::NesPaletteRam,
+		MemoryType::NesNametableRam,
+		MemoryType::NesSecondarySpriteRam,
+		MemoryType::NesPpuMemory,
+		MemoryType::PceVideoRam,
+		MemoryType::PceVideoRamVdc2,
+		MemoryType::PcePaletteRam,
+		MemoryType::PceSpriteRam,
+		MemoryType::PceSpriteRamVdc2,
+		MemoryType::SmsVideoRam,
+		MemoryType::SmsPaletteRam,
+		MemoryType::GbaVideoRam,
+		MemoryType::GbaSpriteRam,
+		MemoryType::GbaPaletteRam,
+		MemoryType::GenesisVideoRam,
+		MemoryType::GenesisPaletteRam
+	}};
+
+	static constexpr std::array<MemoryType, 24> _romMemoryTypes = {{
+		MemoryType::SnesPrgRom,
+		MemoryType::GbPrgRom,
+		MemoryType::GbBootRom,
+		MemoryType::NesPrgRom,
+		MemoryType::NesChrRom,
+		MemoryType::PcePrgRom,
+		MemoryType::DspDataRom,
+		MemoryType::DspProgramRom,
+		MemoryType::St018PrgRom,
+		MemoryType::St018DataRom,
+		MemoryType::SufamiTurboFirmware,
+		MemoryType::SufamiTurboSecondCart,
+		MemoryType::SpcRom,
+		MemoryType::SmsPrgRom,
+		MemoryType::SmsBootRom,
+		MemoryType::GbaPrgRom,
+		MemoryType::GbaBootRom,
+		MemoryType::WsPrgRom,
+		MemoryType::LynxPrgRom,
+		MemoryType::LynxBootRom,
+		MemoryType::GenesisPrgRom,
+		MemoryType::Atari2600PrgRom,
+		MemoryType::ChannelFBiosRom,
+		MemoryType::ChannelFCartRom
+	}};
+
+	static constexpr std::array<MemoryType, 10> _nonVolatileRamMemoryTypes = {{
+		MemoryType::NesSaveRam,
+		MemoryType::GbCartRam,
+		MemoryType::SnesSaveRam,
+		MemoryType::SufamiTurboSecondCartRam,
+		MemoryType::PceSaveRam,
+		MemoryType::SnesRegister,
+		MemoryType::SmsCartRam,
+		MemoryType::GbaSaveRam,
+		MemoryType::WsCartRam,
+		MemoryType::LynxSaveRam
 	}};
 };
