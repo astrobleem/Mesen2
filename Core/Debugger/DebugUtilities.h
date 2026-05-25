@@ -1,4 +1,5 @@
-#pragma once
+﻿#pragma once
+#include <array>
 #include "pch.h"
 #include "Debugger/DebugTypes.h"
 #include "Shared/MemoryType.h"
@@ -32,50 +33,29 @@
 /// </remarks>
 class DebugUtilities {
 public:
+	struct CpuTypeMetadata {
+		CpuType Type;
+		MemoryType CpuMemoryType;
+		int ProgramCounterSize;
+	};
+
+	[[nodiscard]] static constexpr const CpuTypeMetadata& GetCpuTypeMetadata(CpuType type) {
+		for (const CpuTypeMetadata& metadata : _cpuTypeMetadata) {
+			if (metadata.Type == type) {
+				return metadata;
+			}
+		}
+
+		[[unlikely]] throw std::runtime_error("Invalid CPU type");
+	}
+
 	/// <summary>
 	/// Get CPU memory type for CPU.
 	/// </summary>
 	/// <param name="type">CPU type</param>
 	/// <returns>Memory type (e.g., SnesMemory for CpuType::Snes)</returns>
 	[[nodiscard]] static constexpr MemoryType GetCpuMemoryType(CpuType type) {
-		switch (type) {
-			case CpuType::Snes:
-				return MemoryType::SnesMemory;
-			case CpuType::Spc:
-				return MemoryType::SpcMemory;
-			case CpuType::NecDsp:
-				return MemoryType::NecDspMemory;
-			case CpuType::Sa1:
-				return MemoryType::Sa1Memory;
-			case CpuType::Gsu:
-				return MemoryType::GsuMemory;
-			case CpuType::Cx4:
-				return MemoryType::Cx4Memory;
-			case CpuType::St018:
-				return MemoryType::St018Memory;
-			case CpuType::Gameboy:
-				return MemoryType::GameboyMemory;
-			case CpuType::Nes:
-				return MemoryType::NesMemory;
-			case CpuType::Pce:
-				return MemoryType::PceMemory;
-			case CpuType::Sms:
-				return MemoryType::SmsMemory;
-			case CpuType::Gba:
-				return MemoryType::GbaMemory;
-			case CpuType::Ws:
-				return MemoryType::WsMemory;
-			case CpuType::Lynx:
-				return MemoryType::LynxMemory;
-			case CpuType::Genesis:
-				return MemoryType::GenesisMemory;
-			case CpuType::Atari2600:
-				return MemoryType::Atari2600Memory;
-			case CpuType::ChannelF:
-				return MemoryType::ChannelFMemory;
-		}
-
-		[[unlikely]] throw std::runtime_error("Invalid CPU type");
+		return GetCpuTypeMetadata(type).CpuMemoryType;
 	}
 
 	/// <summary>
@@ -84,44 +64,7 @@ public:
 	/// <param name="type">CPU type</param>
 	/// <returns>Hex digit count (4=16-bit, 5=20-bit, 6=24-bit, 8=32-bit)</returns>
 	[[nodiscard]] static constexpr int GetProgramCounterSize(CpuType type) {
-		switch (type) {
-			case CpuType::Snes:
-				return 6;
-			case CpuType::Spc:
-				return 4;
-			case CpuType::NecDsp:
-				return 6;
-			case CpuType::Sa1:
-				return 6;
-			case CpuType::Gsu:
-				return 6;
-			case CpuType::Cx4:
-				return 6;
-			case CpuType::St018:
-				return 8;
-			case CpuType::Gameboy:
-				return 4;
-			case CpuType::Nes:
-				return 4;
-			case CpuType::Pce:
-				return 4;
-			case CpuType::Sms:
-				return 4;
-			case CpuType::Gba:
-				return 8;
-			case CpuType::Ws:
-				return 5;
-			case CpuType::Lynx:
-				return 4;
-			case CpuType::Genesis:
-				return 6;
-			case CpuType::Atari2600:
-				return 4;
-			case CpuType::ChannelF:
-				return 4;
-		}
-
-		[[unlikely]] throw std::runtime_error("Invalid CPU type");
+		return GetCpuTypeMetadata(type).ProgramCounterSize;
 	}
 
 	/// <summary>
@@ -479,4 +422,25 @@ public:
 	[[nodiscard]] static constexpr int GetMemoryTypeCount() {
 		return (int)MemoryType::None + 1;
 	}
+
+private:
+	static constexpr std::array<CpuTypeMetadata, 17> _cpuTypeMetadata = {{
+		{CpuType::Snes, MemoryType::SnesMemory, 6},
+		{CpuType::Spc, MemoryType::SpcMemory, 4},
+		{CpuType::NecDsp, MemoryType::NecDspMemory, 6},
+		{CpuType::Sa1, MemoryType::Sa1Memory, 6},
+		{CpuType::Gsu, MemoryType::GsuMemory, 6},
+		{CpuType::Cx4, MemoryType::Cx4Memory, 6},
+		{CpuType::St018, MemoryType::St018Memory, 8},
+		{CpuType::Gameboy, MemoryType::GameboyMemory, 4},
+		{CpuType::Nes, MemoryType::NesMemory, 4},
+		{CpuType::Pce, MemoryType::PceMemory, 4},
+		{CpuType::Sms, MemoryType::SmsMemory, 4},
+		{CpuType::Gba, MemoryType::GbaMemory, 8},
+		{CpuType::Ws, MemoryType::WsMemory, 5},
+		{CpuType::Lynx, MemoryType::LynxMemory, 4},
+		{CpuType::Genesis, MemoryType::GenesisMemory, 6},
+		{CpuType::Atari2600, MemoryType::Atari2600Memory, 4},
+		{CpuType::ChannelF, MemoryType::ChannelFMemory, 4}
+	}};
 };

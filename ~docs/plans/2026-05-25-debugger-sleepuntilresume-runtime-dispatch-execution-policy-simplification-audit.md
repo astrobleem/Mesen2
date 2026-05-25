@@ -1,4 +1,4 @@
-# Debugger SleepUntilResume Runtime Dispatch Execution Policy Simplification Audit (2026-05-25)
+﻿# Debugger SleepUntilResume Runtime Dispatch Execution Policy Simplification Audit (2026-05-25)
 
 ## Context
 

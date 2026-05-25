@@ -1,4 +1,4 @@
-# Issue #2521 SleepUntilResume Runtime Dispatch Execution Policy Mapping Regression Tests
+﻿# Issue #2521 SleepUntilResume Runtime Dispatch Execution Policy Mapping Regression Tests
 
 ## Scope
 

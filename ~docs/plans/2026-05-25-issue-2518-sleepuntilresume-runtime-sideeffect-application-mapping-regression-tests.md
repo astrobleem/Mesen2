@@ -1,4 +1,4 @@
-# Issue #2518 SleepUntilResume Runtime Side-Effect Application Mapping Regression Tests
+﻿# Issue #2518 SleepUntilResume Runtime Side-Effect Application Mapping Regression Tests
 
 ## Scope
 

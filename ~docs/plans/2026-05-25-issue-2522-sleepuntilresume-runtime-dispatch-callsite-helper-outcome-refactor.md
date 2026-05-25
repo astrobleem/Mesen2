@@ -1,4 +1,4 @@
-# Issue #2522 SleepUntilResume Runtime Dispatch Callsite Helper Outcome Refactor
+﻿# Issue #2522 SleepUntilResume Runtime Dispatch Callsite Helper Outcome Refactor
 
 ## Scope
 

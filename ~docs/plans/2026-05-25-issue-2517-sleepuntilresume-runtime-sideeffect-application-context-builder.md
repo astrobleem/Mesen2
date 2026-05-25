@@ -1,4 +1,4 @@
-# Issue #2517 SleepUntilResume Runtime Side-Effect Application Context Builder
+﻿# Issue #2517 SleepUntilResume Runtime Side-Effect Application Context Builder
 
 ## Scope
 

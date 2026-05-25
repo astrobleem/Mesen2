@@ -1,4 +1,4 @@
-# Issue #2519 SleepUntilResume Runtime Side-Effect State Update Refactor
+﻿# Issue #2519 SleepUntilResume Runtime Side-Effect State Update Refactor
 
 ## Scope
 

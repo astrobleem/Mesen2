@@ -1,4 +1,4 @@
-# Debugger SleepUntilResume Runtime Side-Effect Application Simplification Audit (2026-05-25)
+﻿# Debugger SleepUntilResume Runtime Side-Effect Application Simplification Audit (2026-05-25)
 
 ## Context
 
