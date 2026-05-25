@@ -705,6 +705,14 @@ struct SleepUntilResumePreBreakExecutionOutcome {
 	return context;
 }
 
+[[nodiscard]] inline SleepUntilResumeLoopPostBundleContext BuildSleepUntilResumeLoopPostBundleRuntimeContext(bool waitForBreakResume, int32_t suspendRequestCount, int32_t breakRequestCount) {
+	return BuildSleepUntilResumeLoopPostBundleContext(waitForBreakResume, suspendRequestCount > 0, breakRequestCount > 0, false);
+}
+
+[[nodiscard]] inline SleepUntilResumeLoopPostBundleContext BuildSleepUntilResumePostLoopBundleRuntimeContext(bool notificationSent) {
+	return BuildSleepUntilResumeLoopPostBundleContext(false, false, false, notificationSent);
+}
+
 [[nodiscard]] inline SleepUntilResumePreBreakActionPlanContext BuildSleepUntilResumePreBreakActionPlanContext(const SleepUntilResumePhaseOutcome& phaseOutcome) {
 	SleepUntilResumePreBreakActionPlanContext context = {};
 	context.ShouldRunPreBreakSequence = phaseOutcome.PreLoopBundle.PreLoop.ShouldRunPreBreakSequence;

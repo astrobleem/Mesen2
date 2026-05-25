@@ -330,6 +330,22 @@ TEST(DebuggerDispatchUtilsTests, SleepUntilResumeLoopPostContextBuilderSupportsN
 	EXPECT_FALSE(outcome.PostLoop.ShouldSendDebuggerResumedNotification);
 }
 
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumeLoopPostBundleRuntimeContextBuilderMapsCounterStateToBooleans) {
+	SleepUntilResumeLoopPostBundleContext context = BuildSleepUntilResumeLoopPostBundleRuntimeContext(true, 2, 0);
+	EXPECT_TRUE(context.WaitForBreakResume);
+	EXPECT_TRUE(context.HasSuspendRequest);
+	EXPECT_FALSE(context.HasBreakRequest);
+	EXPECT_FALSE(context.NotificationSent);
+}
+
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumePostLoopBundleRuntimeContextBuilderMapsNotificationState) {
+	SleepUntilResumeLoopPostBundleContext context = BuildSleepUntilResumePostLoopBundleRuntimeContext(true);
+	EXPECT_FALSE(context.WaitForBreakResume);
+	EXPECT_FALSE(context.HasSuspendRequest);
+	EXPECT_FALSE(context.HasBreakRequest);
+	EXPECT_TRUE(context.NotificationSent);
+}
+
 TEST(DebuggerDispatchUtilsTests, SleepUntilResumeCoordinatorEntryOutcomeResolvesContinueWithEmittedPolicyInputs) {
 	SleepUntilResumeCoordinatorEntryContext context = {};
 	context.Guard = BuildSleepUntilResumeGuardContext(false, false, true, true, true, false);

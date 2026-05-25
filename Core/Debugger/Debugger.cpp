@@ -776,7 +776,7 @@ void Debugger::SleepUntilResume(CpuType sourceCpu, BreakSource source, MemoryOpe
 	}
 
 	while (true) {
-		SleepUntilResumeLoopPostBundleContext loopPostBundleContext = BuildSleepUntilResumeLoopPostBundleContext(_waitForBreakResume, _suspendRequestCount > 0, _breakRequestCount > 0, false);
+		SleepUntilResumeLoopPostBundleContext loopPostBundleContext = BuildSleepUntilResumeLoopPostBundleRuntimeContext(_waitForBreakResume, _suspendRequestCount, _breakRequestCount);
 		SleepUntilResumeLoopPostBundleOutcome loopPostBundleOutcome = ResolveSleepUntilResumeLoopPostBundleOutcome(loopPostBundleContext);
 
 		if (!loopPostBundleOutcome.Loop.ShouldContinueWaiting) {
@@ -786,7 +786,7 @@ void Debugger::SleepUntilResume(CpuType sourceCpu, BreakSource source, MemoryOpe
 		std::this_thread::sleep_for(std::chrono::duration<int, std::milli>(loopPostBundleOutcome.Loop.WaitDelayMs));
 	}
 
-	SleepUntilResumeLoopPostBundleContext postLoopBundleContext = BuildSleepUntilResumeLoopPostBundleContext(false, false, false, notificationSent);
+	SleepUntilResumeLoopPostBundleContext postLoopBundleContext = BuildSleepUntilResumePostLoopBundleRuntimeContext(notificationSent);
 	SleepUntilResumeLoopPostBundleOutcome postLoopBundleOutcome = ResolveSleepUntilResumeLoopPostBundleOutcome(postLoopBundleContext);
 
 	if (postLoopBundleOutcome.PostLoop.ShouldDisableScreensaver) {
