@@ -1,4 +1,4 @@
-# Issue #2452 Plan - SleepUntilResume Loop/Post Context Builder Helper
+﻿# Issue #2452 Plan - SleepUntilResume Loop/Post Context Builder Helper
 
 ## Goal
 

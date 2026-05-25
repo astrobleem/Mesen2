@@ -362,6 +362,52 @@ TEST(DebuggerDispatchUtilsTests, SleepUntilResumeCoordinatorEntryOutcomePreserve
 	EXPECT_FALSE(outcome.PhaseContext.DrawPartialFrame);
 }
 
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumePreBreakActionPlanContextBuilderMapsPreLoopAndPreBreakFieldsForEmittedFlow) {
+	SleepUntilResumePhaseContext phaseContext = CreateSleepUntilResumeContinuePhaseContext(BreakSource::Breakpoint, true);
+	SleepUntilResumePhaseOutcome phaseOutcome = ResolveSleepUntilResumePhaseOutcome(phaseContext);
+
+	SleepUntilResumePreBreakActionPlanContext context = BuildSleepUntilResumePreBreakActionPlanContext(phaseOutcome);
+	EXPECT_TRUE(context.ShouldRunPreBreakSequence);
+	EXPECT_TRUE(context.ShouldIgnoreBreakpoints);
+	EXPECT_TRUE(context.ShouldDrawPartialFrame);
+}
+
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumePreBreakActionPlanContextBuilderDisablesPreBreakFieldsForNonEmittedFlow) {
+	SleepUntilResumePhaseContext phaseContext = CreateSleepUntilResumeContinuePhaseContext(BreakSource::Unspecified, true);
+	SleepUntilResumePhaseOutcome phaseOutcome = ResolveSleepUntilResumePhaseOutcome(phaseContext);
+
+	SleepUntilResumePreBreakActionPlanContext context = BuildSleepUntilResumePreBreakActionPlanContext(phaseOutcome);
+	EXPECT_FALSE(context.ShouldRunPreBreakSequence);
+	EXPECT_FALSE(context.ShouldIgnoreBreakpoints);
+	EXPECT_FALSE(context.ShouldDrawPartialFrame);
+}
+
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumePreBreakActionPlanOutcomeDisablesActionsWhenSequenceDoesNotRun) {
+	SleepUntilResumePreBreakActionPlanContext context = {};
+	context.ShouldRunPreBreakSequence = false;
+	context.ShouldIgnoreBreakpoints = true;
+	context.ShouldDrawPartialFrame = true;
+
+	SleepUntilResumePreBreakActionPlanOutcome outcome = ResolveSleepUntilResumePreBreakActionPlanOutcome(context);
+	EXPECT_FALSE(outcome.ShouldCallOnBeforeBreak);
+	EXPECT_FALSE(outcome.ShouldCallOnBeforePause);
+	EXPECT_FALSE(outcome.ShouldIgnoreBreakpoints);
+	EXPECT_FALSE(outcome.ShouldDrawPartialFrame);
+}
+
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumePreBreakActionPlanOutcomePropagatesActionsWhenSequenceRuns) {
+	SleepUntilResumePreBreakActionPlanContext context = {};
+	context.ShouldRunPreBreakSequence = true;
+	context.ShouldIgnoreBreakpoints = true;
+	context.ShouldDrawPartialFrame = false;
+
+	SleepUntilResumePreBreakActionPlanOutcome outcome = ResolveSleepUntilResumePreBreakActionPlanOutcome(context);
+	EXPECT_TRUE(outcome.ShouldCallOnBeforeBreak);
+	EXPECT_TRUE(outcome.ShouldCallOnBeforePause);
+	EXPECT_TRUE(outcome.ShouldIgnoreBreakpoints);
+	EXPECT_FALSE(outcome.ShouldDrawPartialFrame);
+}
+
 TEST(DebuggerDispatchUtilsTests, SleepUntilResumeBreakNotificationPolicyUsesSourceAndBreakRequestState) {
 	EXPECT_TRUE(ShouldEmitSleepUntilResumeBreakNotification(BreakSource::Breakpoint, false));
 	EXPECT_TRUE(ShouldEmitSleepUntilResumeBreakNotification(BreakSource::Breakpoint, true));

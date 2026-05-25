@@ -1,4 +1,4 @@
-# Debugger SleepUntilResume Loop/Post Context Builder Audit (2026-05-24)
+﻿# Debugger SleepUntilResume Loop/Post Context Builder Audit (2026-05-24)
 
 ## Scope
 

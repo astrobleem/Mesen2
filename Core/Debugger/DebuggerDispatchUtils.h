@@ -536,6 +536,19 @@ struct SleepUntilResumeCoordinatorEntryOutcome {
 	SleepUntilResumePhaseOutcome PhaseOutcome = {};
 };
 
+struct SleepUntilResumePreBreakActionPlanContext {
+	bool ShouldRunPreBreakSequence = false;
+	bool ShouldIgnoreBreakpoints = false;
+	bool ShouldDrawPartialFrame = false;
+};
+
+struct SleepUntilResumePreBreakActionPlanOutcome {
+	bool ShouldCallOnBeforeBreak = false;
+	bool ShouldCallOnBeforePause = false;
+	bool ShouldIgnoreBreakpoints = false;
+	bool ShouldDrawPartialFrame = false;
+};
+
 [[nodiscard]] inline SleepUntilResumePhaseOutcome ResolveSleepUntilResumePhaseOutcome(const SleepUntilResumePhaseContext& context) {
 	SleepUntilResumePhaseOutcome outcome = {};
 	outcome.Decision = EvaluateSleepUntilResumeDecision(context.Guard);
@@ -574,6 +587,15 @@ struct SleepUntilResumeCoordinatorEntryOutcome {
 	return outcome;
 }
 
+[[nodiscard]] inline SleepUntilResumePreBreakActionPlanOutcome ResolveSleepUntilResumePreBreakActionPlanOutcome(const SleepUntilResumePreBreakActionPlanContext& context) {
+	SleepUntilResumePreBreakActionPlanOutcome outcome = {};
+	outcome.ShouldCallOnBeforeBreak = context.ShouldRunPreBreakSequence;
+	outcome.ShouldCallOnBeforePause = context.ShouldRunPreBreakSequence;
+	outcome.ShouldIgnoreBreakpoints = context.ShouldRunPreBreakSequence && context.ShouldIgnoreBreakpoints;
+	outcome.ShouldDrawPartialFrame = context.ShouldRunPreBreakSequence && context.ShouldDrawPartialFrame;
+	return outcome;
+}
+
 [[nodiscard]] inline SleepUntilResumeRuntimeBundleContext BuildSleepUntilResumeRuntimeBundleContext(const SleepUntilResumePhaseOutcome& phaseOutcome, CpuType sourceCpu, BreakSource source, int32_t breakpointId, const MemoryOperationInfo* operation, bool notificationSent) {
 	SleepUntilResumeRuntimeBundleContext context = {};
 	context.ShouldRunPreBreakSequence = phaseOutcome.PreLoopBundle.PreLoop.ShouldRunPreBreakSequence;
@@ -603,6 +625,14 @@ struct SleepUntilResumeCoordinatorEntryOutcome {
 	context.HasSuspendRequest = hasSuspendRequest;
 	context.HasBreakRequest = hasBreakRequest;
 	context.NotificationSent = notificationSent;
+	return context;
+}
+
+[[nodiscard]] inline SleepUntilResumePreBreakActionPlanContext BuildSleepUntilResumePreBreakActionPlanContext(const SleepUntilResumePhaseOutcome& phaseOutcome) {
+	SleepUntilResumePreBreakActionPlanContext context = {};
+	context.ShouldRunPreBreakSequence = phaseOutcome.PreLoopBundle.PreLoop.ShouldRunPreBreakSequence;
+	context.ShouldIgnoreBreakpoints = phaseOutcome.PreLoopBundle.PreBreak.ShouldIgnoreBreakpoints;
+	context.ShouldDrawPartialFrame = phaseOutcome.PreLoopBundle.PreBreak.ShouldDrawPartialFrame;
 	return context;
 }
 

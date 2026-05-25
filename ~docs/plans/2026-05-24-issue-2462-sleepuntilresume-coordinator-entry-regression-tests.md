@@ -1,4 +1,4 @@
-# Issue #2462 Plan - Coordinator Entry Helper Regression Tests
+﻿# Issue #2462 Plan - Coordinator Entry Helper Regression Tests
 
 ## Goal
 

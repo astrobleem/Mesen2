@@ -1,4 +1,4 @@
-# Issue #2461 Plan - SleepUntilResume Coordinator Policy Entry Helper
+﻿# Issue #2461 Plan - SleepUntilResume Coordinator Policy Entry Helper
 
 ## Goal
 

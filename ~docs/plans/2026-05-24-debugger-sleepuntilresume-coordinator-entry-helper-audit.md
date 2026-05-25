@@ -1,4 +1,4 @@
-# Debugger SleepUntilResume Coordinator Entry Helper Audit (2026-05-24)
+﻿# Debugger SleepUntilResume Coordinator Entry Helper Audit (2026-05-24)
 
 ## Scope
 

@@ -740,17 +740,24 @@ void Debugger::SleepUntilResume(CpuType sourceCpu, BreakSource source, MemoryOpe
 	entryOutcome = ResolveSleepUntilResumeCoordinatorEntryOutcome(entryContext);
 	phaseContext = entryOutcome.PhaseContext;
 	phaseOutcome = entryOutcome.PhaseOutcome;
+	SleepUntilResumePreBreakActionPlanContext preBreakActionPlanContext = BuildSleepUntilResumePreBreakActionPlanContext(phaseOutcome);
+	SleepUntilResumePreBreakActionPlanOutcome preBreakActionPlanOutcome = ResolveSleepUntilResumePreBreakActionPlanOutcome(preBreakActionPlanContext);
 
 	bool notificationSent = false;
-	if (phaseOutcome.PreLoopBundle.PreLoop.ShouldRunPreBreakSequence) {
+	if (preBreakActionPlanOutcome.ShouldCallOnBeforeBreak) {
 		GetMainDebugger()->OnBeforeBreak(sourceCpu);
+	}
+	if (preBreakActionPlanOutcome.ShouldCallOnBeforePause) {
 		_emu->OnBeforePause(false);
+	}
 
-		if (phaseOutcome.PreLoopBundle.PreBreak.ShouldIgnoreBreakpoints) {
+	if (preBreakActionPlanOutcome.ShouldCallOnBeforeBreak) {
+
+		if (preBreakActionPlanOutcome.ShouldIgnoreBreakpoints) {
 			_debuggers[(int)sourceCpu].Debugger->IgnoreBreakpoints = true;
 		}
 
-		if (phaseOutcome.PreLoopBundle.PreBreak.ShouldDrawPartialFrame) {
+		if (preBreakActionPlanOutcome.ShouldDrawPartialFrame) {
 			_debuggers[(int)sourceCpu].Debugger->DrawPartialFrame();
 		}
 

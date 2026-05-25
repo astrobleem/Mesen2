@@ -1,4 +1,4 @@
-# Issue #2463 Plan - SleepUntilResume Coordinator Entry Refactor
+﻿# Issue #2463 Plan - SleepUntilResume Coordinator Entry Refactor
 
 ## Goal
 

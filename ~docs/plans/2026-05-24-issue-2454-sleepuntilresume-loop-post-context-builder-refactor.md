@@ -1,4 +1,4 @@
-# Issue #2454 Plan - SleepUntilResume Loop/Post Context Builder Refactor
+﻿# Issue #2454 Plan - SleepUntilResume Loop/Post Context Builder Refactor
 
 ## Goal
 
