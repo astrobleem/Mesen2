@@ -346,6 +346,17 @@ TEST(DebuggerDispatchUtilsTests, SleepUntilResumeCoordinatorEntryOutcomeResolves
 	EXPECT_TRUE(outcome.PhaseContext.DrawPartialFrame);
 }
 
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumeCoordinatorEntryContextBuilderMapsGuardAndRuntimePolicyFields) {
+	SleepUntilResumeGuardContext guardContext = BuildSleepUntilResumeGuardContext(false, true, true, false, true, false);
+	SleepUntilResumeCoordinatorEntryContext context = BuildSleepUntilResumeCoordinatorEntryContext(guardContext, BreakSource::Breakpoint, true, true, false);
+
+	EXPECT_TRUE(context.Guard.ExecutionAlreadyStopped);
+	EXPECT_EQ(context.Source, BreakSource::Breakpoint);
+	EXPECT_TRUE(context.HasBreakRequest);
+	EXPECT_TRUE(context.SingleBreakpointPerInstruction);
+	EXPECT_FALSE(context.DrawPartialFrame);
+}
+
 TEST(DebuggerDispatchUtilsTests, SleepUntilResumeCoordinatorEntryOutcomePreservesSkipDecisionWithoutEmittedPath) {
 	SleepUntilResumeCoordinatorEntryContext context = {};
 	context.Guard = BuildSleepUntilResumeGuardContext(true, false, true, true, true, false);
@@ -406,6 +417,36 @@ TEST(DebuggerDispatchUtilsTests, SleepUntilResumePreBreakActionPlanOutcomePropag
 	EXPECT_TRUE(outcome.ShouldCallOnBeforePause);
 	EXPECT_TRUE(outcome.ShouldIgnoreBreakpoints);
 	EXPECT_FALSE(outcome.ShouldDrawPartialFrame);
+}
+
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumePreBreakExecutionOutcomeEnablesRuntimeFlowForBreakSequence) {
+	SleepUntilResumePreBreakExecutionContext context = {};
+	context.ActionPlan.ShouldCallOnBeforeBreak = true;
+	context.ActionPlan.ShouldCallOnBeforePause = true;
+	context.ActionPlan.ShouldIgnoreBreakpoints = true;
+	context.ActionPlan.ShouldDrawPartialFrame = true;
+
+	SleepUntilResumePreBreakExecutionOutcome outcome = ResolveSleepUntilResumePreBreakExecutionOutcome(context);
+	EXPECT_TRUE(outcome.ShouldCallOnBeforeBreak);
+	EXPECT_TRUE(outcome.ShouldCallOnBeforePause);
+	EXPECT_TRUE(outcome.ShouldSetIgnoreBreakpoints);
+	EXPECT_TRUE(outcome.ShouldCallDrawPartialFrame);
+	EXPECT_TRUE(outcome.ShouldRunRuntimeBundle);
+}
+
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumePreBreakExecutionOutcomeDisablesRuntimeFlowWithoutBreakCallback) {
+	SleepUntilResumePreBreakExecutionContext context = {};
+	context.ActionPlan.ShouldCallOnBeforeBreak = false;
+	context.ActionPlan.ShouldCallOnBeforePause = false;
+	context.ActionPlan.ShouldIgnoreBreakpoints = true;
+	context.ActionPlan.ShouldDrawPartialFrame = true;
+
+	SleepUntilResumePreBreakExecutionOutcome outcome = ResolveSleepUntilResumePreBreakExecutionOutcome(context);
+	EXPECT_FALSE(outcome.ShouldCallOnBeforeBreak);
+	EXPECT_FALSE(outcome.ShouldCallOnBeforePause);
+	EXPECT_FALSE(outcome.ShouldSetIgnoreBreakpoints);
+	EXPECT_FALSE(outcome.ShouldCallDrawPartialFrame);
+	EXPECT_FALSE(outcome.ShouldRunRuntimeBundle);
 }
 
 TEST(DebuggerDispatchUtilsTests, SleepUntilResumeBreakNotificationPolicyUsesSourceAndBreakRequestState) {

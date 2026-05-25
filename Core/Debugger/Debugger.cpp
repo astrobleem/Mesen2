@@ -703,11 +703,7 @@ void Debugger::ProcessPpuCycle() {
 
 void Debugger::SleepUntilResume(CpuType sourceCpu, BreakSource source, MemoryOperationInfo* operation, int breakpointId) {
 	SleepUntilResumeGuardContext guardContext = BuildSleepUntilResumeGuardContext(_suspendRequestCount > 0, _executionStopped, _breakRequestCount > 0, sourceCpu == _mainCpuType, _debuggers[(int)sourceCpu].Debugger->AllowChangeProgramCounter, IsBreakpointForbidden(source, sourceCpu, operation));
-
-	SleepUntilResumeCoordinatorEntryContext entryContext = {};
-	entryContext.Guard = guardContext;
-	entryContext.Source = source;
-	entryContext.HasBreakRequest = _breakRequestCount > 0;
+	SleepUntilResumeCoordinatorEntryContext entryContext = BuildSleepUntilResumeCoordinatorEntryContext(guardContext, source, _breakRequestCount > 0, false, false);
 	SleepUntilResumeCoordinatorEntryOutcome entryOutcome = ResolveSleepUntilResumeCoordinatorEntryOutcome(entryContext);
 	SleepUntilResumePhaseContext phaseContext = entryOutcome.PhaseContext;
 	SleepUntilResumePhaseOutcome phaseOutcome = entryOutcome.PhaseOutcome;
@@ -734,33 +730,33 @@ void Debugger::SleepUntilResume(CpuType sourceCpu, BreakSource source, MemoryOpe
 	_executionStopped = true;
 
 	const DebugConfig& debugCfg = _settings->GetDebugConfig();
-	entryContext.SingleBreakpointPerInstruction = debugCfg.SingleBreakpointPerInstruction;
-	entryContext.DrawPartialFrame = debugCfg.DrawPartialFrame;
-	entryContext.HasBreakRequest = _breakRequestCount > 0;
+	entryContext = BuildSleepUntilResumeCoordinatorEntryContext(guardContext, source, _breakRequestCount > 0, debugCfg.SingleBreakpointPerInstruction, debugCfg.DrawPartialFrame);
 	entryOutcome = ResolveSleepUntilResumeCoordinatorEntryOutcome(entryContext);
 	phaseContext = entryOutcome.PhaseContext;
 	phaseOutcome = entryOutcome.PhaseOutcome;
 	SleepUntilResumePreBreakActionPlanContext preBreakActionPlanContext = BuildSleepUntilResumePreBreakActionPlanContext(phaseOutcome);
 	SleepUntilResumePreBreakActionPlanOutcome preBreakActionPlanOutcome = ResolveSleepUntilResumePreBreakActionPlanOutcome(preBreakActionPlanContext);
+	SleepUntilResumePreBreakExecutionContext preBreakExecutionContext = {};
+	preBreakExecutionContext.ActionPlan = preBreakActionPlanOutcome;
+	SleepUntilResumePreBreakExecutionOutcome preBreakExecutionOutcome = ResolveSleepUntilResumePreBreakExecutionOutcome(preBreakExecutionContext);
 
 	bool notificationSent = false;
-	if (preBreakActionPlanOutcome.ShouldCallOnBeforeBreak) {
+	if (preBreakExecutionOutcome.ShouldCallOnBeforeBreak) {
 		GetMainDebugger()->OnBeforeBreak(sourceCpu);
 	}
-	if (preBreakActionPlanOutcome.ShouldCallOnBeforePause) {
+	if (preBreakExecutionOutcome.ShouldCallOnBeforePause) {
 		_emu->OnBeforePause(false);
 	}
 
-	if (preBreakActionPlanOutcome.ShouldCallOnBeforeBreak) {
+	if (preBreakExecutionOutcome.ShouldSetIgnoreBreakpoints) {
+		_debuggers[(int)sourceCpu].Debugger->IgnoreBreakpoints = true;
+	}
 
-		if (preBreakActionPlanOutcome.ShouldIgnoreBreakpoints) {
-			_debuggers[(int)sourceCpu].Debugger->IgnoreBreakpoints = true;
-		}
+	if (preBreakExecutionOutcome.ShouldCallDrawPartialFrame) {
+		_debuggers[(int)sourceCpu].Debugger->DrawPartialFrame();
+	}
 
-		if (preBreakActionPlanOutcome.ShouldDrawPartialFrame) {
-			_debuggers[(int)sourceCpu].Debugger->DrawPartialFrame();
-		}
-
+	if (preBreakExecutionOutcome.ShouldRunRuntimeBundle) {
 		SleepUntilResumeRuntimeBundleContext runtimeBundleContext = BuildSleepUntilResumeRuntimeBundleContext(phaseOutcome, sourceCpu, source, breakpointId, operation, notificationSent);
 		SleepUntilResumeRuntimeBundleOutcome runtimeBundleOutcome = ResolveSleepUntilResumeRuntimeBundleOutcome(runtimeBundleContext);
 
