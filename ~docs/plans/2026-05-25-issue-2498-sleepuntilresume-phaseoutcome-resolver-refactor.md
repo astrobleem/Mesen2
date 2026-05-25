@@ -1,4 +1,4 @@
-# Issue #2498 SleepUntilResume PhaseOutcome Resolver Refactor
+﻿# Issue #2498 SleepUntilResume PhaseOutcome Resolver Refactor
 
 ## Scope
 

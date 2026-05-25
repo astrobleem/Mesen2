@@ -1,4 +1,4 @@
-# Issue #2507 SleepUntilResume Pre-Break Execution Helper Refactor
+﻿# Issue #2507 SleepUntilResume Pre-Break Execution Helper Refactor
 
 ## Scope
 

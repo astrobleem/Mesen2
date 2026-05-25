@@ -423,6 +423,18 @@ struct SleepUntilResumeRuntimeBundleOutcome {
 	SleepUntilResumeRuntimeSideEffectOutcome SideEffect = {};
 };
 
+struct SleepUntilResumeRuntimeSideEffectApplicationContext {
+	bool WaitForBreakResume = false;
+	bool NotificationSent = false;
+	SleepUntilResumeRuntimeSideEffectOutcome SideEffect = {};
+};
+
+struct SleepUntilResumeRuntimeSideEffectApplicationOutcome {
+	bool WaitForBreakResume = false;
+	bool NotificationSent = false;
+	bool ShouldEnableScreensaver = false;
+};
+
 [[nodiscard]] inline SleepUntilResumeRuntimeDispatchContext BuildSleepUntilResumeRuntimeDispatchContext(const SleepUntilResumeRuntimeBundleContext& context) {
 	SleepUntilResumeRuntimeDispatchContext dispatchContext = {};
 	dispatchContext.ShouldRunPreBreakSequence = context.ShouldRunPreBreakSequence;
@@ -451,6 +463,22 @@ struct SleepUntilResumeRuntimeBundleOutcome {
 	SleepUntilResumeRuntimeSideEffectContext sideEffectContext = BuildSleepUntilResumeRuntimeSideEffectContext(context, outcome.Dispatch.Dispatch.ShouldMarkNotificationSent);
 	outcome.SideEffect = ResolveSleepUntilResumeRuntimeSideEffectOutcome(sideEffectContext);
 
+	return outcome;
+}
+
+[[nodiscard]] inline SleepUntilResumeRuntimeSideEffectApplicationContext BuildSleepUntilResumeRuntimeSideEffectApplicationContext(bool waitForBreakResume, bool notificationSent, const SleepUntilResumeRuntimeBundleOutcome& runtimeBundleOutcome) {
+	SleepUntilResumeRuntimeSideEffectApplicationContext context = {};
+	context.WaitForBreakResume = waitForBreakResume;
+	context.NotificationSent = notificationSent;
+	context.SideEffect = runtimeBundleOutcome.SideEffect;
+	return context;
+}
+
+[[nodiscard]] inline SleepUntilResumeRuntimeSideEffectApplicationOutcome ResolveSleepUntilResumeRuntimeSideEffectApplicationOutcome(const SleepUntilResumeRuntimeSideEffectApplicationContext& context) {
+	SleepUntilResumeRuntimeSideEffectApplicationOutcome outcome = {};
+	outcome.WaitForBreakResume = context.WaitForBreakResume || context.SideEffect.ShouldSetWaitForBreakResume;
+	outcome.NotificationSent = context.NotificationSent || context.SideEffect.NotificationSent;
+	outcome.ShouldEnableScreensaver = context.SideEffect.ShouldEnableScreensaver;
 	return outcome;
 }
 

@@ -1,4 +1,4 @@
-# Issue #2496 SleepUntilResume PhaseOutcome Internal Context Builders
+﻿# Issue #2496 SleepUntilResume PhaseOutcome Internal Context Builders
 
 ## Scope
 

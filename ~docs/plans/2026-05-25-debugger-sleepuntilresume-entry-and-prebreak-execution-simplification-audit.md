@@ -1,4 +1,4 @@
-# Debugger SleepUntilResume Entry and Pre-Break Execution Simplification Audit (2026-05-25)
+﻿# Debugger SleepUntilResume Entry and Pre-Break Execution Simplification Audit (2026-05-25)
 
 ## Context
 

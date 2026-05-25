@@ -1,4 +1,4 @@
-# Issue #2510 SleepUntilResume Wait-Loop Helper-Driven Iteration Policy Refactor
+﻿# Issue #2510 SleepUntilResume Wait-Loop Helper-Driven Iteration Policy Refactor
 
 ## Scope
 

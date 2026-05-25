@@ -1,4 +1,4 @@
-# Issue #2506 SleepUntilResume Coordinator Entry Context Builder Regression Tests
+﻿# Issue #2506 SleepUntilResume Coordinator Entry Context Builder Regression Tests
 
 ## Scope
 

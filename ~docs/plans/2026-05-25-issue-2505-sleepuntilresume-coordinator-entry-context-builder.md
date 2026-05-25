@@ -1,4 +1,4 @@
-# Issue #2505 SleepUntilResume Coordinator Entry Context Builder
+﻿# Issue #2505 SleepUntilResume Coordinator Entry Context Builder
 
 ## Scope
 

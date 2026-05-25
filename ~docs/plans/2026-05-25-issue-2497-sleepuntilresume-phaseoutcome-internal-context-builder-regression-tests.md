@@ -1,4 +1,4 @@
-# Issue #2497 SleepUntilResume PhaseOutcome Internal Context Builder Regression Tests
+﻿# Issue #2497 SleepUntilResume PhaseOutcome Internal Context Builder Regression Tests
 
 ## Scope
 

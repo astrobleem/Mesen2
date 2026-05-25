@@ -848,6 +848,48 @@ TEST(DebuggerDispatchUtilsTests, SleepUntilResumeRuntimeSideEffectContextBuilder
 	EXPECT_TRUE(sideEffectContext.NotificationSent);
 }
 
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumeRuntimeSideEffectApplicationContextBuilderMapsRuntimeStateAndSideEffects) {
+	SleepUntilResumeRuntimeBundleOutcome runtimeBundleOutcome = {};
+	runtimeBundleOutcome.SideEffect.ShouldSetWaitForBreakResume = true;
+	runtimeBundleOutcome.SideEffect.ShouldEnableScreensaver = false;
+	runtimeBundleOutcome.SideEffect.NotificationSent = true;
+
+	SleepUntilResumeRuntimeSideEffectApplicationContext context = BuildSleepUntilResumeRuntimeSideEffectApplicationContext(false, false, runtimeBundleOutcome);
+	EXPECT_FALSE(context.WaitForBreakResume);
+	EXPECT_FALSE(context.NotificationSent);
+	EXPECT_TRUE(context.SideEffect.ShouldSetWaitForBreakResume);
+	EXPECT_FALSE(context.SideEffect.ShouldEnableScreensaver);
+	EXPECT_TRUE(context.SideEffect.NotificationSent);
+}
+
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumeRuntimeSideEffectApplicationOutcomePromotesWaitAndNotificationState) {
+	SleepUntilResumeRuntimeSideEffectApplicationContext context = {};
+	context.WaitForBreakResume = false;
+	context.NotificationSent = false;
+	context.SideEffect.ShouldSetWaitForBreakResume = true;
+	context.SideEffect.ShouldEnableScreensaver = true;
+	context.SideEffect.NotificationSent = true;
+
+	SleepUntilResumeRuntimeSideEffectApplicationOutcome outcome = ResolveSleepUntilResumeRuntimeSideEffectApplicationOutcome(context);
+	EXPECT_TRUE(outcome.WaitForBreakResume);
+	EXPECT_TRUE(outcome.NotificationSent);
+	EXPECT_TRUE(outcome.ShouldEnableScreensaver);
+}
+
+TEST(DebuggerDispatchUtilsTests, SleepUntilResumeRuntimeSideEffectApplicationOutcomePreservesExistingStateWhenNoPromotionRequested) {
+	SleepUntilResumeRuntimeSideEffectApplicationContext context = {};
+	context.WaitForBreakResume = true;
+	context.NotificationSent = true;
+	context.SideEffect.ShouldSetWaitForBreakResume = false;
+	context.SideEffect.ShouldEnableScreensaver = false;
+	context.SideEffect.NotificationSent = false;
+
+	SleepUntilResumeRuntimeSideEffectApplicationOutcome outcome = ResolveSleepUntilResumeRuntimeSideEffectApplicationOutcome(context);
+	EXPECT_TRUE(outcome.WaitForBreakResume);
+	EXPECT_TRUE(outcome.NotificationSent);
+	EXPECT_FALSE(outcome.ShouldEnableScreensaver);
+}
+
 TEST(DebuggerDispatchUtilsTests, SleepUntilResumeLoopContextBuilderMapsLoopPostBundleFields) {
 	SleepUntilResumeLoopPostBundleContext bundleContext = {};
 	bundleContext.WaitForBreakResume = true;

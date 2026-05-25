@@ -759,18 +759,18 @@ void Debugger::SleepUntilResume(CpuType sourceCpu, BreakSource source, MemoryOpe
 	if (preBreakExecutionOutcome.ShouldRunRuntimeBundle) {
 		SleepUntilResumeRuntimeBundleContext runtimeBundleContext = BuildSleepUntilResumeRuntimeBundleContext(phaseOutcome, sourceCpu, source, breakpointId, operation, notificationSent);
 		SleepUntilResumeRuntimeBundleOutcome runtimeBundleOutcome = ResolveSleepUntilResumeRuntimeBundleOutcome(runtimeBundleContext);
+		SleepUntilResumeRuntimeSideEffectApplicationContext runtimeSideEffectApplicationContext = BuildSleepUntilResumeRuntimeSideEffectApplicationContext(_waitForBreakResume, notificationSent, runtimeBundleOutcome);
+		SleepUntilResumeRuntimeSideEffectApplicationOutcome runtimeSideEffectApplicationOutcome = ResolveSleepUntilResumeRuntimeSideEffectApplicationOutcome(runtimeSideEffectApplicationContext);
 
-		if (runtimeBundleOutcome.SideEffect.ShouldSetWaitForBreakResume) {
-			_waitForBreakResume = true;
-		}
+		_waitForBreakResume = runtimeSideEffectApplicationOutcome.WaitForBreakResume;
 		if (runtimeBundleOutcome.Dispatch.Dispatch.ShouldDispatchCodeBreakNotification) {
 			_emu->GetNotificationManager()->SendNotification(ConsoleNotificationType::CodeBreak, &runtimeBundleOutcome.Dispatch.BreakEvent.Event);
 		}
 		if (runtimeBundleOutcome.Dispatch.Dispatch.ShouldProcessCodeBreakEvent) {
 			ProcessEvent(EventType::CodeBreak, sourceCpu);
 		}
-		notificationSent = runtimeBundleOutcome.SideEffect.NotificationSent;
-		if (runtimeBundleOutcome.SideEffect.ShouldEnableScreensaver) {
+		notificationSent = runtimeSideEffectApplicationOutcome.NotificationSent;
+		if (runtimeSideEffectApplicationOutcome.ShouldEnableScreensaver) {
 			PlatformUtilities::EnableScreensaver();
 		}
 	}

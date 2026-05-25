@@ -1,4 +1,4 @@
-# Issue #2508 SleepUntilResume Runtime Loop-State Snapshot Builders
+﻿# Issue #2508 SleepUntilResume Runtime Loop-State Snapshot Builders
 
 ## Scope
 

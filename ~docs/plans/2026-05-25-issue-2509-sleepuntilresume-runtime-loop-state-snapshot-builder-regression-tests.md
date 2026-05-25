@@ -1,4 +1,4 @@
-# Issue #2509 SleepUntilResume Runtime Loop-State Snapshot Builder Regression Tests
+﻿# Issue #2509 SleepUntilResume Runtime Loop-State Snapshot Builder Regression Tests
 
 ## Scope
 

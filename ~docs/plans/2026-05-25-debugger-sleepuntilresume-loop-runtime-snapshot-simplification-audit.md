@@ -1,4 +1,4 @@
-# Debugger SleepUntilResume Loop Runtime Snapshot Simplification Audit (2026-05-25)
+﻿# Debugger SleepUntilResume Loop Runtime Snapshot Simplification Audit (2026-05-25)
 
 ## Context
 
