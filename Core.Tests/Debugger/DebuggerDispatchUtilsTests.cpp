@@ -131,6 +131,41 @@ TEST(DebuggerDispatchUtilsTests, PpuBackendMappingReturnsNoneForUnsupportedCpuTy
 	EXPECT_EQ(GetPpuStateBackendForCpu(CpuType::Genesis), PpuStateBackend::None);
 }
 
+TEST(DebuggerDispatchUtilsTests, CpuDispatchMappingsRemainInParityAcrossLayoutFlagsAndPpuBackends) {
+	struct ExpectedCpuDispatch {
+		CpuType Type;
+		CpuStateLayout Layout;
+		std::optional<DebuggerFlags> Flag;
+		PpuStateBackend Backend;
+	};
+
+	static constexpr std::array<ExpectedCpuDispatch, 17> kExpectedMappings = {{
+		{CpuType::Snes, CpuStateLayout::SnesCpu, DebuggerFlags::SnesDebuggerEnabled, PpuStateBackend::Snes},
+		{CpuType::Spc, CpuStateLayout::Spc, DebuggerFlags::SpcDebuggerEnabled, PpuStateBackend::Snes},
+		{CpuType::NecDsp, CpuStateLayout::NecDsp, DebuggerFlags::NecDspDebuggerEnabled, PpuStateBackend::Snes},
+		{CpuType::Sa1, CpuStateLayout::SnesCpu, DebuggerFlags::Sa1DebuggerEnabled, PpuStateBackend::Snes},
+		{CpuType::Gsu, CpuStateLayout::Gsu, DebuggerFlags::GsuDebuggerEnabled, PpuStateBackend::Snes},
+		{CpuType::Cx4, CpuStateLayout::Cx4, DebuggerFlags::Cx4DebuggerEnabled, PpuStateBackend::Snes},
+		{CpuType::St018, CpuStateLayout::ArmV3, DebuggerFlags::St018DebuggerEnabled, PpuStateBackend::Snes},
+		{CpuType::Gameboy, CpuStateLayout::GbCpu, DebuggerFlags::GbDebuggerEnabled, PpuStateBackend::Gameboy},
+		{CpuType::Nes, CpuStateLayout::NesCpu, DebuggerFlags::NesDebuggerEnabled, PpuStateBackend::Nes},
+		{CpuType::Pce, CpuStateLayout::PceCpu, DebuggerFlags::PceDebuggerEnabled, PpuStateBackend::Pce},
+		{CpuType::Sms, CpuStateLayout::SmsCpu, DebuggerFlags::SmsDebuggerEnabled, PpuStateBackend::Sms},
+		{CpuType::Gba, CpuStateLayout::GbaCpu, DebuggerFlags::GbaDebuggerEnabled, PpuStateBackend::Gba},
+		{CpuType::Ws, CpuStateLayout::WsCpu, DebuggerFlags::WsDebuggerEnabled, PpuStateBackend::Ws},
+		{CpuType::Lynx, CpuStateLayout::LynxCpu, DebuggerFlags::LynxDebuggerEnabled, PpuStateBackend::Lynx},
+		{CpuType::Genesis, CpuStateLayout::GenesisM68k, std::nullopt, PpuStateBackend::None},
+		{CpuType::Atari2600, CpuStateLayout::Atari2600Cpu, DebuggerFlags::Atari2600DebuggerEnabled, PpuStateBackend::Atari2600},
+		{CpuType::ChannelF, CpuStateLayout::ChannelFCpu, DebuggerFlags::ChannelFDebuggerEnabled, PpuStateBackend::ChannelF}
+	}};
+
+	for(const ExpectedCpuDispatch& expected : kExpectedMappings) {
+		EXPECT_EQ(GetCpuStateLayout(expected.Type), expected.Layout);
+		EXPECT_EQ(GetDebuggerFlagForCpu(expected.Type), expected.Flag);
+		EXPECT_EQ(GetPpuStateBackendForCpu(expected.Type), expected.Backend);
+	}
+}
+
 TEST(DebuggerDispatchUtilsTests, EventCpuRoutingUsesRequestedCpuWhenAvailable) {
 	EXPECT_EQ(ResolveEventCpuType(CpuType::Nes, CpuType::Snes, true), CpuType::Nes);
 	EXPECT_EQ(ResolveEventCpuType(CpuType::Gba, CpuType::Snes, true), CpuType::Gba);

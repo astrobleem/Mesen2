@@ -43,117 +43,62 @@ enum class PpuStateBackend : uint8_t {
 	None
 };
 
+struct CpuDispatchMetadata {
+	CpuType Type;
+	CpuStateLayout StateLayout;
+	std::optional<DebuggerFlags> DebuggerFlag;
+	PpuStateBackend PpuBackend;
+};
+
+static constexpr std::array<CpuDispatchMetadata, 17> _cpuDispatchMetadata = {{
+	{CpuType::Snes, CpuStateLayout::SnesCpu, DebuggerFlags::SnesDebuggerEnabled, PpuStateBackend::Snes},
+	{CpuType::Spc, CpuStateLayout::Spc, DebuggerFlags::SpcDebuggerEnabled, PpuStateBackend::Snes},
+	{CpuType::NecDsp, CpuStateLayout::NecDsp, DebuggerFlags::NecDspDebuggerEnabled, PpuStateBackend::Snes},
+	{CpuType::Sa1, CpuStateLayout::SnesCpu, DebuggerFlags::Sa1DebuggerEnabled, PpuStateBackend::Snes},
+	{CpuType::Gsu, CpuStateLayout::Gsu, DebuggerFlags::GsuDebuggerEnabled, PpuStateBackend::Snes},
+	{CpuType::Cx4, CpuStateLayout::Cx4, DebuggerFlags::Cx4DebuggerEnabled, PpuStateBackend::Snes},
+	{CpuType::St018, CpuStateLayout::ArmV3, DebuggerFlags::St018DebuggerEnabled, PpuStateBackend::Snes},
+	{CpuType::Gameboy, CpuStateLayout::GbCpu, DebuggerFlags::GbDebuggerEnabled, PpuStateBackend::Gameboy},
+	{CpuType::Nes, CpuStateLayout::NesCpu, DebuggerFlags::NesDebuggerEnabled, PpuStateBackend::Nes},
+	{CpuType::Pce, CpuStateLayout::PceCpu, DebuggerFlags::PceDebuggerEnabled, PpuStateBackend::Pce},
+	{CpuType::Sms, CpuStateLayout::SmsCpu, DebuggerFlags::SmsDebuggerEnabled, PpuStateBackend::Sms},
+	{CpuType::Gba, CpuStateLayout::GbaCpu, DebuggerFlags::GbaDebuggerEnabled, PpuStateBackend::Gba},
+	{CpuType::Ws, CpuStateLayout::WsCpu, DebuggerFlags::WsDebuggerEnabled, PpuStateBackend::Ws},
+	{CpuType::Lynx, CpuStateLayout::LynxCpu, DebuggerFlags::LynxDebuggerEnabled, PpuStateBackend::Lynx},
+	{CpuType::Genesis, CpuStateLayout::GenesisM68k, std::nullopt, PpuStateBackend::None},
+	{CpuType::Atari2600, CpuStateLayout::Atari2600Cpu, DebuggerFlags::Atari2600DebuggerEnabled, PpuStateBackend::Atari2600},
+	{CpuType::ChannelF, CpuStateLayout::ChannelFCpu, DebuggerFlags::ChannelFDebuggerEnabled, PpuStateBackend::ChannelF}
+}};
+
+[[nodiscard]] inline constexpr const CpuDispatchMetadata* TryGetCpuDispatchMetadata(CpuType cpuType) {
+	for(const CpuDispatchMetadata& metadata : _cpuDispatchMetadata) {
+		if(metadata.Type == cpuType) {
+			return &metadata;
+		}
+	}
+
+	return nullptr;
+}
+
 [[nodiscard]] inline CpuStateLayout GetCpuStateLayout(CpuType cpuType) {
-	switch (cpuType) {
-		case CpuType::Snes:
-		case CpuType::Sa1:
-			return CpuStateLayout::SnesCpu;
-		case CpuType::Spc:
-			return CpuStateLayout::Spc;
-		case CpuType::NecDsp:
-			return CpuStateLayout::NecDsp;
-		case CpuType::Gsu:
-			return CpuStateLayout::Gsu;
-		case CpuType::Cx4:
-			return CpuStateLayout::Cx4;
-		case CpuType::St018:
-			return CpuStateLayout::ArmV3;
-		case CpuType::Gameboy:
-			return CpuStateLayout::GbCpu;
-		case CpuType::Nes:
-			return CpuStateLayout::NesCpu;
-		case CpuType::Pce:
-			return CpuStateLayout::PceCpu;
-		case CpuType::Sms:
-			return CpuStateLayout::SmsCpu;
-		case CpuType::Gba:
-			return CpuStateLayout::GbaCpu;
-		case CpuType::Ws:
-			return CpuStateLayout::WsCpu;
-		case CpuType::Lynx:
-			return CpuStateLayout::LynxCpu;
-		case CpuType::Atari2600:
-			return CpuStateLayout::Atari2600Cpu;
-		case CpuType::ChannelF:
-			return CpuStateLayout::ChannelFCpu;
-		case CpuType::Genesis:
-			return CpuStateLayout::GenesisM68k;
+	if(const CpuDispatchMetadata* metadata = TryGetCpuDispatchMetadata(cpuType)) {
+		return metadata->StateLayout;
 	}
 
 	return CpuStateLayout::Unknown;
 }
 
 [[nodiscard]] inline std::optional<DebuggerFlags> GetDebuggerFlagForCpu(CpuType cpuType) {
-	switch (cpuType) {
-		case CpuType::Snes:
-			return DebuggerFlags::SnesDebuggerEnabled;
-		case CpuType::Spc:
-			return DebuggerFlags::SpcDebuggerEnabled;
-		case CpuType::NecDsp:
-			return DebuggerFlags::NecDspDebuggerEnabled;
-		case CpuType::Sa1:
-			return DebuggerFlags::Sa1DebuggerEnabled;
-		case CpuType::Gsu:
-			return DebuggerFlags::GsuDebuggerEnabled;
-		case CpuType::Cx4:
-			return DebuggerFlags::Cx4DebuggerEnabled;
-		case CpuType::St018:
-			return DebuggerFlags::St018DebuggerEnabled;
-		case CpuType::Gameboy:
-			return DebuggerFlags::GbDebuggerEnabled;
-		case CpuType::Nes:
-			return DebuggerFlags::NesDebuggerEnabled;
-		case CpuType::Pce:
-			return DebuggerFlags::PceDebuggerEnabled;
-		case CpuType::Sms:
-			return DebuggerFlags::SmsDebuggerEnabled;
-		case CpuType::Gba:
-			return DebuggerFlags::GbaDebuggerEnabled;
-		case CpuType::Ws:
-			return DebuggerFlags::WsDebuggerEnabled;
-		case CpuType::Lynx:
-			return DebuggerFlags::LynxDebuggerEnabled;
-		case CpuType::Atari2600:
-			return DebuggerFlags::Atari2600DebuggerEnabled;
-		case CpuType::ChannelF:
-			return DebuggerFlags::ChannelFDebuggerEnabled;
-		case CpuType::Genesis:
-			break;
+	if(const CpuDispatchMetadata* metadata = TryGetCpuDispatchMetadata(cpuType)) {
+		return metadata->DebuggerFlag;
 	}
 
 	return std::nullopt;
 }
 
 [[nodiscard]] inline PpuStateBackend GetPpuStateBackendForCpu(CpuType cpuType) {
-	switch (cpuType) {
-		case CpuType::Snes:
-		case CpuType::Spc:
-		case CpuType::NecDsp:
-		case CpuType::Sa1:
-		case CpuType::Gsu:
-		case CpuType::Cx4:
-		case CpuType::St018:
-			return PpuStateBackend::Snes;
-		case CpuType::Gameboy:
-			return PpuStateBackend::Gameboy;
-		case CpuType::Nes:
-			return PpuStateBackend::Nes;
-		case CpuType::Pce:
-			return PpuStateBackend::Pce;
-		case CpuType::Sms:
-			return PpuStateBackend::Sms;
-		case CpuType::Gba:
-			return PpuStateBackend::Gba;
-		case CpuType::Ws:
-			return PpuStateBackend::Ws;
-		case CpuType::Lynx:
-			return PpuStateBackend::Lynx;
-		case CpuType::Atari2600:
-			return PpuStateBackend::Atari2600;
-		case CpuType::ChannelF:
-			return PpuStateBackend::ChannelF;
-		default:
-			break;
+	if(const CpuDispatchMetadata* metadata = TryGetCpuDispatchMetadata(cpuType)) {
+		return metadata->PpuBackend;
 	}
 
 	return PpuStateBackend::None;
@@ -259,6 +204,7 @@ struct SleepUntilResumePreBreakOutcome {
 	outcome.ShouldDrawPartialFrame = context.DrawPartialFrame;
 	return outcome;
 }
+
 
 struct SleepUntilResumePreLoopContext {
 	bool ShouldEmitBreakNotification = false;
