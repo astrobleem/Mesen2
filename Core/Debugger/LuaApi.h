@@ -68,7 +68,11 @@ public:
 	static int Rewind(lua_State *lua);
 
 	static int TakeScreenshot(lua_State *lua);
-	
+
+	static int StartAudioRecording(lua_State *lua);
+	static int StopAudioRecording(lua_State *lua);
+	static int IsAudioRecording(lua_State *lua);
+
 	static int CreateSavestate(lua_State *lua);
 	static int LoadSavestate(lua_State *lua);
 

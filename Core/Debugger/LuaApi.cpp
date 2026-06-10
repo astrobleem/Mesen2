@@ -14,6 +14,7 @@
 #include "Shared/SystemActionManager.h"
 #include "Shared/Video/DebugHud.h"
 #include "Shared/Video/VideoDecoder.h"
+#include "Shared/Audio/SoundMixer.h"
 #include "Shared/MessageManager.h"
 #include "Shared/CheatManager.h"
 #include "Shared/RewindManager.h"
@@ -137,6 +138,10 @@ int LuaApi::GetLibrary(lua_State *lua)
 		{ "rewind", LuaApi::Rewind },
 
 		{ "takeScreenshot", LuaApi::TakeScreenshot },
+
+		{ "startAudioRecording", LuaApi::StartAudioRecording },
+		{ "stopAudioRecording",  LuaApi::StopAudioRecording },
+		{ "isAudioRecording",    LuaApi::IsAudioRecording },
 
 		{ "isKeyPressed", LuaApi::IsKeyPressed },
 		{ "getInput", LuaApi::GetInput },
@@ -818,6 +823,32 @@ int LuaApi::TakeScreenshot(lua_State *lua)
 	stringstream ss;
 	_emu->GetVideoDecoder()->TakeScreenshot(ss);
 	l.Return(ss.str());
+	return l.ReturnCount();
+}
+
+int LuaApi::StartAudioRecording(lua_State *lua)
+{
+	LuaCallHelper l(lua);
+	string filepath = l.ReadString();
+	checkparams();
+	errorCond(filepath.empty(), "filepath must not be empty");
+	_emu->GetSoundMixer()->StartRecording(filepath);
+	return l.ReturnCount();
+}
+
+int LuaApi::StopAudioRecording(lua_State *lua)
+{
+	LuaCallHelper l(lua);
+	checkparams();
+	_emu->GetSoundMixer()->StopRecording();
+	return l.ReturnCount();
+}
+
+int LuaApi::IsAudioRecording(lua_State *lua)
+{
+	LuaCallHelper l(lua);
+	checkparams();
+	l.Return(_emu->GetSoundMixer()->IsRecording());
 	return l.ReturnCount();
 }
 
