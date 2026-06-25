@@ -11,7 +11,7 @@ source is `python/mesen_mcp/`.
 ## What this gives you
 
 A live, paused-by-default debugger for an SNES (or any Mesen 2-supported
-console) with **46 MCP tools** organised into 10 categories: state,
+console) with **47 MCP tools** organised into 10 categories: state,
 memory, screenshot, savestate, movies, ppu, hooks, debugging, input,
 audio. The C# server runs **inside Mesen 2** (our `astrobleem/Mesen2`
 fork's `--mcp` mode). This Python package is the client + stdio bridge.

@@ -25,6 +25,7 @@ _RAW: list[tuple[str, str, str]] = [
     # category, name, summary
     ("state",      "ping",                "Echo back. Verify the MCP session is alive."),
     ("state",      "get_state",           "Snapshot emulator state (isRunning, isPaused, frameCount)."),
+    ("state",      "get_cpu_state",       "CPU registers (PC/A/X/Y/SP/D/DBR) for the main 'Snes' CPU or the 'Sa1' coprocessor."),
     ("state",      "pause",               "Pause emulation. Required for race-free multi-call reads."),
     ("state",      "resume",              "Resume emulation at full speed."),
     ("state",      "run_frames",          "Advance N frames deterministically (frame-counter poll, not wall-clock)."),
@@ -106,7 +107,7 @@ CATEGORY_BLURBS: dict[str, str] = {
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(
         prog="python -m mesen_mcp.tools",
-        description="List the Mesen 2 MCP tool surface (46 tools across 10 categories).",
+        description="List the Mesen 2 MCP tool surface (47 tools across 10 categories).",
     )
     p.add_argument("--names", action="store_true",
                    help="Print just the tool names, one per line. Pipeable.")
