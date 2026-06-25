@@ -130,6 +130,25 @@ class Program {
 				return 0;
 			}
 
+			// Headless runners (test / MCP) must bypass the first-run setup wizard.
+			// They need HomeFolder + extracted native deps but render no GUI, so the
+			// "no settings.json yet" wizard path below must not swallow them.
+			if (CommandLineHelper.IsTestRunner(args) || CommandLineHelper.IsMcpRunner(args)) {
+				Log.InitializeFileLogging();
+				Log.Info($"Home folder: {ConfigManager.HomeFolder}");
+				Log.Info($".NET: {RuntimeInformation.FrameworkDescription}");
+				Task.Run(() => ConfigManager.LoadConfig());
+				Log.Info("Extracting native dependencies...");
+				DependencyHelper.ExtractNativeDependencies(ConfigManager.HomeFolder);
+				SyncNativeDependenciesFromAppBase();
+				if (CommandLineHelper.IsTestRunner(args)) {
+					Log.Info("Running in test mode");
+					return TestRunner.Run(args);
+				}
+				Log.Info("Running in MCP mode");
+				return Nexen.Utilities.Mcp.McpRunner.Run(args);
+			}
+
 			// Check for first-run WITHOUT triggering HomeFolder creation.
 			// HomeFolder auto-detection creates ~/.config/Nexen/ and we don't want that
 			// before the setup wizard lets the user choose their preferred location.
@@ -175,14 +194,7 @@ class Program {
 			DependencyHelper.ExtractNativeDependencies(ConfigManager.HomeFolder);
 			SyncNativeDependenciesFromAppBase();
 
-			if (CommandLineHelper.IsTestRunner(args)) {
-				Log.Info("Running in test mode");
-				return TestRunner.Run(args);
-			}
-
-			if (CommandLineHelper.IsMcpRunner(args)) {
-				return Nexen.Utilities.Mcp.McpRunner.Run(args);
-			}
+			// Test/MCP runners are handled above (before the first-run wizard).
 
 			using SingleInstance instance = SingleInstance.Instance;
 			instance.Init(args);

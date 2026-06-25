@@ -1082,7 +1082,11 @@ ShortcutState Emulator::IsShortcutAllowed(EmulatorShortcut shortcut, uint32_t sh
 
 bool Emulator::IsKeyboardConnected() {
 	shared_ptr<IConsole> console = GetConsole();
-	return console ? console->GetControlManager()->IsKeyboardConnected() : false;
+	// GetControlManager() is briefly null while a ROM loads (and stays null in
+	// headless/console mode), but the ShortcutKeyHandler thread polls this
+	// concurrently — guard against the null to avoid a deref race/crash.
+	BaseControlManager* controlManager = console ? console->GetControlManager() : nullptr;
+	return controlManager ? controlManager->IsKeyboardConnected() : false;
 }
 
 void Emulator::BlockDebuggerRequests() {
