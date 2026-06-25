@@ -266,6 +266,7 @@ private:
 		{MemoryType::NesPrgRom, CpuType::Nes},
 		{MemoryType::NesSaveRam, CpuType::Nes},
 		{MemoryType::NesSpriteRam, CpuType::Nes},
+		{MemoryType::NesSecondarySpriteRam, CpuType::Nes},
 		{MemoryType::NesWorkRam, CpuType::Nes},
 		{MemoryType::PcePrgRom, CpuType::Pce},
 		{MemoryType::PceWorkRam, CpuType::Pce},
