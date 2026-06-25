@@ -64,6 +64,7 @@ struct InteropRomInfo {
 };
 
 extern "C" {
+	DllExport uint32_t __stdcall GetFrameCount() { return _emu->GetFrameCount(); }
 	DllExport void __stdcall McpResetEmu() { _emu->Reset(); }
 	DllExport void __stdcall McpPowerCycle() { _emu->PowerCycle(); }
 

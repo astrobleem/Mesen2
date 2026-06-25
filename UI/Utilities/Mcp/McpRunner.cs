@@ -58,7 +58,7 @@ internal static class McpRunner
 		ConfigApi.SetEmulationFlag(EmulationFlags.ConsoleMode, true);
 		// Tell the C++ side that stdout belongs to MCP; Debugger/Lua logs
 		// divert to stderr.
-		ConfigApi.SetEmulationFlag(EmulationFlags.McpMode, true);
+		// EmulationFlags.McpMode (Mesen2-only log-routing flag) not ported — MCP runs over TCP.
 
 		Log("LoadRom");
 		if(!EmuApi.LoadRom(cli.FilesToLoad[0], string.Empty)) {
