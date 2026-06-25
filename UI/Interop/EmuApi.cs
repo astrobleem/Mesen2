@@ -45,6 +45,8 @@ public sealed class EmuApi {
 	[DllImport(DllPath)] public static extern Int32 GetStopCode();
 
 	[DllImport(DllPath)] public static extern void Pause();
+	[DllImport(DllPath)] public static extern void McpResetEmu();
+	[DllImport(DllPath)] public static extern void McpPowerCycle();
 	[DllImport(DllPath)] public static extern void Resume();
 	[DllImport(DllPath)][return: MarshalAs(UnmanagedType.I1)] public static extern bool IsPaused();
 

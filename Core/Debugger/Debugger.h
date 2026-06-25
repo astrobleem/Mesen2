@@ -116,6 +116,7 @@ private:
 	unique_ptr<MemoryDumper> _memoryDumper;             ///< Memory read/write access
 	unique_ptr<MemoryAccessCounter> _memoryAccessCounter; ///< Access pattern tracking
 	unique_ptr<CodeDataLogger> _codeDataLogger;         ///< Code/data classification
+	unique_ptr<class McpHookManager> _mcpHooks;         ///< MCP exec/read/write/frame hooks
 	unique_ptr<Disassembler> _disassembler;             ///< Multi-CPU disassembly
 	unique_ptr<DisassemblySearch> _disassemblySearch;   ///< Search disassembly
 	unique_ptr<LabelManager> _labelManager;             ///< Symbol/label database
@@ -264,6 +265,7 @@ public:
 	[[nodiscard]] LabelManager* GetLabelManager() { return _labelManager.get(); }
 	[[nodiscard]] CdlManager* GetCdlManager() { return _cdlManager.get(); }
 	[[nodiscard]] ScriptManager* GetScriptManager() { return _scriptManager.get(); }
+	[[nodiscard]] class McpHookManager* GetMcpHooks() { return _mcpHooks.get(); }
 	[[nodiscard]] IConsole* GetConsole() { return _console; }
 	[[nodiscard]] Emulator* GetEmulator() { return _emu; }
 

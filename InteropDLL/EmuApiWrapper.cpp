@@ -64,6 +64,9 @@ struct InteropRomInfo {
 };
 
 extern "C" {
+	DllExport void __stdcall McpResetEmu() { _emu->Reset(); }
+	DllExport void __stdcall McpPowerCycle() { _emu->PowerCycle(); }
+
 DllExport bool __stdcall TestDll() {
 	return true;
 }

@@ -27,6 +27,7 @@
 #include "Debugger/ExpressionEvaluator.h"
 #include "Debugger/ScriptManager.h"
 #include "Debugger/Debugger.h"
+#include "Mcp/McpHookManager.h"
 #include "Debugger/CodeDataLogger.h"
 #include "Debugger/StepBackManager.h"
 #include "Shared/SettingTypes.h"
@@ -137,6 +138,9 @@ void SnesDebugger::ProcessInstruction() {
 	uint32_t pc = (state.K << 16) | state.PC;
 	AddressInfo addressInfo = GetAbsoluteAddress(pc);
 	uint8_t opCode = _memoryMappings->Peek(pc);
+	if(_debugger->GetMcpHooks()->HasAnyHooks()) {
+		_debugger->GetMcpHooks()->OnMemoryOperation(_cpuType, pc, opCode, McpHookKind::Exec, _emu->GetFrameCount());
+	}
 	MemoryOperationInfo operation(pc, opCode, MemoryOperationType::ExecOpCode, _cpuMemType);
 	InstructionProgress.LastMemOperation = operation;
 	InstructionProgress.StartCycle = state.CycleCount;
@@ -207,6 +211,9 @@ void SnesDebugger::ProcessInstruction() {
 }
 
 void SnesDebugger::ProcessRead(uint32_t addr, uint8_t value, MemoryOperationType type) {
+	if(_debugger->GetMcpHooks()->HasAnyHooks()) {
+		_debugger->GetMcpHooks()->OnMemoryOperation(_cpuType, addr, value, McpHookKind::Read, _emu->GetFrameCount());
+	}
 	AddressInfo addressInfo = GetAbsoluteAddress(addr);
 	MemoryOperationInfo operation(addr, value, type, _cpuMemType);
 	InstructionProgress.LastMemOperation = operation;
@@ -265,6 +272,9 @@ void SnesDebugger::ProcessRead(uint32_t addr, uint8_t value, MemoryOperationType
 }
 
 void SnesDebugger::ProcessWrite(uint32_t addr, uint8_t value, MemoryOperationType type) {
+	if(_debugger->GetMcpHooks()->HasAnyHooks()) {
+		_debugger->GetMcpHooks()->OnMemoryOperation(_cpuType, addr, value, McpHookKind::Write, _emu->GetFrameCount());
+	}
 	AddressInfo addressInfo = GetAbsoluteAddress(addr);
 	MemoryOperationInfo operation(addr, value, type, _cpuMemType);
 	InstructionProgress.LastMemOperation = operation;

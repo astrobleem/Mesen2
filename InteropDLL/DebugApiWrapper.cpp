@@ -45,11 +45,54 @@ void WrapDebuggerCall(std::function<void(Debugger* debugger)> func) {
 	}
 }
 
+#include "Core/Mcp/McpHookManager.h"
 #define WithDebugger(t, x) WrapDebuggerCall<t>([&](Debugger* dbg) -> t { return dbg->x; });
 #define WithTool(t, x, f)  WrapDebuggerCall<t>([&](Debugger* dbg) -> t { if(dbg->x) { return dbg->x->f; } else { return {}; } });
 #define WithToolVoid(x, f) WrapDebuggerCall<void>([&](Debugger* dbg) -> void { if(dbg->x) { return dbg->x->f; } });
 
 extern "C" {
+	// --- MCP hook management --------------------------------------------
+	DllExport int32_t __stdcall McpAddHook(uint8_t kind, CpuType cpu, uint32_t startAddr, uint32_t endAddr,
+		uint32_t matchValue, uint32_t matchValueMask)
+	{
+		return WithDebugger(int32_t, GetMcpHooks()->RegisterHook(
+			(McpHookKind)kind, cpu, startAddr, endAddr, matchValue, matchValueMask));
+	}
+
+	DllExport bool __stdcall McpRemoveHook(int32_t handle)
+	{
+		return WithDebugger(bool, GetMcpHooks()->UnregisterHook(handle));
+	}
+
+	DllExport int32_t __stdcall McpListHooks(McpHook* out, int32_t maxCount)
+	{
+		if(maxCount <= 0) return 0;
+		return (int32_t)WithDebugger(size_t, GetMcpHooks()->CopyActiveHooks(out, (size_t)maxCount));
+	}
+
+	DllExport int32_t __stdcall McpDrainEvents(McpHookEvent* out, int32_t maxCount)
+	{
+		if(maxCount <= 0) return 0;
+		return (int32_t)WithDebugger(size_t, GetMcpHooks()->DrainEvents(out, (size_t)maxCount));
+	}
+
+	DllExport void __stdcall McpResetHooks()
+	{
+		WithDebugger(void, GetMcpHooks()->Reset());
+	}
+
+	DllExport void __stdcall McpHookDiagCounters(uint64_t* calls, uint64_t* matches)
+	{
+		DebuggerRequest dbgRequest = _emu->GetDebugger(true);
+		if(Debugger* dbg = dbgRequest.GetDebugger()) {
+			if(calls) *calls = dbg->GetMcpHooks()->GetCallCount();
+			if(matches) *matches = dbg->GetMcpHooks()->GetMatchCount();
+		} else {
+			if(calls) *calls = 0;
+			if(matches) *matches = 0;
+		}
+	}
+
 // Debugger wrapper
 DllExport void __stdcall InitializeDebugger() {
 	_emu->InitDebugger();

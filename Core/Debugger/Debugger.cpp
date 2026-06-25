@@ -12,6 +12,7 @@
 #include "Debugger/DebugBreakHelper.h"
 #include "Debugger/LabelManager.h"
 #include "Debugger/ScriptManager.h"
+#include "Mcp/McpHookManager.h"
 #include "Debugger/ScriptHost.h"
 #include "Debugger/CallstackManager.h"
 #include "Debugger/ExpressionEvaluator.h"
@@ -94,6 +95,7 @@ Debugger::Debugger(Emulator* emu, IConsole* console) {
 	_disassemblySearch = std::make_unique<DisassemblySearch>(_disassembler.get(), _labelManager.get());  // Search in disassembly
 	_memoryAccessCounter = std::make_unique<MemoryAccessCounter>(this);  // Memory access tracking
 	_scriptManager = std::make_unique<ScriptManager>(this);        // Lua scripting
+	_mcpHooks = std::make_unique<McpHookManager>();                // MCP hook registry
 	_traceLogSaver = std::make_unique<TraceLogFileSaver>();        // Trace log file output
 	_cdlManager = std::make_unique<CdlManager>(this, _disassembler.get());  // Code/Data log manager
 
