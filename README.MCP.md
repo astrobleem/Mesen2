@@ -12,8 +12,10 @@ this repo under `python/` (`python/AGENTS.md`, `python/README.md`,
 
 ## What you get
 
-**46 MCP tools** organised into 10 categories. Highlights:
+**47 MCP tools** organised into 10 categories. Highlights:
 
+- **CPU/state**: live register snapshot (`get_cpu_state` — PC/A/X/Y/SP/D/DBR for the
+  main `Snes` CPU *or* the `Sa1` coprocessor), plus PPU/audio/system state.
 - **Memory**: read / write / multi-region diff over N frames.
 - **Hooks**: exec / read / write / per-frame, with server-side value
   filters so high-volume PCs don't flood the wire.
@@ -88,7 +90,7 @@ built before the MCP changes.
 |---|---|
 | `UI/Utilities/Mcp/McpServer.cs` | JSON-RPC dispatcher; tool table; per-client connection loop. |
 | `UI/Utilities/Mcp/McpRunner.cs` | `--mcp` CLI bootstrap. Hooks into `Program.cs`. |
-| `UI/Utilities/Mcp/McpTools.cs` | All 46 tool implementations + their schemas. |
+| `UI/Utilities/Mcp/McpTools.cs` | All 47 tool implementations + their schemas. |
 | `UI/Utilities/Mcp/PansyReader.cs` | Standalone TheAnsarya/pansy v1.0 binary reader. |
 | `Core/Mcp/McpHookManager.{h,cpp}` | C++ side of the hook hot-path. Bounded event queue. |
 | `Core/SNES/SnesMemoryManager.cpp` | (touched) — SA-1 `Peek` fix routing $7E/$7F to BWRAM properly. |

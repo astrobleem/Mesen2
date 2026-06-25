@@ -5,6 +5,12 @@ Server-side tool changes ship in the
 [`astrobleem/Mesen2`](https://github.com/astrobleem/Mesen2) fork; this
 log tracks what's wired up here.
 
+## Unreleased
+
+- Added `McpSession.get_cpu_state(cpu_type="Snes")` for the new server tool
+  `get_cpu_state` — live PC/A/X/Y/SP/D/DBR for the main `Snes` CPU or the `Sa1`
+  coprocessor (added for SA-1 interpreter-port debugging). Tool count **46 → 47**.
+
 ## 0.1.0 — initial public release
 
 The package becomes drop-in-portable. Targets the Mesen 2 fork's
