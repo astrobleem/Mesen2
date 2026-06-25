@@ -180,6 +180,10 @@ class Program {
 				return TestRunner.Run(args);
 			}
 
+			if (CommandLineHelper.IsMcpRunner(args)) {
+				return Nexen.Utilities.Mcp.McpRunner.Run(args);
+			}
+
 			using SingleInstance instance = SingleInstance.Instance;
 			instance.Init(args);
 			if (instance.FirstInstance) {
