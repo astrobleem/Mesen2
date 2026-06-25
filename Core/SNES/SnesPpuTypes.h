@@ -358,10 +358,15 @@ struct SnesPpuState : public BaseState {
 	WindowMaskLogic MaskLogic[6] = {};
 
 	/// <summary>Main screen window masking enable per layer.</summary>
-	bool WindowMaskMain[5] = {};
+	// Sized 6 (not 5) so PrecomputeWindowMasks can index all six layers uniformly,
+	// including ColorWindowIndex (5). Only [0..4] map to TMW register bits ($212E);
+	// [5] is an always-false sentinel (the color window is gated via _windowMask[5],
+	// not this enable). Indexing [5] on a [5]-sized array is out-of-bounds UB that
+	// -O2/-O3 miscompiles into a heap-corrupting store in the window-mask loop.
+	bool WindowMaskMain[6] = {};
 
-	/// <summary>Sub screen window masking enable per layer.</summary>
-	bool WindowMaskSub[5] = {};
+	/// <summary>Sub screen window masking enable per layer (see WindowMaskMain).</summary>
+	bool WindowMaskSub[6] = {};
 
 	// =========================================================================
 	// Cold fields: OAM, VRAM, CGRAM registers, timing
