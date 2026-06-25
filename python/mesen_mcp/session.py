@@ -209,6 +209,11 @@ class McpSession:
     def get_state(self) -> dict:
         return self.tool("get_state")
 
+    def get_cpu_state(self, cpu_type: str = "Snes") -> dict:
+        """CPU register state (pc, k, a, x, y, sp, d, dbr, ps, emulationMode,
+        stopState, cycleCount). cpu_type='Sa1' reads the SA-1 coprocessor."""
+        return self.tool("get_cpu_state", {"cpuType": cpu_type})
+
     def pause(self) -> dict:
         return self.tool("pause")
 

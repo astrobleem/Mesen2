@@ -29,13 +29,16 @@ def validate_mesen_build(mesen: Path | str) -> None:
 
     build_dir = exe.parent
     managed = build_dir / "Mesen.dll"
+    # Native core is .dll on Windows, .so on Linux
     native = build_dir / "MesenCore.dll"
+    if not native.exists():
+        native = build_dir / "MesenCore.so"
     missing = [p.name for p in (managed, native) if not p.exists()]
     if missing:
         raise MesenBuildError(
             f"MESEN_EXE points at {exe}, but sibling file(s) are missing: "
             f"{', '.join(missing)}. Point MESEN_EXE at the build directory "
-            "containing a matched Mesen.exe, Mesen.dll, and MesenCore.dll."
+            "containing a matched Mesen.exe, Mesen.dll, and MesenCore.dll (or .so on Linux)."
         )
 
     if not _contains_marker(managed, b"McpRunner"):

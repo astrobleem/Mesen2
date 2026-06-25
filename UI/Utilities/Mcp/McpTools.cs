@@ -29,6 +29,12 @@ internal static class McpTools
 				+ "before a sequence of read_memory calls to get a coherent snapshot.",
 			null),
 
+		new("get_cpu_state",
+			"Get a CPU's register state: pc, k(bank), a, x, y, sp, d, dbr, ps(flags), "
+				+ "emulationMode, stopState, cycleCount. cpuType='Sa1' reads the SA-1 "
+				+ "coprocessor (use to debug SA-1 bring-up). Pause first for a coherent read.",
+			BuildGetCpuStateSchema()),
+
 		new("pause",
 			"Pause emulation. All read_* tools become race-free while paused. "
 				+ "Follow with resume or run_frames to advance.",
@@ -397,6 +403,20 @@ internal static class McpTools
 				},
 			},
 			["required"] = required,
+		};
+	}
+
+	private static JsonNode BuildGetCpuStateSchema()
+	{
+		return new JsonObject {
+			["type"] = "object",
+			["properties"] = new JsonObject {
+				["cpuType"] = new JsonObject {
+					["type"] = "string",
+					["description"] = "CPU type: 'Snes' (default) or 'Sa1'",
+				},
+			},
+			["required"] = new JsonArray(),
 		};
 	}
 
@@ -1020,6 +1040,30 @@ internal static class McpTools
 			["isRunning"] = EmuApi.IsRunning(),
 			["isPaused"] = EmuApi.IsPaused(),
 			["frameCount"] = EmuApi.GetFrameCount(),
+		};
+	}
+
+	public static JsonNode GetCpuState(JsonNode? args)
+	{
+		string cpuStr = args?["cpuType"]?.GetValue<string>() ?? "Snes";
+		if(!Enum.TryParse<CpuType>(cpuStr, ignoreCase: true, out var cpu)) {
+			throw new McpException(-32602, "unknown cpuType: " + cpuStr);
+		}
+		var s = DebugApi.GetCpuState<SnesCpuState>(cpu);
+		return new JsonObject {
+			["cpuType"] = cpu.ToString(),
+			["pc"] = s.PC,
+			["k"] = s.K,
+			["a"] = s.A,
+			["x"] = s.X,
+			["y"] = s.Y,
+			["sp"] = s.SP,
+			["d"] = s.D,
+			["dbr"] = s.DBR,
+			["ps"] = (byte)s.PS,
+			["emulationMode"] = s.EmulationMode,
+			["stopState"] = s.StopState.ToString(),
+			["cycleCount"] = s.CycleCount,
 		};
 	}
 
