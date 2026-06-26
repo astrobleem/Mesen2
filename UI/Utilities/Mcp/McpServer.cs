@@ -317,6 +317,7 @@ internal sealed class McpServer
 			["ping"] = McpTools.Ping,
 			["get_state"] = McpTools.GetState,
 			["get_cpu_state"] = McpTools.GetCpuState,
+			["set_cpu_state"] = McpTools.SetCpuState,
 			["pause"] = McpTools.Pause,
 			["resume"] = McpTools.Resume,
 			["run_frames"] = McpTools.RunFrames,

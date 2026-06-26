@@ -35,6 +35,12 @@ internal static class McpTools
 				+ "coprocessor (use to debug SA-1 bring-up). Pause first for a coherent read.",
 			BuildGetCpuStateSchema()),
 
+		new("set_cpu_state",
+			"Set a CPU's architectural registers (pc,k,a,x,y,sp,d,dbr,ps,cycleCount,"
+				+ "emulationMode); only provided fields change. cpuType='Sa1' or 'Snes'. "
+				+ "Used with write_memory to transplant an execution state. Pause first.",
+			BuildSetCpuStateSchema()),
+
 		new("pause",
 			"Pause emulation. All read_* tools become race-free while paused. "
 				+ "Follow with resume or run_frames to advance.",
@@ -415,6 +421,26 @@ internal static class McpTools
 					["type"] = "string",
 					["description"] = "CPU type: 'Snes' (default) or 'Sa1'",
 				},
+			},
+			["required"] = new JsonArray(),
+		};
+	}
+
+	private static JsonNode BuildSetCpuStateSchema()
+	{
+		JsonObject Num(string d) => new JsonObject { ["type"] = "integer", ["description"] = d };
+		return new JsonObject {
+			["type"] = "object",
+			["properties"] = new JsonObject {
+				["cpuType"] = new JsonObject { ["type"] = "string", ["description"] = "CPU type: 'Snes' (default) or 'Sa1'" },
+				["pc"] = Num("program counter (16-bit)"),
+				["k"] = Num("program bank (8-bit)"),
+				["a"] = Num("accumulator (16-bit)"),
+				["x"] = Num("X (16-bit)"), ["y"] = Num("Y (16-bit)"),
+				["sp"] = Num("stack pointer (16-bit)"), ["d"] = Num("direct page (16-bit)"),
+				["dbr"] = Num("data bank (8-bit)"), ["ps"] = Num("processor flags (8-bit)"),
+				["cycleCount"] = Num("cycle count (64-bit)"),
+				["emulationMode"] = new JsonObject { ["type"] = "boolean", ["description"] = "65816 emulation mode flag" },
 			},
 			["required"] = new JsonArray(),
 		};
@@ -957,7 +983,6 @@ internal static class McpTools
 		var required = new JsonArray();
 		required.Add(JsonValue.Create("port"));
 		required.Add(JsonValue.Create("buttons"));
-		required.Add(JsonValue.Create("frames"));
 		return new JsonObject {
 			["type"] = "object",
 			["properties"] = new JsonObject {
@@ -967,11 +992,15 @@ internal static class McpTools
 				},
 				["buttons"] = new JsonObject {
 					["type"] = "integer",
-					["description"] = "Bitmask of buttons (e.g. 8 = start)",
+					["description"] = "Bitmask of buttons: A=1 B=2 Select=4 Start=8 Up=16 Down=32 Left=64 Right=128 X=256 L=512 R=1024 Y=2048",
 				},
 				["frames"] = new JsonObject {
 					["type"] = "integer",
-					["description"] = "How many frames to hold the input; emulation advances during this window",
+					["description"] = "Auto-advance mode: hold the input this many frames then auto-release. Required unless hold=true.",
+				},
+				["hold"] = new JsonObject {
+					["type"] = "boolean",
+					["description"] = "TAS-style hold: set the override and return immediately without advancing or clearing. The override persists across subsequent run_frames until released with set_input(buttons=0, hold=true). Use to observe manual $4016 serial reads while a button is held.",
 				},
 			},
 			["required"] = required,
@@ -1064,6 +1093,34 @@ internal static class McpTools
 			["emulationMode"] = s.EmulationMode,
 			["stopState"] = s.StopState.ToString(),
 			["cycleCount"] = s.CycleCount,
+		};
+	}
+
+	// Set a CPU's architectural registers. Reads the current state, overwrites any
+	// provided fields, writes it back via DebugApi.SetCpuState. Used to transplant a
+	// CPU's execution point (e.g. seed a gameplay state into the SA-1). Pause first.
+	public static JsonNode SetCpuState(JsonNode? args)
+	{
+		string cpuStr = args?["cpuType"]?.GetValue<string>() ?? "Snes";
+		if(!Enum.TryParse<CpuType>(cpuStr, ignoreCase: true, out var cpu)) {
+			throw new McpException(-32602, "unknown cpuType: " + cpuStr);
+		}
+		var s = DebugApi.GetCpuState<SnesCpuState>(cpu);
+		long? G(string k) => args?[k] != null ? args[k]!.GetValue<long>() : (long?)null;
+		if(G("pc") is long pc) s.PC = (UInt16)pc;
+		if(G("k") is long k) s.K = (byte)k;
+		if(G("a") is long a) s.A = (UInt16)a;
+		if(G("x") is long x) s.X = (UInt16)x;
+		if(G("y") is long y) s.Y = (UInt16)y;
+		if(G("sp") is long sp) s.SP = (UInt16)sp;
+		if(G("d") is long d) s.D = (UInt16)d;
+		if(G("dbr") is long dbr) s.DBR = (byte)dbr;
+		if(G("ps") is long ps) s.PS = (SnesCpuFlags)(byte)ps;
+		if(G("cycleCount") is long cc) s.CycleCount = (UInt64)cc;
+		if(args?["emulationMode"] != null) s.EmulationMode = args["emulationMode"]!.GetValue<bool>();
+		DebugApi.SetCpuState(s, cpu);
+		return new JsonObject {
+			["ok"] = true, ["cpuType"] = cpu.ToString(), ["pc"] = s.PC,
 		};
 	}
 
@@ -3056,8 +3113,17 @@ internal static class McpTools
 		}
 		uint port = RequireUInt(args, "port");
 		uint buttons = RequireUInt(args, "buttons");
-		uint frames = RequireUInt(args, "frames");
-		if(frames == 0 || frames > 100_000) {
+		// hold=true: set (or clear, when buttons==0) the debugger input override
+		// and return immediately WITHOUT auto-clearing or advancing emulation.
+		// This is the TAS-style primitive: the override persists across
+		// subsequent run_frames calls until explicitly released with
+		// set_input(buttons=0, hold=true). Lets a caller observe a manual
+		// $4016 serial read (mailbox) while the button is held. When hold is
+		// omitted/false, the legacy auto-advance-then-clear behavior applies
+		// and "frames" is required.
+		bool hold = OptionalBool(args, "hold", false);
+		uint frames = hold ? 0 : RequireUInt(args, "frames");
+		if(!hold && (frames == 0 || frames > 100_000)) {
 			throw new McpException(-32602, "frames out of range (1..100000)");
 		}
 		if(port > 3) {
@@ -3078,6 +3144,19 @@ internal static class McpTools
 			R = (buttons & 0x400) != 0,
 			Y = (buttons & 0x800) != 0,
 		};
+
+		if(hold) {
+			// Persist the override; emulation is advanced by the caller via
+			// run_frames. buttons==0 -> default() state releases the override
+			// (the next frame's normal poll clears the controller).
+			DebugApi.SetInputOverrides(port, state);
+			return new JsonObject {
+				["port"] = port,
+				["buttons"] = buttons,
+				["hold"] = true,
+				["isPaused"] = EmuApi.IsPaused(),
+			};
+		}
 
 		// Apply the override, run the emulator forward for the requested
 		// frames, then clear the override. Debugger input overrides win
@@ -3197,6 +3276,20 @@ internal static class McpTools
 			throw;
 		} catch {
 			throw new McpException(-32602, $"arg {key} must be an integer");
+		}
+	}
+
+	private static bool OptionalBool(JsonNode args, string key, bool dflt)
+	{
+		var node = args[key];
+		if(node == null) {
+			return dflt;
+		}
+		try {
+			return node.GetValue<bool>();
+		} catch {
+			// Accept 0/1 integers too, for clients that don't emit JSON bools.
+			try { return node.GetValue<long>() != 0; } catch { return dflt; }
 		}
 	}
 

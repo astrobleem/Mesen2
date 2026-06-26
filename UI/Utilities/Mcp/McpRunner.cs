@@ -43,6 +43,11 @@ internal static class McpRunner
 
 		Log("InitDll");
 		EmuApi.InitDll();
+		// Attach a standard controller on port 1 so the MCP set_input tool (debugger
+		// input overrides) and raw $4016 reads work headlessly. In headless mode the
+		// config-load can race and leave the port type None, which makes $4016 return
+		// open bus and leaves input overrides with no device to drive.
+		ConfigManager.Config.Snes.Port1.Type = ControllerType.SnesController;
 		Log("ApplyConfig");
 		ConfigManager.Config.ApplyConfig();
 		Log("InitializeEmu");
@@ -59,6 +64,14 @@ internal static class McpRunner
 		// Tell the C++ side that stdout belongs to MCP; Debugger/Lua logs
 		// divert to stderr.
 		// EmulationFlags.McpMode (Mesen2-only log-routing flag) not ported — MCP runs over TCP.
+
+		// Re-assert a standard controller on port 1 and push it to native RIGHT BEFORE
+		// LoadRom (after the async config-load race), so the control manager attaches a
+		// real device. Without a device $4016 returns open bus and set_input has nothing
+		// to drive.
+		ConfigManager.Config.Snes.Port1.Type = ControllerType.SnesController;
+		ConfigManager.Config.Snes.ApplyConfig();
+		Log("port1 controller = " + ConfigManager.Config.Snes.Port1.Type);
 
 		Log("LoadRom");
 		if(!EmuApi.LoadRom(cli.FilesToLoad[0], string.Empty)) {
