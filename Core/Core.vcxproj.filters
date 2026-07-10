@@ -43,6 +43,12 @@
     <ClCompile Include="Debugger\Debugger.cpp">
       <Filter>Debugger</Filter>
     </ClCompile>
+    <ClCompile Include="Mcp\McpHookManager.cpp">
+      <Filter>Mcp</Filter>
+    </ClCompile>
+    <ClInclude Include="Mcp\McpHookManager.h">
+      <Filter>Mcp</Filter>
+    </ClInclude>
     <ClInclude Include="Debugger\Debugger.h">
       <Filter>Debugger</Filter>
     </ClInclude>
@@ -3489,6 +3495,9 @@
     </Filter>
     <Filter Include="SNES\Coprocessors\SufamiTurbo">
       <UniqueIdentifier>{bfdd4bb9-41c2-4255-a8c3-0176c990cbf3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mcp">
+      <UniqueIdentifier>{c711e055-350c-4e8c-8eb4-a231748095c4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

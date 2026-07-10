@@ -872,8 +872,10 @@
     <ClInclude Include="Atari2600\Debugger\Atari2600PpuTools.h" />
     <ClInclude Include="Atari2600\Debugger\Atari2600TraceLogger.h" />
     <ClInclude Include="Atari2600\Debugger\Atari2600EventManager.h" />
+    <ClInclude Include="Mcp\McpHookManager.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Mcp\McpHookManager.cpp" />
     <ClCompile Include="Debugger\Base6502Assembler.cpp" />
     <ClCompile Include="Debugger\BaseEventManager.cpp" />
     <ClCompile Include="Debugger\CdlManager.cpp" />

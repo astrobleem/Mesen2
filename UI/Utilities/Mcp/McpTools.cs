@@ -18,6 +18,16 @@ namespace Nexen.Utilities.Mcp;
 /// </summary>
 internal static class McpTools
 {
+	private static string GetMcpCaptureFolder()
+	{
+		string? envDir = Environment.GetEnvironmentVariable("NEXEN_MCP_CAPTURE_DIR");
+		string dir = string.IsNullOrWhiteSpace(envDir)
+			? Nexen.Config.ConfigManager.ScreenshotFolder
+			: envDir;
+		System.IO.Directory.CreateDirectory(dir);
+		return dir;
+	}
+
 	public static readonly IReadOnlyList<McpToolDesc> Descriptions = new List<McpToolDesc> {
 		new("ping",
 			"Echo back. Use to verify the MCP session is alive.",
@@ -1221,10 +1231,17 @@ internal static class McpTools
 	{
 		string format = (args?["format"]?.GetValue<string>() ?? "path").ToLowerInvariant();
 
+		// Use the debugger's composited main-screen view for headless SNES
+		// sessions; the standard screenshot queue depends on a UI renderer.
+		if(EmuApi.GetRomInfo().ConsoleType == ConsoleType.Snes) {
+			return RenderSnesScreenCapture(format);
+		}
+
 		// EmuApi.TakeScreenshot writes to the configured Screenshots folder
 		// using a timestamped filename. We capture the newest file that
 		// appears as our return path. Simple, avoids framebuffer plumbing.
 		string dir = Nexen.Config.ConfigManager.ScreenshotFolder;
+		System.IO.Directory.CreateDirectory(dir);
 		HashSet<string> before;
 		try {
 			before = new HashSet<string>(System.IO.Directory.GetFiles(dir));
@@ -1279,6 +1296,52 @@ internal static class McpTools
 			result["bytes"] = bytes.Length;
 		}
 		return result;
+	}
+
+	private static JsonObject RenderSnesScreenCapture(string format)
+	{
+		BaseState ppuState = DebugApi.GetPpuState(CpuType.Snes);
+		BaseState ppuToolsState = DebugApi.GetPpuToolsState(CpuType.Snes);
+		byte[] vram = DebugApi.GetMemoryState(MemoryType.SnesVideoRam);
+		DebugPaletteInfo paletteInfo = DebugApi.GetPaletteInfo(CpuType.Snes);
+		UInt32[] rgbPalette = paletteInfo.GetRgbPalette();
+
+		// Layer 4 is the debugger's SNES Main screen view. It is populated from
+		// the PPU's already-composited main-screen buffer, including sprite
+		// priority and window effects, so do not overlay a second sprite preview.
+		var tilemapOptions = new GetTilemapOptions {
+			Layer = 4,
+		};
+		FrameInfo size = DebugApi.GetTilemapSize(CpuType.Snes, tilemapOptions, ppuState);
+		if(size.Width == 0 || size.Height == 0) {
+			throw new McpException(-32603, "SNES screenshot renderer could not resolve the main screen view");
+		}
+
+		int w = (int)size.Width;
+		int h = (int)size.Height;
+		var pixels = new uint[w * h];
+		unsafe {
+			fixed(uint* pixelPtr = pixels) {
+				DebugApi.GetTilemap(
+					CpuType.Snes, tilemapOptions, ppuState, ppuToolsState,
+					vram, rgbPalette, (IntPtr)pixelPtr);
+			}
+		}
+
+		JsonObject result = RenderArgbToPng(pixels, w, h, 1, format, "screenshot_snes_mcp");
+		result["unique_colors"] = CountUniqueColors(pixels);
+		result["source"] = "snes_debugger_renderer";
+		result["source_view"] = "main";
+		return result;
+	}
+
+	private static int CountUniqueColors(uint[] pixels)
+	{
+		var seen = new HashSet<uint>();
+		foreach(uint p in pixels) {
+			seen.Add(p | 0xFF000000);
+		}
+		return seen.Count;
 	}
 
 	public static JsonNode CropScreenshot(JsonNode? args)
@@ -1413,7 +1476,7 @@ internal static class McpTools
 
 		// Save next to the screenshot folder so screenshots + tilemap dumps
 		// land in the same directory for easy comparison.
-		string dir = Nexen.Config.ConfigManager.ScreenshotFolder;
+		string dir = GetMcpCaptureFolder();
 		string path = System.IO.Path.Combine(dir,
 			$"tilemap_L{layer + 1}_{DateTime.Now:yyyyMMdd_HHmmss_fff}.png");
 		try { System.IO.Directory.CreateDirectory(dir); } catch { }
@@ -1478,7 +1541,7 @@ internal static class McpTools
 				new SkiaSharp.SKPaint { FilterQuality = SkiaSharp.SKFilterQuality.None });
 		}
 
-		string dir = Nexen.Config.ConfigManager.ScreenshotFolder;
+		string dir = GetMcpCaptureFolder();
 		string path = System.IO.Path.Combine(dir,
 			$"{filenamePrefix}_{DateTime.Now:yyyyMMdd_HHmmss_fff}.png");
 		try { System.IO.Directory.CreateDirectory(dir); } catch { }
@@ -1830,7 +1893,7 @@ internal static class McpTools
 				}
 			}
 
-			string dir = Nexen.Config.ConfigManager.ScreenshotFolder;
+			string dir = GetMcpCaptureFolder();
 			string outPath = System.IO.Path.Combine(dir,
 				$"filmstrip_{count}x_step{frameStep}_{DateTime.Now:yyyyMMdd_HHmmss_fff}.png");
 			try { System.IO.Directory.CreateDirectory(dir); } catch { }
