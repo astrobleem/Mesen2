@@ -22,7 +22,7 @@
 #pragma once
 
 #include "BaseCodec.h"
-#include <miniz/miniz.h>
+#include "miniz/miniz.h"
 
 #ifdef _MSC_VER
 #define INLINE __forceinline

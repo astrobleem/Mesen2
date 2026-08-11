@@ -3,7 +3,7 @@
 #include "pch.h"
 #include <cstring>
 #include "CamstudioCodec.h"
-#include <miniz/miniz.h>
+#include "miniz/miniz.h"
 
 CamstudioCodec::~CamstudioCodec() {
 	deflateEnd(&_compressor);

@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "pch.h"
-#include <miniz/miniz.h>
+#include "miniz/miniz.h"
 
 /// <summary>
 /// Compression utilities using miniz library (zlib-compatible deflate algorithm).

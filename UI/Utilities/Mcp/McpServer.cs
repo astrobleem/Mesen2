@@ -320,6 +320,7 @@ internal sealed class McpServer
 			["set_cpu_state"] = McpTools.SetCpuState,
 			["pause"] = McpTools.Pause,
 			["resume"] = McpTools.Resume,
+			["step_cpu"] = McpTools.StepCpu,
 			["run_frames"] = McpTools.RunFrames,
 			["read_memory"] = McpTools.ReadMemory,
 			["write_memory"] = McpTools.WriteMemory,

@@ -25,7 +25,7 @@
 #include <string.h>
 #include <math.h>
 
-#include <miniz/miniz.h>
+#include "miniz/miniz.h"
 #include "ZmbvCodec.h"
 
 #define DBZV_VERSION_HIGH 0

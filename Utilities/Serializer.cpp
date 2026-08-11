@@ -3,7 +3,7 @@
 #include <cctype>
 #include "Serializer.h"
 #include "ISerializable.h"
-#include <miniz/miniz.h>
+#include "miniz/miniz.h"
 
 Serializer::Serializer(uint32_t version, bool forSave, SerializeFormat format) {
 	_version = version;

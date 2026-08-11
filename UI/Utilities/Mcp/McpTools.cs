@@ -61,6 +61,12 @@ internal static class McpTools
 				+ "target across multiple calls.",
 			null),
 
+		new("step_cpu",
+			"Execute an exact number of debugger CPU steps, then pause. This is the "
+				+ "instruction-boundary primitive for deterministic CPU bring-up; unlike "
+				+ "run_frames it does not advance through a frame-level race.",
+			BuildStepCpuSchema()),
+
 		new("run_frames",
 			"Advance emulation by exactly N frames, then pause again. Deterministic: "
 				+ "polls EmuApi.GetFrameCount() until the counter has advanced by N "
@@ -359,6 +365,21 @@ internal static class McpTools
 					["type"] = "integer",
 					["description"] = "Number of frames to advance (1..1000000)",
 				},
+			},
+			["required"] = required,
+		};
+	}
+
+	private static JsonNode BuildStepCpuSchema()
+	{
+		var required = new JsonArray();
+		required.Add(JsonValue.Create("cpuType"));
+		return new JsonObject {
+			["type"] = "object",
+			["properties"] = new JsonObject {
+				["cpuType"] = new JsonObject { ["type"] = "string", ["description"] = "CPU type, e.g. 'Sa1' or 'Snes'" },
+				["count"] = new JsonObject { ["type"] = "integer", ["description"] = "Instruction count (1..1000, default 1)" },
+				["stepType"] = new JsonObject { ["type"] = "string", ["description"] = "Debugger step type: Step, StepOver, or StepOut (default Step)" },
 			},
 			["required"] = required,
 		};
@@ -1152,6 +1173,40 @@ internal static class McpTools
 	{
 		EmuApi.Resume();
 		return new JsonObject { ["paused"] = false };
+	}
+
+	public static JsonNode StepCpu(JsonNode? args)
+	{
+		args ??= new JsonObject();
+		string cpuStr = args["cpuType"]?.GetValue<string>() ?? throw new McpException(-32602, "missing arg: cpuType");
+		if(!Enum.TryParse<CpuType>(cpuStr, ignoreCase: true, out var cpu)) {
+			throw new McpException(-32602, "unknown cpuType: " + cpuStr);
+		}
+		int count = (int)((args["count"]?.GetValue<long>()) ?? 1);
+		if(count < 1 || count > 1000) throw new McpException(-32602, "count out of range (1..1000)");
+		string stepStr = args["stepType"]?.GetValue<string>() ?? "Step";
+		if(!Enum.TryParse<StepType>(stepStr, ignoreCase: true, out var stepType)) {
+			throw new McpException(-32602, "unknown stepType: " + stepStr);
+		}
+
+		Pause(null);
+		DebugApi.Step(cpu, count, stepType);
+		for(int i = 0; i < 200; i++) {
+			if(EmuApi.IsPaused()) break;
+			System.Threading.Thread.Sleep(5);
+		}
+		var progress = DebugApi.GetInstructionProgress(cpu);
+		return new JsonObject {
+			["cpuType"] = cpu.ToString(),
+			["count"] = count,
+			["stepType"] = stepType.ToString(),
+			["paused"] = EmuApi.IsPaused(),
+			["currentCycle"] = progress.CurrentCycle,
+			["lastOpCode"] = progress.LastOpCode,
+			["lastMemoryAddress"] = progress.LastMemOperation.Address,
+			["lastMemoryValue"] = progress.LastMemOperation.Value,
+			["lastMemoryType"] = progress.LastMemOperation.Type.ToString(),
+		};
 	}
 
 	public static JsonNode RunFrames(JsonNode? args)
@@ -3055,13 +3110,19 @@ internal static class McpTools
 		}
 
 		uint startFrame = EmuApi.GetFrameCount();
-		ulong startMatches = 0;
+		// Drain events queued by an earlier run.  The diagnostic match counter
+		// is global, so it cannot identify the requested hook and allowed a
+		// different hook's match to terminate this wait.
 		if(hookHandle != 0) {
-			DebugApi.McpHookDiagCounters(out _, out startMatches);
+			var staleEvents = new Interop.McpHookEvent[256];
+			while(DebugApi.McpDrainEvents(staleEvents, staleEvents.Length) != 0) { }
 		}
 
 		EmuApi.Resume();
 		string reason = "maxFrames";
+		Interop.McpHookEvent matchedEvent = default;
+		bool matched = false;
+		var observedEvents = new JsonArray();
 		var sw = System.Diagnostics.Stopwatch.StartNew();
 		// Poll loop: every ~10ms check (a) frame budget, (b) hook firing.
 		// Cap real-time at 2x the frame-budget wall-clock just in case
@@ -3075,11 +3136,24 @@ internal static class McpTools
 				break;
 			}
 			if(hookHandle != 0) {
-				DebugApi.McpHookDiagCounters(out _, out ulong nowMatches);
-				if(nowMatches > startMatches) {
+				var events = new Interop.McpHookEvent[256];
+				int eventCount = DebugApi.McpDrainEvents(events, events.Length);
+				for(int i = 0; i < eventCount; i++) {
+					observedEvents.Add(new JsonObject {
+						["handle"] = events[i].Handle,
+						["address"] = events[i].Address,
+						["value"] = events[i].Value,
+						["frame"] = events[i].FrameNumber,
+						["kind"] = events[i].Kind.ToString(),
+						["cpuType"] = events[i].Cpu.ToString(),
+					});
+					if(events[i].Handle != hookHandle) continue;
+					matchedEvent = events[i];
+					matched = true;
 					reason = "hookFired";
 					break;
 				}
+				if(matched) break;
 			}
 		}
 		EmuApi.Pause();
@@ -3093,6 +3167,11 @@ internal static class McpTools
 			["reason"] = reason,
 			["framesAdvanced"] = endFrame - startFrame,
 			["isPaused"] = EmuApi.IsPaused(),
+			["hookHandle"] = hookHandle,
+			["matchedAddress"] = matched ? matchedEvent.Address : 0,
+			["matchedValue"] = matched ? matchedEvent.Value : 0,
+			["matchedFrame"] = matched ? matchedEvent.FrameNumber : 0,
+			["observedEvents"] = observedEvents,
 		};
 	}
 
