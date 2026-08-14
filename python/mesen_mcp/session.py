@@ -214,11 +214,31 @@ class McpSession:
         stopState, cycleCount). cpu_type='Sa1' reads the SA-1 coprocessor."""
         return self.tool("get_cpu_state", {"cpuType": cpu_type})
 
+    def set_cpu_state(self, cpu_type: str = "Snes", **registers: int | bool) -> dict:
+        """Write selected architectural registers and return the written state.
+
+        Only supplied fields change. For SA-1 register seeding use
+        ``set_cpu_state("Sa1", pc=..., k=..., d=..., sp=..., ps=...)``.
+        Pause first when the write must take effect at a deterministic boundary.
+        """
+        args: dict[str, object] = {"cpuType": cpu_type}
+        args.update(registers)
+        return self.tool("set_cpu_state", args)
+
     def pause(self) -> dict:
         return self.tool("pause")
 
     def resume(self) -> dict:
         return self.tool("resume")
+
+    def step_cpu(self, cpu_type: str = "Snes", count: int = 1,
+                 step_type: str = "Step") -> dict:
+        """Execute exactly ``count`` debugger CPU instructions, then pause."""
+        return self.tool("step_cpu", {
+            "cpuType": cpu_type,
+            "count": count,
+            "stepType": step_type,
+        })
 
     def run_frames(self, count: int) -> dict:
         return self.tool("run_frames", {"count": count})

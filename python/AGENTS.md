@@ -11,7 +11,7 @@ source is `python/mesen_mcp/`.
 ## What this gives you
 
 A live, paused-by-default debugger for an SNES (or any Mesen 2-supported
-console) with **47 MCP tools** organised into 10 categories: state,
+console) with **48 MCP tools** organised into 10 categories: state,
 memory, screenshot, savestate, movies, ppu, hooks, debugging, input,
 audio. The C# server runs **inside Mesen 2** (our `astrobleem/Mesen2`
 fork's `--mcp` mode). This Python package is the client + stdio bridge.
@@ -43,6 +43,25 @@ with McpSession.from_env() as m:
 Or as MCP tool calls:
 1. `mcp__mesen-inproc__pause`
 2. `mcp__mesen-inproc__get_state`
+
+### Seeding SA-1 architectural state
+
+Use `set_cpu_state` while paused to write selected registers without disturbing
+the fields omitted from the request. It accepts `cpuType="Sa1"` and returns
+the written PC; follow with `get_cpu_state("Sa1")` when the full state must be
+authenticated.
+
+```python
+m.pause()
+before = m.get_cpu_state("Sa1")
+m.set_cpu_state("Sa1", pc=0x80F8, k=0, d=0, sp=before["sp"], ps=before["ps"])
+after = m.get_cpu_state("Sa1")
+```
+
+The equivalent MCP call is `set_cpu_state` with arguments such as
+`{"cpuType":"Sa1","pc":33016,"k":0,"d":0}`. This is a register write,
+not a ROM redirect; do not treat the write alone as proof that the target
+instruction executed.
 
 ## Discovering what's available
 
