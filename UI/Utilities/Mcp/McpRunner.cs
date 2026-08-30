@@ -66,6 +66,24 @@ internal static class McpRunner
 			return -1;
 		}
 
+		// Re-pause immediately after load instead of auto-resuming: LoadRom's
+		// native implementation resumes the core internally regardless of the
+		// pre-load Pause() above. This MUST happen before
+		// DebugWorkspaceManager.Load()/Lua loading below, not after: those
+		// calls do real disk I/O (symbol files, workspace state) and can take
+		// several hundred milliseconds of wall-clock time. Until MaximumSpeed
+		// is set (further down), the emulator runs at normal, unaccelerated
+		// speed, so that wall-clock delay was previously translating directly
+		// into dozens of real frames elapsing -- nondeterministically, since
+		// it depended on disk/OS scheduling timing -- before any client could
+		// ever call pause(). That made frame 0 unobservable and produced
+		// exactly the kind of run-to-run-varying "crash point" that looks
+		// like nondeterministic game behavior but is actually harness skew.
+		// The client now owns the first resume() call and gets a true
+		// from-reset-vector trace.
+		Log("Pause (post-load)");
+		EmuApi.Pause();
+
 		Log("DebugWorkspaceManager.Load");
 		DebugWorkspaceManager.Load();
 
@@ -81,7 +99,14 @@ internal static class McpRunner
 		}
 
 		ConfigApi.SetEmulationFlag(EmulationFlags.MaximumSpeed, true);
-		EmuApi.Resume();
+
+		// The core may have serviced a partial frame between LoadRom()'s
+		// internal resume and the Pause() above taking effect (Pause() only
+		// halts at the next frame boundary). Re-assert pause once more here,
+		// after workspace/Lua loading, so any such stray progress is also
+		// caught before the client connects.
+		Log("Pause (post-workspace-load)");
+		EmuApi.Pause();
 
 		// Hand control to the MCP server. Blocks until client disconnects
 		// and accept() unblocks (we rely on emu.Stop from a tool for shutdown).

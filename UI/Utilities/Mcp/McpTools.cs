@@ -80,12 +80,37 @@ internal static class McpTools
 			BuildSaveLoadSchema()),
 
 		new("set_input",
-			"Inject controller state for the next N frames. Buttons are bit-OR "
-				+ "of: a=1,b=2,select=4,start=8,up=16,down=32,left=64,right=128 and "
-				+ "SNES-only x=256,l=512,r=1024,y=2048. Use when scripts need to "
-				+ "drive past the title screen or trigger script-driven transitions "
-				+ "the way the real controller does.",
+			"Inject controller state for EXACTLY the next N emulated frames "
+				+ "(frame-exact: polls the real frame counter to the target, same "
+				+ "technique as run_frames -- not a wall-clock sleep). Buttons are "
+				+ "bit-OR of: a=1,b=2,select=4,start=8,up=16,down=32,left=64,right=128 "
+				+ "and SNES-only x=256,l=512,r=1024,y=2048. Input is released before "
+				+ "returning. Response includes startFrame/endFrame/framesAdvanced/"
+				+ "timedOut so a caller can verify the edge was actually delivered for "
+				+ "the requested frame count. Use when scripts need to drive past the "
+				+ "title screen or trigger script-driven transitions the way the real "
+				+ "controller does.",
 			BuildSetInputSchema()),
+
+		new("hold_input",
+			"Set a persistent controller-state override that stays active across "
+				+ "multiple run_frames calls until release_input clears it (unlike "
+				+ "set_input, which always releases before returning). Use this when "
+				+ "a gate needs to hold a button through several run_frames calls and "
+				+ "inspect state between them, WITHOUT re-latching the input edge each "
+				+ "time -- calling set_input(...,1) repeatedly to fake a multi-frame "
+				+ "hold clears and re-applies the override every single frame, which "
+				+ "can miss the console's actual once-per-frame controller-poll timing "
+				+ "and silently deliver zero real presses. Same button bitmask as "
+				+ "set_input. Always pair with release_input when done, even on an "
+				+ "error path -- an unreleased override otherwise stays stuck for the "
+				+ "rest of the session.",
+			BuildHoldInputSchema()),
+
+		new("release_input",
+			"Clear a persistent override previously set by hold_input for the given "
+				+ "port. Safe to call even if nothing is held (no-op).",
+			BuildReleaseInputSchema()),
 
 		new("get_ppu_state",
 			"Return PPU register snapshot: forced-blank flag, brightness, BG mode, "
@@ -972,6 +997,43 @@ internal static class McpTools
 				["frames"] = new JsonObject {
 					["type"] = "integer",
 					["description"] = "How many frames to hold the input; emulation advances during this window",
+				},
+			},
+			["required"] = required,
+		};
+	}
+
+	private static JsonNode BuildHoldInputSchema()
+	{
+		var required = new JsonArray();
+		required.Add(JsonValue.Create("port"));
+		required.Add(JsonValue.Create("buttons"));
+		return new JsonObject {
+			["type"] = "object",
+			["properties"] = new JsonObject {
+				["port"] = new JsonObject {
+					["type"] = "integer",
+					["description"] = "Controller port (0 = player 1)",
+				},
+				["buttons"] = new JsonObject {
+					["type"] = "integer",
+					["description"] = "Bitmask of buttons (e.g. 8 = start)",
+				},
+			},
+			["required"] = required,
+		};
+	}
+
+	private static JsonNode BuildReleaseInputSchema()
+	{
+		var required = new JsonArray();
+		required.Add(JsonValue.Create("port"));
+		return new JsonObject {
+			["type"] = "object",
+			["properties"] = new JsonObject {
+				["port"] = new JsonObject {
+					["type"] = "integer",
+					["description"] = "Controller port (0 = player 1)",
 				},
 			},
 			["required"] = required,
@@ -3079,13 +3141,28 @@ internal static class McpTools
 			Y = (buttons & 0x800) != 0,
 		};
 
-		// Apply the override, run the emulator forward for the requested
-		// frames, then clear the override. Debugger input overrides win
-		// against the default controller polling every frame.
+		// Apply the override, run the emulator forward for EXACTLY the
+		// requested frames (frame-exact stepping via EmuApi.GetFrameCount()
+		// polling, same technique RunFrames uses), then clear the override.
+		// Debugger input overrides win against the default controller
+		// polling every frame. Previously this slept a fixed wall-clock
+		// estimate (frames * 1000/60 * 1.2 + 20ms) and hoped -- under real
+		// system load the emulator could advance fewer (or, rarely, more)
+		// frames than requested while the override was still active, so a
+		// caller had no way to know the input edge it asked for was ever
+		// actually delivered for the frame count it expected. Mirrors
+		// RunFrames' own fix for the identical problem.
 		DebugApi.SetInputOverrides(port, state);
+		uint startFrame = EmuApi.GetFrameCount();
+		uint targetFrame = unchecked(startFrame + frames);
 		EmuApi.Resume();
-		double estMs = frames * (1000.0 / 60.0);
-		System.Threading.Thread.Sleep((int)Math.Min(estMs * 1.2 + 20, 120_000));
+		var sw = System.Diagnostics.Stopwatch.StartNew();
+		long maxMs = (long)(frames * (1000.0 / 60.0) * 2.0) + 200;
+		while(sw.ElapsedMilliseconds < maxMs) {
+			uint nowFrame = EmuApi.GetFrameCount();
+			if(unchecked(nowFrame - startFrame) >= frames) break;
+			System.Threading.Thread.Sleep(2);
+		}
 		EmuApi.Pause();
 		for(int i = 0; i < 200; i++) {
 			if(EmuApi.IsPaused()) break;
@@ -3093,11 +3170,72 @@ internal static class McpTools
 		}
 		DebugApi.SetInputOverrides(port, default);
 
+		uint endFrame = EmuApi.GetFrameCount();
+		long actualAdvanced = unchecked(endFrame - startFrame);
 		return new JsonObject {
 			["port"] = port,
 			["buttons"] = buttons,
 			["frames"] = frames,
+			["startFrame"] = startFrame,
+			["endFrame"] = endFrame,
+			["framesAdvanced"] = actualAdvanced,
 			["isPaused"] = EmuApi.IsPaused(),
+			["timedOut"] = sw.ElapsedMilliseconds >= maxMs && actualAdvanced < frames,
+		};
+	}
+
+	public static JsonNode HoldInput(JsonNode? args)
+	{
+		if(args == null) {
+			throw new McpException(-32602, "hold_input requires arguments");
+		}
+		uint port = RequireUInt(args, "port");
+		uint buttons = RequireUInt(args, "buttons");
+		if(port > 3) {
+			throw new McpException(-32602, "port out of range (0..3)");
+		}
+
+		DebugControllerState state = new() {
+			A = (buttons & 0x001) != 0,
+			B = (buttons & 0x002) != 0,
+			Select = (buttons & 0x004) != 0,
+			Start = (buttons & 0x008) != 0,
+			Up = (buttons & 0x010) != 0,
+			Down = (buttons & 0x020) != 0,
+			Left = (buttons & 0x040) != 0,
+			Right = (buttons & 0x080) != 0,
+			X = (buttons & 0x100) != 0,
+			L = (buttons & 0x200) != 0,
+			R = (buttons & 0x400) != 0,
+			Y = (buttons & 0x800) != 0,
+		};
+		// Persistent override -- deliberately does NOT resume/advance/clear.
+		// Caller drives progress with run_frames and must call release_input
+		// when done (this is the one piece set_input's all-in-one shape can't
+		// do: hold a button continuously across several separate run_frames
+		// calls with state inspected between them, without re-latching the
+		// edge every single frame).
+		DebugApi.SetInputOverrides(port, state);
+		return new JsonObject {
+			["port"] = port,
+			["buttons"] = buttons,
+			["held"] = true,
+		};
+	}
+
+	public static JsonNode ReleaseInput(JsonNode? args)
+	{
+		if(args == null) {
+			throw new McpException(-32602, "release_input requires arguments");
+		}
+		uint port = RequireUInt(args, "port");
+		if(port > 3) {
+			throw new McpException(-32602, "port out of range (0..3)");
+		}
+		DebugApi.SetInputOverrides(port, default);
+		return new JsonObject {
+			["port"] = port,
+			["held"] = false,
 		};
 	}
 

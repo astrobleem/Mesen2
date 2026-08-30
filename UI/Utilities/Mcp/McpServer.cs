@@ -326,6 +326,8 @@ internal sealed class McpServer
 			["save_state"] = McpTools.SaveState,
 			["load_state"] = McpTools.LoadState,
 			["set_input"] = McpTools.SetInput,
+			["hold_input"] = McpTools.HoldInput,
+			["release_input"] = McpTools.ReleaseInput,
 			["get_ppu_state"] = McpTools.GetPpuState,
 			["add_exec_hook"] = McpTools.AddExecHook,
 			["add_read_hook"] = McpTools.AddReadHook,

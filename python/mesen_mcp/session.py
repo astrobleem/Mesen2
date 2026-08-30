@@ -138,6 +138,16 @@ class McpSession:
                     self._proc.wait(timeout=5)
                 except subprocess.TimeoutExpired:
                     self._proc.kill()
+                    # kill() only requests termination; without a blocking
+                    # wait() here, __exit__ can return before the OS has
+                    # actually reaped the process and released its listening
+                    # port. A sequential caller that immediately opens a new
+                    # session on the same port could then have its fresh
+                    # Mesen.exe fail to bind (or, worse, have its client
+                    # socket connect to the still-dying old process instead
+                    # of the new one), corrupting the new session's state
+                    # with stale emulator state from the previous run.
+                    self._proc.wait()
                 if self._stderr_log:
                     Path(self._stderr_log).write_bytes(
                         b"".join(self._stderr_lines)
@@ -277,6 +287,18 @@ class McpSession:
             "buttons": buttons,
             "frames": frames,
         })
+
+    def hold_input(self, buttons: int, port: int = 0) -> dict:
+        """Set a persistent controller-state override that stays active
+        across multiple run_frames calls until release_input() clears it.
+        Unlike set_input, this does not itself advance emulation or
+        release -- caller drives progress with run_frames and MUST call
+        release_input when done (including on error paths), or the
+        override sticks for the rest of the session."""
+        return self.tool("hold_input", {"port": port, "buttons": buttons})
+
+    def release_input(self, port: int = 0) -> dict:
+        return self.tool("release_input", {"port": port})
 
     def get_ppu_state(self) -> dict:
         return self.tool("get_ppu_state")
