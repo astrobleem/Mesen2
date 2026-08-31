@@ -9,14 +9,21 @@ using Avalonia.Layout;
 using Avalonia.Platform;
 using Avalonia.Rendering;
 using Avalonia.VisualTree;
+#if !OPTIMIZEUI
+using Avalonia.Diagnostics;
+#endif
 
 namespace Nexen.Utilities;
 static class WindowExtensions {
-	// Avalonia 12's diagnostics package no longer supplies the former
-	// AttachDevTools extension in the Linux headless build. Keep the migrated
-	// call sites source-compatible; headless Nexen does not attach UI tooling.
+#if OPTIMIZEUI
+	// Avalonia diagnostics are excluded from optimized/headless builds.
 	public static void AttachDeveloperTools(this Control control) { }
-
+#else
+	// Avalonia diagnostics attach to the application in normal GUI builds.
+	public static void AttachDeveloperTools(this Control control) {
+		Application.Current?.AttachDeveloperTools();
+	}
+#endif
 	public static void CenterWindow(Window child, Visual parent) {
 		if (TryCenterWindowImmediately(child, parent)) {
 			return;

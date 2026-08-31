@@ -101,6 +101,7 @@ extern "C" {
 		if(snesResets) *snesResets = 0;
 		if(sa1Resets) *sa1Resets = 0;
 		if(!_emu) return;
+		EmulatorLock lock(_emu.get(), false);
 		if(auto* console = dynamic_cast<SnesConsole*>(_emu->GetConsoleUnsafe())) {
 			if(snesResets) *snesResets = console->GetResetCount();
 			if(console->GetCartridge() && console->GetCartridge()->GetSa1()) {

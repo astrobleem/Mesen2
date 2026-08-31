@@ -20,6 +20,10 @@ def main() -> None:
         m.pause()
         m.reset_emulator()
         m.pause()
+        diag = m.tool("reset_diag")
+        assert {"snesResets", "sa1Resets", "frameCount"} <= diag.keys(), diag
+        assert all(isinstance(diag[key], int) and diag[key] >= 0 for key in ("snesResets", "sa1Resets", "frameCount")), diag
+        assert diag["sa1Resets"] >= 1, diag
         handle = m.add_write_hook(0x000F, 0x000F, cpu_type="Sa1")
         result = m.run_until(max_frames=60, hook_handle=handle)
         events = [e for e in result["observedEvents"] if e["handle"] == handle]

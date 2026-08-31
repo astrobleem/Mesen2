@@ -41,7 +41,7 @@
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(OptimizeUi)'=='true'">
 		<Optimize>true</Optimize>
-		<DefineConstants>TRACE</DefineConstants>
+		<DefineConstants>TRACE;OPTIMIZEUI</DefineConstants>
 	</PropertyGroup>
 	<PropertyGroup>
 		<CFBundleName>Nexen</CFBundleName> <!-- Also defines .app file name -->
