@@ -12,7 +12,12 @@ public:
 	DebugBreakHelper(Debugger* debugger, bool breakBetweenInstructions = false) {
 		_debugger = debugger;
 
-		_needBreak = !debugger->GetEmulator()->IsEmulationThread();
+		// Preserve an existing debugger pause. MCP state reads/writes are often
+		// issued as a sequence while the emulator is already stopped; treating
+		// every cross-thread call as owning the break releases that pause in the
+		// destructor and lets the CPU run between calls.
+		_needBreak = !debugger->GetEmulator()->IsEmulationThread()
+			&& !debugger->GetEmulator()->IsPaused();
 
 		if (_needBreak) {
 			// Only attempt to break if this is done in a thread other than the main emulation thread (and the debugger is active)

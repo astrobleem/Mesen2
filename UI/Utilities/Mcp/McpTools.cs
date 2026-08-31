@@ -39,6 +39,12 @@ internal static class McpTools
 				+ "before a sequence of read_memory calls to get a coherent snapshot.",
 			null),
 
+
+		new("reset_diag",
+			"Return native SNES and SA-1 reset counters. Use this to distinguish "
+				+ "a coprocessor reset from an instruction-level branch or mode change.",
+			null),
+
 		new("get_cpu_state",
 			"Get a CPU's register state: pc, k(bank), a, x, y, sp, d, dbr, ps(flags), "
 				+ "emulationMode, stopState, cycleCount. cpuType='Sa1' reads the SA-1 "
@@ -985,6 +991,14 @@ internal static class McpTools
 				["type"] = "integer",
 				["description"] = "Mask for matchValue. 0 disables value matching (fire on every hit). 0xFF for byte-exact.",
 			};
+			props["xValue"] = new JsonObject {
+				["type"] = "integer",
+				["description"] = "Optional X-register match for execution hooks.",
+			};
+			props["xMask"] = new JsonObject {
+				["type"] = "integer",
+				["description"] = "Mask for xValue; 0 disables X matching. Use 0xFFFF for exact X.",
+			};
 		}
 		return new JsonObject {
 			["type"] = "object",
@@ -1099,6 +1113,16 @@ internal static class McpTools
 		return new JsonObject {
 			["isRunning"] = EmuApi.IsRunning(),
 			["isPaused"] = EmuApi.IsPaused(),
+			["frameCount"] = EmuApi.GetFrameCount(),
+		};
+	}
+
+	public static JsonNode ResetDiag(JsonNode? args)
+	{
+		DebugApi.McpGetResetCounts(out ulong snesResets, out ulong sa1Resets);
+		return new JsonObject {
+			["snesResets"] = snesResets,
+			["sa1Resets"] = sa1Resets,
 			["frameCount"] = EmuApi.GetFrameCount(),
 		};
 	}
@@ -1228,7 +1252,11 @@ internal static class McpTools
 		uint targetFrame = unchecked(startFrame + (uint)count);
 		EmuApi.Resume();
 		var sw = System.Diagnostics.Stopwatch.StartNew();
-		long maxMs = (long)(count * (1000.0 / 60.0) * 2.0) + 200;
+		// Black Tiger's interpreter can require substantially longer than one
+		// real-time frame at max-speed.  A short cap leaves the emulator
+		// running after the request times out; the next request then resumes
+		// an in-flight frame and produces alternating 0/1-frame results.
+		long maxMs = (long)(count * 2000.0) + 1000;
 		while(sw.ElapsedMilliseconds < maxMs) {
 			uint nowFrame = EmuApi.GetFrameCount();
 			// Compare via wraparound-safe subtraction; a u32 frame counter
@@ -2310,8 +2338,8 @@ internal static class McpTools
 	{
 		int count = (int)((args?["count"]?.GetValue<long>()) ?? 32);
 		string cpuStr = args?["cpuType"]?.GetValue<string>() ?? "Snes";
-		if(count < 1 || count > 1000) {
-			throw new McpException(-32602, "count must be 1..1000");
+		if(count < 1 || count > 30000) {
+			throw new McpException(-32602, "count must be 1..30000");
 		}
 		if(!Enum.TryParse<CpuType>(cpuStr, ignoreCase: true, out var cpu)) {
 			throw new McpException(-32602, "unknown cpuType: " + cpuStr);
@@ -2342,17 +2370,17 @@ internal static class McpTools
 			}
 		}
 
-		// GetExecutionTrace reads up to TraceLogBufferSize=30000 rows total.
-		// We want the LAST `count` rows. The "startOffset" arg means "skip the
-		// first N rows of the captured history". To get the tail, fetch the
-		// full size first, then start from (size - count).
+		// GetExecutionTrace returns rows newest-first, and startOffset skips
+		// rows from that newest end. Fetch from offset zero and filter while
+		// retaining the newest `count` rows for the requested CPU. The trace
+		// buffer interleaves all active CPUs, so skipping totalSize-count before
+		// filtering can return the oldest segment and miss the fault boundary.
 		uint totalSize = DebugApi.GetExecutionTraceSize();
-		uint startOffset = totalSize > (uint)count ? totalSize - (uint)count : 0;
-		uint rowsToFetch = totalSize > (uint)count ? (uint)count : totalSize;
+		uint rowsToFetch = totalSize;
 
 		var rows = new JsonArray();
 		if(rowsToFetch > 0) {
-			TraceRow[] fetched = DebugApi.GetExecutionTrace(startOffset, rowsToFetch);
+			TraceRow[] fetched = DebugApi.GetExecutionTrace(0, rowsToFetch);
 			// Filter to the requested CPU only — the buffer interleaves all active CPUs.
 			foreach(TraceRow row in fetched) {
 				if(row.Type != cpu) continue;
@@ -2361,6 +2389,7 @@ internal static class McpTools
 					["bytes"] = row.GetByteCodeStr(),
 					["text"] = row.GetOutput(),
 				});
+				if(rows.Count >= count) break;
 			}
 		}
 
@@ -2504,7 +2533,7 @@ internal static class McpTools
 			// Fallback: no value match, fire every frame and let the client filter.
 			mask = 0;
 		}
-		int handle = DebugApi.McpAddHook((byte)McpHookKind.Frame, cpu, 0, uint.MaxValue, 0, mask);
+		int handle = DebugApi.McpAddHook((byte)McpHookKind.Frame, cpu, 0, uint.MaxValue, 0, mask, 0, 0);
 		return new JsonObject {
 			["handle"] = handle,
 			["kind"] = "Frame",
@@ -2891,13 +2920,19 @@ internal static class McpTools
 		} else {
 			EmuApi.McpResetEmu();
 		}
-		// Reset is processed on the emu thread; give it a beat to land
-		// before the caller queries state.
-		for(int i = 0; i < 60; i++) {
+		// Reset is processed on the emu thread.  Waiting for
+		// `frameCount < 30` is not a completion test: after a power-cycle
+		// the counter is already zero, so that condition returns before the
+		// reset has reached the emulation thread.  Wait for one post-reset
+		// frame transition instead, preserving the caller's choice to pause
+		// and arm hooks at the settled boundary.
+		uint startFrame = EmuApi.GetFrameCount();
+		for(int i = 0; i < 150; i++) {
 			System.Threading.Thread.Sleep(20);
-			if(EmuApi.GetFrameCount() < 30) break;  // counter rewound
+			if(EmuApi.GetFrameCount() != startFrame) break;
 		}
-		return new JsonObject { ["reset"] = true, ["power"] = power };
+		return new JsonObject { ["reset"] = true, ["power"] = power,
+			["startFrame"] = startFrame, ["frameCount"] = EmuApi.GetFrameCount() };
 	}
 
 	public static JsonNode ReadDmaState(JsonNode? args)
@@ -2971,7 +3006,9 @@ internal static class McpTools
 		}
 		uint matchValue = (uint)((args["matchValue"]?.GetValue<long>()) ?? 0);
 		uint matchValueMask = (uint)((args["matchValueMask"]?.GetValue<long>()) ?? 0);
-		int handle = DebugApi.McpAddHook((byte)kind, cpu, addr, endAddr, matchValue, matchValueMask);
+		uint xValue = (uint)((args["xValue"]?.GetValue<long>()) ?? 0);
+		uint xMask = (uint)((args["xMask"]?.GetValue<long>()) ?? 0);
+		int handle = DebugApi.McpAddHook((byte)kind, cpu, addr, endAddr, matchValue, matchValueMask, xValue, xMask);
 		return new JsonObject {
 			["handle"] = handle,
 			["kind"] = kind.ToString(),
@@ -2980,6 +3017,8 @@ internal static class McpTools
 			["endAddress"] = endAddr,
 			["matchValue"] = matchValue,
 			["matchValueMask"] = matchValueMask,
+			["xValue"] = xValue,
+			["xMask"] = xMask,
 		};
 	}
 
@@ -3124,17 +3163,12 @@ internal static class McpTools
 		bool matched = false;
 		var observedEvents = new JsonArray();
 		var sw = System.Diagnostics.Stopwatch.StartNew();
-		// Poll loop: every ~10ms check (a) frame budget, (b) hook firing.
-		// Cap real-time at 2x the frame-budget wall-clock just in case
-		// emulation hangs.
-		long maxMs = (long)(maxFrames * (1000.0 / 60.0) * 2.0 + 200);
+		// Bound the request so a genuinely wedged emulator cannot hang the
+		// MCP loop forever; the bound is deliberately generous for this
+		// interpreter's measured frame cost.
+		long maxMs = (long)(maxFrames * 2000.0 + 1000);
 		while(sw.ElapsedMilliseconds < maxMs) {
 			System.Threading.Thread.Sleep(10);
-			uint nowFrame = EmuApi.GetFrameCount();
-			if(nowFrame - startFrame >= (uint)maxFrames) {
-				reason = "maxFrames";
-				break;
-			}
 			if(hookHandle != 0) {
 				var events = new Interop.McpHookEvent[256];
 				int eventCount = DebugApi.McpDrainEvents(events, events.Length);
@@ -3146,6 +3180,19 @@ internal static class McpTools
 						["frame"] = events[i].FrameNumber,
 						["kind"] = events[i].Kind.ToString(),
 						["cpuType"] = events[i].Cpu.ToString(),
+						["hostPc"] = events[i].HostPc,
+						["hostSp"] = events[i].HostSp,
+						["hostP"] = events[i].HostP,
+						["hostE"] = events[i].HostE,
+						["hostM"] = events[i].HostM,
+						["hostX"] = events[i].HostX,
+						["hostPbr"] = events[i].HostPbr,
+						["hostD"] = events[i].HostD,
+						["hostDbr"] = events[i].HostDbr,
+						["hostA"] = events[i].HostA,
+						["hostXReg"] = events[i].HostXReg,
+						["hostY"] = events[i].HostY,
+						["hostCycleCount"] = events[i].HostCycleCount,
 					});
 					if(events[i].Handle != hookHandle) continue;
 					matchedEvent = events[i];
@@ -3154,6 +3201,11 @@ internal static class McpTools
 					break;
 				}
 				if(matched) break;
+			}
+			uint nowFrame = EmuApi.GetFrameCount();
+			if(nowFrame - startFrame >= (uint)maxFrames) {
+				reason = "maxFrames";
+				break;
 			}
 		}
 		EmuApi.Pause();
@@ -3171,6 +3223,19 @@ internal static class McpTools
 			["matchedAddress"] = matched ? matchedEvent.Address : 0,
 			["matchedValue"] = matched ? matchedEvent.Value : 0,
 			["matchedFrame"] = matched ? matchedEvent.FrameNumber : 0,
+			["matchedHostPc"] = matched ? matchedEvent.HostPc : 0,
+			["matchedHostSp"] = matched ? matchedEvent.HostSp : 0,
+			["matchedHostP"] = matched ? matchedEvent.HostP : 0,
+			["matchedHostE"] = matched ? matchedEvent.HostE : 0,
+			["matchedHostM"] = matched ? matchedEvent.HostM : 0,
+			["matchedHostX"] = matched ? matchedEvent.HostX : 0,
+			["matchedHostPbr"] = matched ? matchedEvent.HostPbr : 0,
+			["matchedHostD"] = matched ? matchedEvent.HostD : 0,
+			["matchedHostDbr"] = matched ? matchedEvent.HostDbr : 0,
+			["matchedHostA"] = matched ? matchedEvent.HostA : 0,
+			["matchedHostXReg"] = matched ? matchedEvent.HostXReg : 0,
+			["matchedHostY"] = matched ? matchedEvent.HostY : 0,
+			["matchedHostCycleCount"] = matched ? matchedEvent.HostCycleCount : 0,
 			["observedEvents"] = observedEvents,
 		};
 	}

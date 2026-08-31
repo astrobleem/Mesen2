@@ -864,6 +864,7 @@ void Sa1::RunCharConvertType2() {
 }
 
 void Sa1::Reset() {
+	_resetCount++;
 	_state = {};
 	CpuRegisterWrite(0x2200, 0x20);
 	CpuRegisterWrite(0x2228, 0xFF);

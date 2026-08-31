@@ -92,6 +92,7 @@ private:
 	uint32_t _masterClockRate = 0;
 	ConsoleRegion _region = {};
 	bool _frameRunning = false;
+	uint64_t _resetCount = 0;
 
 	void UpdateRegion();
 	bool LoadSpcFile(VirtualFile& romFile);
@@ -107,6 +108,7 @@ public:
 	void Release();
 
 	void Reset() override;
+	uint64_t GetResetCount() const { return _resetCount; }
 
 	void RunFrame() override;
 

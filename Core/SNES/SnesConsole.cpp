@@ -91,6 +91,7 @@ void SnesConsole::ProcessEndOfFrame() {
 
 // Reset SNES console state
 void SnesConsole::Reset() {
+	_resetCount++;
 	_dmaController->Reset();      // Reset DMA controller
 	_internalRegisters->Reset();  // Reset internal registers ($4200-$421F)
 	_memoryManager->Reset();      // Reset memory manager and clock

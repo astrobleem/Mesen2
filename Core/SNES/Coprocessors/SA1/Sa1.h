@@ -62,6 +62,7 @@ private:
 	SnesCpu* _snesCpu;
 
 	Sa1State _state = {};
+	uint64_t _resetCount = 0;
 	std::unique_ptr<uint8_t[]> _iRam;
 
 	MemoryType _lastAccessMemType;
@@ -118,6 +119,7 @@ public:
 
 	void Run() override;
 	void Reset() override;
+	uint64_t GetResetCount() const { return _resetCount; }
 
 	MemoryType GetSa1MemoryType();
 	bool IsSnesCpuFastRomSpeed();
