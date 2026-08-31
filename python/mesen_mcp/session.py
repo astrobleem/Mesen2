@@ -309,25 +309,34 @@ class McpSession:
                   end_address: int | None = None,
                   cpu_type: str = "Snes",
                   match_value: int = 0,
-                  match_value_mask: int = 0) -> int:
+                  match_value_mask: int = 0,
+                  x_value: int = 0, x_mask: int = 0) -> int:
         args: dict = {"address": address, "cpuType": cpu_type}
         if end_address is not None:
             args["endAddress"] = end_address
         if match_value_mask != 0:
             args["matchValue"] = match_value
             args["matchValueMask"] = match_value_mask
+        if x_mask != 0:
+            args["xValue"] = x_value
+            args["xMask"] = x_mask
         return self.tool(tool_name, args)["handle"]
 
     def add_exec_hook(self, address: int, end_address: int | None = None,
                       cpu_type: str = "Snes",
-                      match_value: int = 0, match_value_mask: int = 0) -> int:
+                      match_value: int = 0, match_value_mask: int = 0,
+                      x_value: int = 0, x_mask: int = 0) -> int:
         """Register an exec hook; returns the handle. Each time the
         CPU executes an instruction in [address, end_address], the
         server pushes a notifications/mesen/hookFired message. Call
-        drain_notifications() to collect them. match_value_mask=0
-        disables the value filter (every hit fires)."""
+        drain_notifications() to collect them. Notifications and run_until
+        observedEvents include event-time hostPc, hostSp, hostP, hostE,
+        hostM, hostX, hostPbr, hostD, hostDbr, hostA, hostXReg, hostY,
+        and hostCycleCount. match_value_mask=0 disables the value filter
+        (every hit fires)."""
         return self._add_hook("add_exec_hook", address, end_address,
-                              cpu_type, match_value, match_value_mask)
+                              cpu_type, match_value, match_value_mask,
+                              x_value, x_mask)
 
     def add_read_hook(self, address: int, end_address: int | None = None,
                       cpu_type: str = "Snes",

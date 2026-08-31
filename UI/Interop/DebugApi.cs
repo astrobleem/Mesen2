@@ -29,12 +29,13 @@ public sealed class DebugApi {
 
 	// --- MCP hook management (Core/Mcp/McpHookManager) ---
 	[DllImport(DllPath)] public static extern Int32 McpAddHook(byte kind, CpuType cpu, UInt32 startAddr, UInt32 endAddr,
-		UInt32 matchValue, UInt32 matchValueMask);
+		UInt32 matchValue, UInt32 matchValueMask, UInt32 xValue, UInt32 xMask);
 	[DllImport(DllPath)] [return: MarshalAs(UnmanagedType.I1)] public static extern bool McpRemoveHook(Int32 handle);
 	[DllImport(DllPath)] public static extern Int32 McpListHooks([In, Out] McpHook[] buffer, Int32 maxCount);
 	[DllImport(DllPath)] public static extern Int32 McpDrainEvents([In, Out] McpHookEvent[] buffer, Int32 maxCount);
 	[DllImport(DllPath)] public static extern void McpResetHooks();
 	[DllImport(DllPath)] public static extern void McpHookDiagCounters(out UInt64 calls, out UInt64 matches);
+	[DllImport(DllPath)] public static extern void McpGetResetCounts(out UInt64 snesResets, out UInt64 sa1Resets);
 	[DllImport(DllPath)] public static extern void Step(CpuType cpuType, Int32 instructionCount, StepType type = StepType.Step);
 
 	[DllImport(DllPath)] public static extern void StartLogTraceToFile([MarshalAs(UnmanagedType.LPUTF8Str)] string filename);
@@ -610,6 +611,8 @@ public struct McpHook
 	public UInt32 EndAddr;
 	public UInt32 MatchValue;
 	public UInt32 MatchValueMask;
+	public UInt32 XValue;
+	public UInt32 XMask;
 	[MarshalAs(UnmanagedType.I1)] public bool Active;
 	[MarshalAs(UnmanagedType.I1)] public bool ValueMatchEnabled;
 	public byte _pad2a;
@@ -627,6 +630,20 @@ public struct McpHookEvent
 	public CpuType Cpu;
 	public byte _pad0;
 	public byte _pad1;
+	public UInt32 _snapshotPad;
+	public UInt32 HostPc;
+	public UInt32 HostSp;
+	public UInt32 HostP;
+	public UInt32 HostE;
+	public UInt32 HostM;
+	public UInt32 HostX;
+	public UInt32 HostPbr;
+	public UInt32 HostD;
+	public UInt32 HostDbr;
+	public UInt32 HostA;
+	public UInt32 HostXReg;
+	public UInt32 HostY;
+	public UInt64 HostCycleCount;
 }
 
 public enum MemoryType {

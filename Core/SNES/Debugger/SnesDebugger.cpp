@@ -139,7 +139,13 @@ void SnesDebugger::ProcessInstruction() {
 	AddressInfo addressInfo = GetAbsoluteAddress(pc);
 	uint8_t opCode = _memoryMappings->Peek(pc);
 	if(_debugger->GetMcpHooks()->HasAnyHooks()) {
-		_debugger->GetMcpHooks()->OnMemoryOperation(_cpuType, pc, opCode, McpHookKind::Exec, _emu->GetFrameCount());
+		McpCpuSnapshot snapshot {
+			state.PC, state.SP, state.PS, state.EmulationMode ? 1u : 0u,
+			(state.PS & ProcFlags::MemoryMode8) != 0 ? 1u : 0u,
+			(state.PS & ProcFlags::IndexMode8) != 0 ? 1u : 0u,
+			state.K, state.D, state.DBR, state.A, state.X, state.Y, state.CycleCount
+		};
+		_debugger->GetMcpHooks()->OnMemoryOperation(_cpuType, pc, opCode, McpHookKind::Exec, _emu->GetFrameCount(), state.X, snapshot);
 	}
 	MemoryOperationInfo operation(pc, opCode, MemoryOperationType::ExecOpCode, _cpuMemType);
 	InstructionProgress.LastMemOperation = operation;
@@ -211,13 +217,19 @@ void SnesDebugger::ProcessInstruction() {
 }
 
 void SnesDebugger::ProcessRead(uint32_t addr, uint8_t value, MemoryOperationType type) {
+	SnesCpuState& state = GetCpuState();
 	if(_debugger->GetMcpHooks()->HasAnyHooks()) {
-		_debugger->GetMcpHooks()->OnMemoryOperation(_cpuType, addr, value, McpHookKind::Read, _emu->GetFrameCount());
+		McpCpuSnapshot snapshot {
+			state.PC, state.SP, state.PS, state.EmulationMode ? 1u : 0u,
+			(state.PS & ProcFlags::MemoryMode8) != 0 ? 1u : 0u,
+			(state.PS & ProcFlags::IndexMode8) != 0 ? 1u : 0u,
+			state.K, state.D, state.DBR, state.A, state.X, state.Y, state.CycleCount
+		};
+		_debugger->GetMcpHooks()->OnMemoryOperation(_cpuType, addr, value, McpHookKind::Read, _emu->GetFrameCount(), state.X, snapshot);
 	}
 	AddressInfo addressInfo = GetAbsoluteAddress(addr);
 	MemoryOperationInfo operation(addr, value, type, _cpuMemType);
 	InstructionProgress.LastMemOperation = operation;
-	SnesCpuState& state = GetCpuState();
 
 	if (IsRegister(addr)) {
 		_eventManager->AddEvent(DebugEventType::Register, operation);
@@ -272,8 +284,15 @@ void SnesDebugger::ProcessRead(uint32_t addr, uint8_t value, MemoryOperationType
 }
 
 void SnesDebugger::ProcessWrite(uint32_t addr, uint8_t value, MemoryOperationType type) {
+	SnesCpuState& state = GetCpuState();
 	if(_debugger->GetMcpHooks()->HasAnyHooks()) {
-		_debugger->GetMcpHooks()->OnMemoryOperation(_cpuType, addr, value, McpHookKind::Write, _emu->GetFrameCount());
+		McpCpuSnapshot snapshot {
+			state.PC, state.SP, state.PS, state.EmulationMode ? 1u : 0u,
+			(state.PS & ProcFlags::MemoryMode8) != 0 ? 1u : 0u,
+			(state.PS & ProcFlags::IndexMode8) != 0 ? 1u : 0u,
+			state.K, state.D, state.DBR, state.A, state.X, state.Y, state.CycleCount
+		};
+		_debugger->GetMcpHooks()->OnMemoryOperation(_cpuType, addr, value, McpHookKind::Write, _emu->GetFrameCount(), state.X, snapshot);
 	}
 	AddressInfo addressInfo = GetAbsoluteAddress(addr);
 	MemoryOperationInfo operation(addr, value, type, _cpuMemType);

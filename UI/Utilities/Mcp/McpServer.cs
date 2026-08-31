@@ -179,6 +179,19 @@ internal sealed class McpServer
 				["address"] = evt.Address,
 				["value"] = evt.Value,
 				["frame"] = evt.FrameNumber,
+				["hostPc"] = evt.HostPc,
+				["hostSp"] = evt.HostSp,
+				["hostP"] = evt.HostP,
+				["hostE"] = evt.HostE,
+				["hostM"] = evt.HostM,
+				["hostX"] = evt.HostX,
+				["hostPbr"] = evt.HostPbr,
+				["hostD"] = evt.HostD,
+				["hostDbr"] = evt.HostDbr,
+				["hostA"] = evt.HostA,
+				["hostXReg"] = evt.HostXReg,
+				["hostY"] = evt.HostY,
+				["hostCycleCount"] = evt.HostCycleCount,
 			},
 		};
 		WriteLine(msg);
@@ -316,6 +329,7 @@ internal sealed class McpServer
 		return new Dictionary<string, Func<JsonNode?, JsonNode>> {
 			["ping"] = McpTools.Ping,
 			["get_state"] = McpTools.GetState,
+			["reset_diag"] = McpTools.ResetDiag,
 			["get_cpu_state"] = McpTools.GetCpuState,
 			["set_cpu_state"] = McpTools.SetCpuState,
 			["pause"] = McpTools.Pause,

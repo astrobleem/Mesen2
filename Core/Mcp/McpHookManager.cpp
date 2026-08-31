@@ -6,7 +6,7 @@ McpHookManager::McpHookManager()
 }
 
 int32_t McpHookManager::RegisterHook(McpHookKind kind, CpuType cpu, uint32_t startAddr, uint32_t endAddr,
-	uint32_t matchValue, uint32_t matchValueMask)
+	uint32_t matchValue, uint32_t matchValueMask, uint32_t xValue, uint32_t xMask)
 {
 	std::lock_guard<std::mutex> lock(_mutex);
 	int32_t handle = _nextHandle.fetch_add(1);
@@ -18,6 +18,8 @@ int32_t McpHookManager::RegisterHook(McpHookKind kind, CpuType cpu, uint32_t sta
 	h.EndAddr = endAddr;
 	h.MatchValue = matchValue;
 	h.MatchValueMask = matchValueMask;
+	h.XValue = xValue;
+	h.XMask = xMask;
 	h.Active = true;
 	h.ValueMatchEnabled = (matchValueMask != 0);
 	_hooks.push_back(h);
@@ -49,7 +51,7 @@ size_t McpHookManager::CopyActiveHooks(McpHook* out, size_t maxCount)
 }
 
 void McpHookManager::OnMemoryOperation(CpuType cpu, uint32_t addr, uint32_t value,
-	McpHookKind kind, uint32_t frameNumber)
+	McpHookKind kind, uint32_t frameNumber, uint32_t xValue, const McpCpuSnapshot& snapshot)
 {
 	_callCount.fetch_add(1, std::memory_order_relaxed);
 
@@ -69,6 +71,7 @@ void McpHookManager::OnMemoryOperation(CpuType cpu, uint32_t addr, uint32_t valu
 		if(h.ValueMatchEnabled) {
 			if((value & h.MatchValueMask) != (h.MatchValue & h.MatchValueMask)) continue;
 		}
+		if(h.XMask != 0 && (xValue & h.XMask) != (h.XValue & h.XMask)) continue;
 		_matchCount.fetch_add(1, std::memory_order_relaxed);
 
 		// Drop oldest if queue full. Slow-client backpressure belongs on
@@ -87,6 +90,7 @@ void McpHookManager::OnMemoryOperation(CpuType cpu, uint32_t addr, uint32_t valu
 		evt.Cpu = (uint8_t)cpu;
 		evt.Padding[0] = 0;
 		evt.Padding[1] = 0;
+		evt.Snapshot = snapshot;
 		_events.push_back(evt);
 	}
 }

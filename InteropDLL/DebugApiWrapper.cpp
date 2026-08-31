@@ -22,6 +22,9 @@
 #include "Core/Debugger/ITraceLogger.h"
 #include "Core/Debugger/TraceLogFileSaver.h"
 #include "Core/Debugger/FrozenAddressManager.h"
+#include "Core/SNES/SnesConsole.h"
+#include "Core/SNES/BaseCartridge.h"
+#include "Core/SNES/Coprocessors/SA1/Sa1.h"
 #include "Core/Gameboy/GbTypes.h"
 #include "Utilities/StringUtilities.h"
 
@@ -53,10 +56,10 @@ void WrapDebuggerCall(std::function<void(Debugger* debugger)> func) {
 extern "C" {
 	// --- MCP hook management --------------------------------------------
 	DllExport int32_t __stdcall McpAddHook(uint8_t kind, CpuType cpu, uint32_t startAddr, uint32_t endAddr,
-		uint32_t matchValue, uint32_t matchValueMask)
+		uint32_t matchValue, uint32_t matchValueMask, uint32_t xValue, uint32_t xMask)
 	{
 		return WithDebugger(int32_t, GetMcpHooks()->RegisterHook(
-			(McpHookKind)kind, cpu, startAddr, endAddr, matchValue, matchValueMask));
+			(McpHookKind)kind, cpu, startAddr, endAddr, matchValue, matchValueMask, xValue, xMask));
 	}
 
 	DllExport bool __stdcall McpRemoveHook(int32_t handle)
@@ -90,6 +93,19 @@ extern "C" {
 		} else {
 			if(calls) *calls = 0;
 			if(matches) *matches = 0;
+		}
+	}
+
+	DllExport void __stdcall McpGetResetCounts(uint64_t* snesResets, uint64_t* sa1Resets)
+	{
+		if(snesResets) *snesResets = 0;
+		if(sa1Resets) *sa1Resets = 0;
+		if(!_emu) return;
+		if(auto* console = dynamic_cast<SnesConsole*>(_emu->GetConsoleUnsafe())) {
+			if(snesResets) *snesResets = console->GetResetCount();
+			if(console->GetCartridge() && console->GetCartridge()->GetSa1()) {
+				if(sa1Resets) *sa1Resets = console->GetCartridge()->GetSa1()->GetResetCount();
+			}
 		}
 	}
 

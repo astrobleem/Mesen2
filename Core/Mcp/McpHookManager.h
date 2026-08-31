@@ -29,12 +29,33 @@ struct McpHook
 	// suppress notification floods on hot PCs / hot memory ranges.
 	uint32_t MatchValue;
 	uint32_t MatchValueMask;
+	uint32_t XValue;
+	uint32_t XMask;
 	bool Active;
 	bool ValueMatchEnabled;
 };
 
 // Event emitted when a hook fires. Kept POD + fixed-size so the C# side
 // can marshal a contiguous array in one P/Invoke.
+// Register state captured synchronously on the emulator thread at the hook.
+// All fields use fixed-width scalars so the C ABI remains deterministic.
+struct McpCpuSnapshot
+{
+	uint32_t Pc;
+	uint32_t Sp;
+	uint32_t P;
+	uint32_t E;
+	uint32_t M;
+	uint32_t X;
+	uint32_t Pbr;
+	uint32_t D;
+	uint32_t Dbr;
+	uint32_t A;
+	uint32_t XReg;
+	uint32_t Y;
+	uint64_t CycleCount;
+};
+
 struct McpHookEvent
 {
 	int32_t Handle;
@@ -44,7 +65,10 @@ struct McpHookEvent
 	uint8_t Kind;         // McpHookKind
 	uint8_t Cpu;          // CpuType
 	uint8_t Padding[2];
+	McpCpuSnapshot Snapshot;
 };
+
+static_assert(sizeof(McpHookEvent) == 80, "McpHookEvent ABI layout changed");
 
 // Thread-safe registry + bounded event queue. Hot path runs on the
 // emulator thread (called from Debugger::ProcessMemoryRead/Write/Instruction
@@ -68,7 +92,8 @@ public:
 	// Registry. valueMatchMask=0 disables the value match (fire on every
 	// hit); valueMatchMask=0xFFFFFFFF requires exact equality.
 	int32_t RegisterHook(McpHookKind kind, CpuType cpu, uint32_t startAddr, uint32_t endAddr,
-		uint32_t matchValue = 0, uint32_t matchValueMask = 0);
+		uint32_t matchValue = 0, uint32_t matchValueMask = 0,
+		uint32_t xValue = 0, uint32_t xMask = 0);
 	bool UnregisterHook(int32_t handle);
 	size_t CopyActiveHooks(McpHook* out, size_t maxCount);
 
@@ -85,7 +110,7 @@ public:
 	// registered hooks and pushes one event per match. Drops oldest events
 	// if queue is full.
 	void OnMemoryOperation(CpuType cpu, uint32_t addr, uint32_t value,
-		McpHookKind kind, uint32_t frameNumber);
+		McpHookKind kind, uint32_t frameNumber, uint32_t xValue, const McpCpuSnapshot& snapshot);
 
 	// Drain events into out buffer. Returns number of events copied.
 	// Emulator thread continues enqueueing concurrently; draining is O(n).
