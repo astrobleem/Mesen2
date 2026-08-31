@@ -12,6 +12,11 @@ using Avalonia.VisualTree;
 
 namespace Nexen.Utilities;
 static class WindowExtensions {
+	// Avalonia 12's diagnostics package no longer supplies the former
+	// AttachDevTools extension in the Linux headless build. Keep the migrated
+	// call sites source-compatible; headless Nexen does not attach UI tooling.
+	public static void AttachDeveloperTools(this Control control) { }
+
 	public static void CenterWindow(Window child, Visual parent) {
 		if (TryCenterWindowImmediately(child, parent)) {
 			return;
