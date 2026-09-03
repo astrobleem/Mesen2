@@ -7,6 +7,9 @@
 #include "Utilities/Serializer.h"
 #include <cstdlib>
 #include <cstring>
+#ifdef _WIN32
+extern "C" __declspec(dllimport) unsigned long __stdcall GetEnvironmentVariableA(const char*, char*, unsigned long);
+#endif
 
 //Quoted comments are from anomie's DSP document (with modifications by jwdonal)
 
@@ -27,7 +30,6 @@ Dsp::Dsp(Emulator* emu, SnesConsole* console, Spc* spc)
 	_state.EchoRingBufferAddress = ReadReg(DspGlobalRegs::EchoRingBufferAddress);
 
 	Reset();
-	InitVoiceCapture();
 }
 
 Dsp::~Dsp()
@@ -38,14 +40,38 @@ Dsp::~Dsp()
 void Dsp::InitVoiceCapture()
 {
 	const char* path = std::getenv("MESEN_VOICE_CAPTURE_PATH");
+	char processPath[1024] = {};
+#ifdef _WIN32
+	if(path == nullptr || path[0] == '\0') {
+		if(GetEnvironmentVariableA("MESEN_VOICE_CAPTURE_PATH", processPath, sizeof(processPath)) != 0) {
+			path = processPath;
+		}
+	}
+#endif
 	if(path == nullptr || path[0] == '\0') {
 		return;
 	}
 	const char* voice = std::getenv("MESEN_VOICE_CAPTURE_VOICE");
+#ifdef _WIN32
+	char processVoice[8] = {};
+	if(voice == nullptr || voice[0] == '\0') {
+		if(GetEnvironmentVariableA("MESEN_VOICE_CAPTURE_VOICE", processVoice, sizeof(processVoice)) != 0) {
+			voice = processVoice;
+		}
+	}
+#endif
 	if(voice != nullptr && voice[0] >= '0' && voice[0] <= '7' && voice[1] == '\0') {
 		_voiceCaptureIndex = (uint8_t)(voice[0] - '0');
 	}
 	const char* armPath = std::getenv("MESEN_VOICE_CAPTURE_ARM_FILE");
+#ifdef _WIN32
+	char processArmPath[1024] = {};
+	if(armPath == nullptr || armPath[0] == '\0') {
+		if(GetEnvironmentVariableA("MESEN_VOICE_CAPTURE_ARM_FILE", processArmPath, sizeof(processArmPath)) != 0) {
+			armPath = processArmPath;
+		}
+	}
+#endif
 	if(armPath != nullptr) {
 		std::strncpy(_voiceCaptureArmPath, armPath, sizeof(_voiceCaptureArmPath) - 1);
 	}
@@ -373,6 +399,10 @@ void Dsp::EchoStep30()
 
 void Dsp::Exec()
 {
+	if(_voiceCaptureFile == nullptr) {
+		InitVoiceCapture();
+	}
+
 	uint8_t step = _state.Step;
 	_state.Step = (_state.Step + 1) & 0x1F;
 
