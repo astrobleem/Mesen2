@@ -214,6 +214,7 @@ template<CpuType type>
 void Debugger::ProcessInstruction()
 {
 	IDebugger* debugger = _debuggers[(int)type].Debugger.get();
+	uint32_t instructionAddress = debugger->GetProgramCounter(true);
 	if(debugger->IsStepBack() && ProcessStepBack(debugger)) {
 		debugger->AllowChangeProgramCounter = true; //set to true temporarily to allow debugger to pause on break requests when rewinding/step back is active
 		SleepOnBreakRequest<type>();
@@ -250,8 +251,7 @@ void Debugger::ProcessInstruction()
 	}
 
 	if(_mcpHooks->HasAnyHooks()) {
-		MemoryOperationInfo memOp = debugger->InstructionProgress.LastMemOperation;
-		_mcpHooks->OnMemoryOperation(type, memOp.Address, memOp.Value, McpHookKind::Exec, _emu->GetFrameCount());
+		_mcpHooks->OnMemoryOperation(type, instructionAddress, 0, McpHookKind::Exec, _emu->GetFrameCount());
 	}
 }
 
