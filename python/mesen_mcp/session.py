@@ -51,6 +51,7 @@ class McpSession:
         boot_wait: float = 2.0,
         socket_timeout: float = 30.0,
         stderr_log: Path | str | None = None,
+        env: dict[str, str] | None = None,
     ) -> None:
         self._port = port
         self._rom = str(rom)
@@ -62,6 +63,9 @@ class McpSession:
         self._boot_wait = boot_wait
         self._socket_timeout = socket_timeout
         self._stderr_log = stderr_log
+        self._env = os.environ.copy()
+        if env is not None:
+            self._env.update(env)
         self._proc: subprocess.Popen | None = None
         self._sock: socket.socket | None = None
         self._buf = b""
@@ -104,6 +108,7 @@ class McpSession:
             cwd=self._cwd,
             stdout=subprocess.DEVNULL,
             stderr=subprocess.PIPE,
+            env=self._env,
         )
 
         def _drain() -> None:

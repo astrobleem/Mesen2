@@ -7,6 +7,7 @@
 #include "Utilities/Serializer.h"
 #include <cstdlib>
 #include <cstring>
+#include <cerrno>
 #ifdef _WIN32
 extern "C" __declspec(dllimport) unsigned long __stdcall GetEnvironmentVariableA(const char*, char*, unsigned long);
 #endif
@@ -30,6 +31,8 @@ Dsp::Dsp(Emulator* emu, SnesConsole* console, Spc* spc)
 	_state.EchoRingBufferAddress = ReadReg(DspGlobalRegs::EchoRingBufferAddress);
 
 	Reset();
+	_voiceCaptureInitAttempted = true;
+	InitVoiceCapture();
 }
 
 Dsp::~Dsp()
@@ -51,6 +54,7 @@ void Dsp::InitVoiceCapture()
 	if(path == nullptr || path[0] == '\0') {
 		return;
 	}
+	std::fprintf(stderr, "[voice-capture] path=%s\n", path);
 	const char* voice = std::getenv("MESEN_VOICE_CAPTURE_VOICE");
 #ifdef _WIN32
 	char processVoice[8] = {};
@@ -62,6 +66,9 @@ void Dsp::InitVoiceCapture()
 #endif
 	if(voice != nullptr && voice[0] >= '0' && voice[0] <= '7' && voice[1] == '\0') {
 		_voiceCaptureIndex = (uint8_t)(voice[0] - '0');
+	} else if(voice != nullptr && voice[0] != '\0') {
+		std::fprintf(stderr, "[voice-capture] invalid voice=%s\n", voice);
+		return;
 	}
 	const char* armPath = std::getenv("MESEN_VOICE_CAPTURE_ARM_FILE");
 #ifdef _WIN32
@@ -77,12 +84,14 @@ void Dsp::InitVoiceCapture()
 	}
 	_voiceCaptureFile = std::fopen(path, "wb");
 	if(_voiceCaptureFile == nullptr) {
+		std::fprintf(stderr, "[voice-capture] open failed path=%s errno=%d\n", path, errno);
 		return;
 	}
 	std::string metaPath = std::string(path) + ".json";
 	_voiceCaptureMetaFile = std::fopen(metaPath.c_str(), "wb");
 	std::string tracePath = std::string(path) + ".trace";
 	_voiceCaptureTraceFile = std::fopen(tracePath.c_str(), "wb");
+	std::fprintf(stderr, "[voice-capture] initialized voice=%u path=%s\n", (unsigned)_voiceCaptureIndex, path);
 }
 
 void Dsp::FinishVoiceCapture()
@@ -399,7 +408,8 @@ void Dsp::EchoStep30()
 
 void Dsp::Exec()
 {
-	if(_voiceCaptureFile == nullptr) {
+	if(!_voiceCaptureInitAttempted) {
+		_voiceCaptureInitAttempted = true;
 		InitVoiceCapture();
 	}
 
