@@ -3242,10 +3242,13 @@ internal static class McpTools
 
 	public static JsonNode HookDiag(JsonNode? args)
 	{
-		DebugApi.McpHookDiagCounters(out ulong calls, out ulong matches);
+		DebugApi.McpHookDiagCounters(out ulong calls, out ulong matches,
+			out ulong queued, out ulong dropped);
 		return new JsonObject {
 			["onMemoryOperationCalls"] = calls,
 			["matchedEventsEmitted"] = matches,
+			["queuedEvents"] = queued,
+			["droppedEvents"] = dropped,
 		};
 	}
 

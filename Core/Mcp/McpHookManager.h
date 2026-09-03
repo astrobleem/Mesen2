@@ -105,6 +105,8 @@ public:
 	// integration is alive even if no hook address range matches.
 	uint64_t GetCallCount() const { return _callCount.load(std::memory_order_relaxed); }
 	uint64_t GetMatchCount() const { return _matchCount.load(std::memory_order_relaxed); }
+	size_t GetQueuedEventCount();
+	size_t GetDroppedEventCount();
 
 	// Fire from emulator thread. Synchronously matches the op against all
 	// registered hooks and pushes one event per match. Drops oldest events

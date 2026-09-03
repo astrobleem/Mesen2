@@ -34,7 +34,8 @@ public sealed class DebugApi {
 	[DllImport(DllPath)] public static extern Int32 McpListHooks([In, Out] McpHook[] buffer, Int32 maxCount);
 	[DllImport(DllPath)] public static extern Int32 McpDrainEvents([In, Out] McpHookEvent[] buffer, Int32 maxCount);
 	[DllImport(DllPath)] public static extern void McpResetHooks();
-	[DllImport(DllPath)] public static extern void McpHookDiagCounters(out UInt64 calls, out UInt64 matches);
+	[DllImport(DllPath)] public static extern void McpHookDiagCounters(out UInt64 calls, out UInt64 matches,
+		out UInt64 queued, out UInt64 dropped);
 	[DllImport(DllPath)] public static extern void McpGetResetCounts(out UInt64 snesResets, out UInt64 sa1Resets);
 	[DllImport(DllPath)] public static extern void Step(CpuType cpuType, Int32 instructionCount, StepType type = StepType.Step);
 

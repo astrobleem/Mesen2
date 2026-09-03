@@ -84,15 +84,20 @@ extern "C" {
 		WithDebugger(void, GetMcpHooks()->Reset());
 	}
 
-	DllExport void __stdcall McpHookDiagCounters(uint64_t* calls, uint64_t* matches)
+	DllExport void __stdcall McpHookDiagCounters(uint64_t* calls, uint64_t* matches,
+		uint64_t* queued, uint64_t* dropped)
 	{
 		DebuggerRequest dbgRequest = _emu->GetDebugger(true);
 		if(Debugger* dbg = dbgRequest.GetDebugger()) {
 			if(calls) *calls = dbg->GetMcpHooks()->GetCallCount();
 			if(matches) *matches = dbg->GetMcpHooks()->GetMatchCount();
+			if(queued) *queued = dbg->GetMcpHooks()->GetQueuedEventCount();
+			if(dropped) *dropped = dbg->GetMcpHooks()->GetDroppedEventCount();
 		} else {
 			if(calls) *calls = 0;
 			if(matches) *matches = 0;
+			if(queued) *queued = 0;
+			if(dropped) *dropped = 0;
 		}
 	}
 

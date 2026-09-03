@@ -5,6 +5,18 @@ McpHookManager::McpHookManager()
 {
 }
 
+size_t McpHookManager::GetQueuedEventCount()
+{
+	std::lock_guard<std::mutex> lock(_mutex);
+	return _events.size();
+}
+
+size_t McpHookManager::GetDroppedEventCount()
+{
+	std::lock_guard<std::mutex> lock(_mutex);
+	return _droppedEvents;
+}
+
 int32_t McpHookManager::RegisterHook(McpHookKind kind, CpuType cpu, uint32_t startAddr, uint32_t endAddr,
 	uint32_t matchValue, uint32_t matchValueMask, uint32_t xValue, uint32_t xMask)
 {
