@@ -179,6 +179,7 @@ void DspVoice::UpdateOutput(bool right)
 	int32_t voiceOut = ((int32_t)_shared->VoiceOutput * (int8_t)ReadReg((DspVoiceRegs)((int)DspVoiceRegs::VolLeft + (int)right))) >> 7;
 
 	voiceOut = voiceOut * (int32_t)_cfg->ChannelVolumes[_voiceIndex] / 100;
+	_lastOutput[right ? 1 : 0] = voiceOut;
 
 	_shared->OutSamples[(int)right] = Dsp::Clamp16(_shared->OutSamples[(int)right] + voiceOut);
 
@@ -244,6 +245,7 @@ void DspVoice::Step3c()
 
 	if(_keyOnDelay) {
 		if(_keyOnDelay == 5) {
+			_dsp->CaptureVoiceEvent(_voiceIndex, "KON");
 			//Key was just enabled, prepare next BRR sample decoding
 			_brrAddress = _shared->BrrNextAddress;
 			_brrOffset = 1;
@@ -281,6 +283,9 @@ void DspVoice::Step3c()
 	//"Check FLG bit 7 (NOT previously loaded).
 	//Check BRR header 'e' and 'l' bits to determine if the voice ends."
 	if((_dsp->ReadReg(DspGlobalRegs::Flags) & 0x80) || (_shared->BrrHeader & 0x03) == 0x01) {
+		if((_shared->BrrHeader & 0x03) == 0x01) {
+			_dsp->CaptureVoiceEvent(_voiceIndex, "ENDX");
+		}
 		//"When a BRR end-without-loop block is reached, the state is set to Release."
 		_envMode = EnvelopeMode::Release;
 		_envVolume = 0;
@@ -289,6 +294,7 @@ void DspVoice::Step3c()
 	if(_shared->EveryOtherSample) {
 		//"Handle KOFF and KON using previously loaded values. If KON, ENDX.x will be cleared in step S7."
 		if(_shared->KeyOff & _voiceBit) {
+			_dsp->CaptureVoiceEvent(_voiceIndex, "KOFF");
 			//When the voice is keyed off [...], the state is set to Release."
 			_envMode = EnvelopeMode::Release;
 		}

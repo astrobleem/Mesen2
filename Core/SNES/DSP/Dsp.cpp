@@ -5,6 +5,8 @@
 #include "Shared/Emulator.h"
 #include "Shared/EmuSettings.h"
 #include "Utilities/Serializer.h"
+#include <cstdlib>
+#include <cstring>
 
 //Quoted comments are from anomie's DSP document (with modifications by jwdonal)
 
@@ -25,6 +27,111 @@ Dsp::Dsp(Emulator* emu, SnesConsole* console, Spc* spc)
 	_state.EchoRingBufferAddress = ReadReg(DspGlobalRegs::EchoRingBufferAddress);
 
 	Reset();
+	InitVoiceCapture();
+}
+
+Dsp::~Dsp()
+{
+	FinishVoiceCapture();
+}
+
+void Dsp::InitVoiceCapture()
+{
+	const char* path = std::getenv("MESEN_VOICE_CAPTURE_PATH");
+	if(path == nullptr || path[0] == '\0') {
+		return;
+	}
+	const char* voice = std::getenv("MESEN_VOICE_CAPTURE_VOICE");
+	if(voice != nullptr && voice[0] >= '0' && voice[0] <= '7' && voice[1] == '\0') {
+		_voiceCaptureIndex = (uint8_t)(voice[0] - '0');
+	}
+	const char* armPath = std::getenv("MESEN_VOICE_CAPTURE_ARM_FILE");
+	if(armPath != nullptr) {
+		std::strncpy(_voiceCaptureArmPath, armPath, sizeof(_voiceCaptureArmPath) - 1);
+	}
+	_voiceCaptureFile = std::fopen(path, "wb");
+	if(_voiceCaptureFile == nullptr) {
+		return;
+	}
+	std::string metaPath = std::string(path) + ".json";
+	_voiceCaptureMetaFile = std::fopen(metaPath.c_str(), "wb");
+	std::string tracePath = std::string(path) + ".trace";
+	_voiceCaptureTraceFile = std::fopen(tracePath.c_str(), "wb");
+}
+
+void Dsp::FinishVoiceCapture()
+{
+	if(_voiceCaptureFile != nullptr) {
+		std::fflush(_voiceCaptureFile);
+		std::fclose(_voiceCaptureFile);
+		_voiceCaptureFile = nullptr;
+	}
+	if(_voiceCaptureMetaFile != nullptr) {
+		std::fprintf(_voiceCaptureMetaFile,
+			"{\"voice\":%u,\"sample_rate\":32000,\"sample_count\":%llu,\"kon_sample\":%llu,\"koff_sample\":%s,\"endx_sample\":%s}\n",
+			(unsigned)_voiceCaptureIndex,
+			(unsigned long long)_voiceCaptureSampleIndex,
+			(unsigned long long)_voiceCaptureKonIndex,
+			_voiceCaptureKoffIndex == UINT64_MAX ? "null" : std::to_string(_voiceCaptureKoffIndex).c_str(),
+			_voiceCaptureEndIndex == UINT64_MAX ? "null" : std::to_string(_voiceCaptureEndIndex).c_str());
+		std::fclose(_voiceCaptureMetaFile);
+		_voiceCaptureMetaFile = nullptr;
+	}
+	if(_voiceCaptureTraceFile != nullptr) {
+		std::fflush(_voiceCaptureTraceFile);
+		std::fclose(_voiceCaptureTraceFile);
+		_voiceCaptureTraceFile = nullptr;
+	}
+}
+
+void Dsp::CaptureVoiceEvent(uint8_t voiceIndex, const char* eventName)
+{
+	if(_voiceCaptureFile == nullptr || voiceIndex != _voiceCaptureIndex) {
+		return;
+	}
+	if(_voiceCaptureArmPath[0] != '\0') {
+		FILE* arm = std::fopen(_voiceCaptureArmPath, "rb");
+		if(arm == nullptr) {
+			return;
+		}
+		std::fclose(arm);
+	}
+	if(std::strcmp(eventName, "KON") == 0 && !_voiceCaptureActive) {
+		_voiceCaptureActive = true;
+		_voiceCaptureKonIndex = _voiceCaptureSampleIndex;
+	} else if(std::strcmp(eventName, "KOFF") == 0 && _voiceCaptureActive) {
+		_voiceCaptureKoffIndex = _voiceCaptureSampleIndex;
+	} else if(std::strcmp(eventName, "ENDX") == 0 && _voiceCaptureActive) {
+		_voiceCaptureEndPending = true;
+	}
+}
+
+void Dsp::CaptureVoiceSample(uint8_t voiceIndex, int32_t left, int32_t right)
+{
+	if(_voiceCaptureFile == nullptr || voiceIndex != _voiceCaptureIndex || !_voiceCaptureActive) {
+		return;
+	}
+	int16_t samples[2] = {Clamp16(left), Clamp16(right)};
+	std::fwrite(samples, sizeof(samples), 1, _voiceCaptureFile);
+	if(_voiceCaptureTraceFile != nullptr) {
+		uint16_t brrAddress = _voices[voiceIndex].GetBrrAddress();
+		uint32_t blockFingerprint = 2166136261u;
+		for(uint8_t i = 0; i < 9; i++) {
+			blockFingerprint ^= _spc->DspReadRam(brrAddress + i);
+			blockFingerprint *= 16777619u;
+		}
+		std::fprintf(_voiceCaptureTraceFile, "%llu,%04X,%02X,%08X\n",
+			(unsigned long long)_voiceCaptureSampleIndex,
+			(unsigned)brrAddress,
+			(unsigned)_spc->DspReadRam(brrAddress),
+			(unsigned)blockFingerprint);
+	}
+	_voiceCaptureSampleIndex++;
+	if(_voiceCaptureEndPending) {
+		_voiceCaptureEndPending = false;
+		_voiceCaptureActive = false;
+		_voiceCaptureEndIndex = _voiceCaptureSampleIndex;
+	}
 }
 
 void Dsp::LoadSpcFileRegs(uint8_t* regs)
@@ -308,6 +415,7 @@ void Dsp::Exec()
 
 			//"Output the right sample to the DAC."
 			EchoStep27();
+			CaptureVoiceSample(_voiceCaptureIndex, _voices[_voiceCaptureIndex].GetLastOutput(false), _voices[_voiceCaptureIndex].GetLastOutput(true));
 
 			if(ReadReg(DspGlobalRegs::Flags) & 0x40) {
 				//Global mute/silence flag

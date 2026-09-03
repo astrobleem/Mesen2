@@ -31,6 +31,8 @@ private:
 
 	int16_t _sampleBuffer[12] = {};
 
+	int32_t _lastOutput[2] = {};
+
 	uint8_t ReadReg(DspVoiceRegs reg) { return _regs[(int)reg]; }
 	void WriteReg(DspVoiceRegs reg, uint8_t value) { _regs[(int)reg] = value; }
 
@@ -53,6 +55,9 @@ public:
 	void Step7();
 	void Step8();
 	void Step9();
+
+	int32_t GetLastOutput(bool right) const { return _lastOutput[right ? 1 : 0]; }
+	uint16_t GetBrrAddress() const { return _brrAddress; }
 
 	void Serialize(Serializer& s) override;
 };

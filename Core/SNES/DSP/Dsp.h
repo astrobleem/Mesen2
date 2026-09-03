@@ -3,6 +3,7 @@
 #include "SNES/DSP/DspVoice.h"
 #include "SNES/DSP/DspTypes.h"
 #include "Utilities/ISerializable.h"
+#include <cstdio>
 
 class Emulator;
 class SnesConsole;
@@ -20,6 +21,23 @@ private:
 	uint16_t _outSampleCount = 0;
 	int16_t _dspOutput[0x2000] = {};
 
+	// Test-only passive per-voice capture. Enabled only when the environment
+	// variable MESEN_VOICE_CAPTURE_PATH is set; it never changes DSP state.
+	FILE* _voiceCaptureFile = nullptr;
+	FILE* _voiceCaptureMetaFile = nullptr;
+	FILE* _voiceCaptureTraceFile = nullptr;
+	uint8_t _voiceCaptureIndex = 7;
+	char _voiceCaptureArmPath[512] = {};
+	bool _voiceCaptureActive = false;
+	bool _voiceCaptureEndPending = false;
+	uint64_t _voiceCaptureSampleIndex = 0;
+	uint64_t _voiceCaptureKonIndex = UINT64_MAX;
+	uint64_t _voiceCaptureKoffIndex = UINT64_MAX;
+	uint64_t _voiceCaptureEndIndex = UINT64_MAX;
+
+	void InitVoiceCapture();
+	void FinishVoiceCapture();
+
 	void UpdateCounter();
 	
 	int32_t CalculateFir(int index, int ch);
@@ -36,6 +54,7 @@ private:
 
 public:
 	Dsp(Emulator* emu, SnesConsole* console, Spc* spc);
+	~Dsp();
 
 	void LoadSpcFileRegs(uint8_t* regs);
 	void Reset();
@@ -46,6 +65,9 @@ public:
 	uint16_t GetSampleCount() { return _outSampleCount; }
 	int16_t* GetSamples() { return _dspOutput; }
 	void ResetOutput() { _outSampleCount = 0; }
+
+	void CaptureVoiceEvent(uint8_t voiceIndex, const char* eventName);
+	void CaptureVoiceSample(uint8_t voiceIndex, int32_t left, int32_t right);
 
 	bool CheckCounter(int32_t rate);
 
