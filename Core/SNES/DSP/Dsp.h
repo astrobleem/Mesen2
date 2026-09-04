@@ -30,11 +30,13 @@ private:
 	char _voiceCaptureArmPath[512] = {};
 	bool _voiceCaptureActive = false;
 	bool _voiceCaptureEndPending = false;
+	bool _voiceCaptureContinueAfterEndx = false;
 	bool _voiceCaptureInitAttempted = false;
 	uint64_t _voiceCaptureSampleIndex = 0;
 	uint64_t _voiceCaptureKonIndex = UINT64_MAX;
 	uint64_t _voiceCaptureKoffIndex = UINT64_MAX;
 	uint64_t _voiceCaptureEndIndex = UINT64_MAX;
+	uint64_t _voiceCaptureEndCount = 0;
 
 	void InitVoiceCapture();
 	void FinishVoiceCapture();

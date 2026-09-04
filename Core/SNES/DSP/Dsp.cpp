@@ -82,6 +82,16 @@ void Dsp::InitVoiceCapture()
 	if(armPath != nullptr) {
 		std::strncpy(_voiceCaptureArmPath, armPath, sizeof(_voiceCaptureArmPath) - 1);
 	}
+	const char* continueAfterEndx = std::getenv("MESEN_VOICE_CAPTURE_CONTINUE_AFTER_ENDX");
+#ifdef _WIN32
+	char processContinueAfterEndx[8] = {};
+	if(continueAfterEndx == nullptr || continueAfterEndx[0] == '\0') {
+		if(GetEnvironmentVariableA("MESEN_VOICE_CAPTURE_CONTINUE_AFTER_ENDX", processContinueAfterEndx, sizeof(processContinueAfterEndx)) != 0) {
+			continueAfterEndx = processContinueAfterEndx;
+		}
+	}
+#endif
+	_voiceCaptureContinueAfterEndx = continueAfterEndx != nullptr && std::strcmp(continueAfterEndx, "1") == 0;
 	_voiceCaptureFile = std::fopen(path, "wb");
 	if(_voiceCaptureFile == nullptr) {
 		std::fprintf(stderr, "[voice-capture] open failed path=%s errno=%d\n", path, errno);
@@ -91,7 +101,7 @@ void Dsp::InitVoiceCapture()
 	_voiceCaptureMetaFile = std::fopen(metaPath.c_str(), "wb");
 	std::string tracePath = std::string(path) + ".trace";
 	_voiceCaptureTraceFile = std::fopen(tracePath.c_str(), "wb");
-	std::fprintf(stderr, "[voice-capture] initialized voice=%u path=%s\n", (unsigned)_voiceCaptureIndex, path);
+	std::fprintf(stderr, "[voice-capture] initialized voice=%u path=%s continue_after_endx=%u\n", (unsigned)_voiceCaptureIndex, path, _voiceCaptureContinueAfterEndx ? 1 : 0);
 }
 
 void Dsp::FinishVoiceCapture()
@@ -103,12 +113,14 @@ void Dsp::FinishVoiceCapture()
 	}
 	if(_voiceCaptureMetaFile != nullptr) {
 		std::fprintf(_voiceCaptureMetaFile,
-			"{\"voice\":%u,\"sample_rate\":32000,\"sample_count\":%llu,\"kon_sample\":%llu,\"koff_sample\":%s,\"endx_sample\":%s}\n",
+		"{\"voice\":%u,\"sample_rate\":32000,\"sample_count\":%llu,\"kon_sample\":%llu,\"koff_sample\":%s,\"endx_sample\":%s,\"endx_count\":%llu,\"continue_after_endx\":%s}\n",
 			(unsigned)_voiceCaptureIndex,
 			(unsigned long long)_voiceCaptureSampleIndex,
 			(unsigned long long)_voiceCaptureKonIndex,
 			_voiceCaptureKoffIndex == UINT64_MAX ? "null" : std::to_string(_voiceCaptureKoffIndex).c_str(),
-			_voiceCaptureEndIndex == UINT64_MAX ? "null" : std::to_string(_voiceCaptureEndIndex).c_str());
+			_voiceCaptureEndIndex == UINT64_MAX ? "null" : std::to_string(_voiceCaptureEndIndex).c_str(),
+			(unsigned long long)_voiceCaptureEndCount,
+			_voiceCaptureContinueAfterEndx ? "true" : "false");
 		std::fclose(_voiceCaptureMetaFile);
 		_voiceCaptureMetaFile = nullptr;
 	}
@@ -137,7 +149,14 @@ void Dsp::CaptureVoiceEvent(uint8_t voiceIndex, const char* eventName)
 	} else if(std::strcmp(eventName, "KOFF") == 0 && _voiceCaptureActive) {
 		_voiceCaptureKoffIndex = _voiceCaptureSampleIndex;
 	} else if(std::strcmp(eventName, "ENDX") == 0 && _voiceCaptureActive) {
-		_voiceCaptureEndPending = true;
+		_voiceCaptureEndCount++;
+		if(_voiceCaptureContinueAfterEndx) {
+			if(_voiceCaptureEndIndex == UINT64_MAX) {
+				_voiceCaptureEndIndex = _voiceCaptureSampleIndex;
+			}
+		} else {
+			_voiceCaptureEndPending = true;
+		}
 	}
 }
 
